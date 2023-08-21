@@ -1,4 +1,6 @@
-﻿using VContainer;
+﻿using Sushi.Menu.Controllers;
+using Utils.Controllers.VContainerIntegration;
+using VContainer;
 using VContainer.Unity;
 
 namespace Sushi.Menu.Installer
@@ -8,6 +10,8 @@ namespace Sushi.Menu.Installer
         public void Install(IContainerBuilder builder)
         {
             builder.RegisterEntryPoint<RootMenuController>();
+
+            builder.RegisterController<MenuViewController>();
         }
     }
 }

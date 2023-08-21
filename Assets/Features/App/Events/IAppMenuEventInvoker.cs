@@ -2,6 +2,6 @@
 {
     public interface IAppMenuEventInvoker
     {
-        public void RequestFeatureWorkComletion();
+        public void RequestFeatureWorkCompletion();
     }
 }

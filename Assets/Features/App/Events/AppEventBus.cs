@@ -7,7 +7,7 @@ namespace Sushi.App.Events
     {
         public event Action<AppActionType> OnFeatureWorkCompletion;
 
-        public void RequestFeatureWorkComletion()
+        public void RequestFeatureWorkCompletion()
         {
             OnFeatureWorkCompletion?.Invoke(AppActionType.Level);
         }

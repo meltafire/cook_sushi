@@ -1,19 +1,22 @@
 using Cysharp.Threading.Tasks;
 using Sushi.App.Events;
 using System.Threading;
-using UnityEngine;
 using Utils.Controllers;
 using VContainer.Unity;
 
-namespace Sushi.Menu
+namespace Sushi.Menu.Controllers
 {
     public class RootMenuController : Controller, IAsyncStartable
     {
         private readonly IAppMenuEventInvoker _appMenuEventInvoker;
+        private readonly IFactory<MenuViewController> _menuViewControllerFactory;
 
-        public RootMenuController(IAppMenuEventInvoker appMenuEventInvoker)
+        public RootMenuController(
+            IAppMenuEventInvoker appMenuEventInvoker,
+            IFactory<MenuViewController> menuViewControllerFactory)
         {
             _appMenuEventInvoker = appMenuEventInvoker;
+            _menuViewControllerFactory = menuViewControllerFactory;
         }
 
         public UniTask StartAsync(CancellationToken cancellation)
@@ -23,7 +26,10 @@ namespace Sushi.Menu
 
         protected async override UniTask Run(CancellationToken token)
         {
-            _appMenuEventInvoker.RequestFeatureWorkComletion();
+            await RunChild(_menuViewControllerFactory, token);
+
+
+            _appMenuEventInvoker.RequestFeatureWorkCompletion();
         }
     }
 }

@@ -4,6 +4,7 @@ using Sushi.App.Events;
 using Sushi.Menu.Installer;
 using System;
 using System.Threading;
+using UnityEngine;
 using Utils.Controllers;
 using VContainer.Unity;
 
@@ -68,6 +69,8 @@ namespace Sushi.App
                     return _currentScope.CreateChild(_menuInstaller);
 
                 case AppActionType.Level:
+
+                    Debug.Log("Level");
 
                     return null;
 

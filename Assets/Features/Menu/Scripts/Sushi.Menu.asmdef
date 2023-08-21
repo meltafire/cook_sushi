@@ -3,7 +3,9 @@
     "rootNamespace": "",
     "references": [
         "Sushi.App.Events",
+        "Sushi.SceneReference",
         "UniTask",
+        "Utils.AddressablesLoader",
         "Utils.Controllers",
         "VContainer"
     ],

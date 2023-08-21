@@ -3,6 +3,8 @@
     "rootNamespace": "",
     "references": [
         "Sushi.Menu",
+        "Utils.Controllers",
+        "Utils.Controllers.VContainerIntegration",
         "VContainer"
     ],
     "includePlatforms": [],
