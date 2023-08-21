@@ -1,0 +1,17 @@
+{
+    "name": "Utils.Controllers.VContainerIntegration",
+    "rootNamespace": "",
+    "references": [
+        "Utils.Controllers",
+        "VContainer"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
