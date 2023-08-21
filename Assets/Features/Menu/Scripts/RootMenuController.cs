@@ -1,6 +1,7 @@
 using Cysharp.Threading.Tasks;
 using Sushi.App.Events;
 using System.Threading;
+using UnityEngine;
 using Utils.Controllers;
 using VContainer.Unity;
 

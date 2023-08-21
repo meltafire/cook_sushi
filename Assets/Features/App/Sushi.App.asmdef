@@ -2,13 +2,20 @@
     "name": "Sushi.App",
     "rootNamespace": "",
     "references": [
+
         "Sushi.App.Data",
         "Sushi.App.Events",
+
+
+
+
+
+
         "Sushi.Menu.Installer",
-        "VContainer",
         "UniTask",
         "Utils.Controllers",
-        "Utils.Controllers.VContainerIntegration"
+        "Utils.Controllers.VContainerIntegration",
+        "VContainer"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
