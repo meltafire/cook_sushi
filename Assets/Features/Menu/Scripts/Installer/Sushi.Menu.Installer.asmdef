@@ -1,0 +1,17 @@
+{
+    "name": "Sushi.Menu.Installer",
+    "rootNamespace": "",
+    "references": [
+        "Sushi.Menu",
+        "VContainer"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

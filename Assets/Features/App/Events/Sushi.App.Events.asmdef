@@ -1,0 +1,16 @@
+{
+    "name": "Sushi.App.Events",
+    "rootNamespace": "",
+    "references": [
+        "Sushi.App.Data"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

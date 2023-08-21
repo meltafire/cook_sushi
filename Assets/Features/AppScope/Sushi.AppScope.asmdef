@@ -1,0 +1,22 @@
+{
+    "name": "Sushi.AppScope",
+    "rootNamespace": "",
+    "references": [
+        "Sushi.App",
+        "Sushi.App.Data",
+        "Sushi.App.Events",
+        "Sushi.Menu.Installer",
+        "Utils.Controllers",
+        "Utils.Controllers.VContainerIntegration",
+        "VContainer"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
