@@ -2,15 +2,9 @@
     "name": "Sushi.App",
     "rootNamespace": "",
     "references": [
-
         "Sushi.App.Data",
         "Sushi.App.Events",
-
-
-
-
-
-
+        "Sushi.Menu",
         "Sushi.Menu.Installer",
         "UniTask",
         "Utils.Controllers",

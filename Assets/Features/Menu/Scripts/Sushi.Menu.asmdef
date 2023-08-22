@@ -2,6 +2,7 @@
     "name": "Sushi.Menu",
     "rootNamespace": "",
     "references": [
+        "Sushi.App.Data",
         "Sushi.App.Events",
         "Sushi.SceneReference",
         "UniTask",

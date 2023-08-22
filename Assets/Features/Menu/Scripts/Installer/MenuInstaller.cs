@@ -9,8 +9,7 @@ namespace Sushi.Menu.Installer
     {
         public void Install(IContainerBuilder builder)
         {
-            builder.RegisterEntryPoint<RootMenuController>();
-
+            builder.RegisterController<RootMenuController>();
             builder.RegisterController<MenuViewController>();
         }
     }

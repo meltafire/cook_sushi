@@ -3,7 +3,6 @@
     "rootNamespace": "",
     "references": [
         "Sushi.App.Data",
-        "Sushi.App.Events",
         "Sushi.App",
         "VContainer"
     ],

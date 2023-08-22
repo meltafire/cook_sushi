@@ -1,21 +1,18 @@
 using Cysharp.Threading.Tasks;
+using Sushi.App.Data;
 using Sushi.App.Events;
 using System.Threading;
 using Utils.Controllers;
-using VContainer.Unity;
 
 namespace Sushi.Menu.Controllers
 {
-    public class RootMenuController : Controller, IAsyncStartable
+    public class RootMenuController : Controller
     {
-        private readonly IAppMenuEventInvoker _appMenuEventInvoker;
         private readonly IFactory<MenuViewController> _menuViewControllerFactory;
 
         public RootMenuController(
-            IAppMenuEventInvoker appMenuEventInvoker,
             IFactory<MenuViewController> menuViewControllerFactory)
         {
-            _appMenuEventInvoker = appMenuEventInvoker;
             _menuViewControllerFactory = menuViewControllerFactory;
         }
 
@@ -28,8 +25,7 @@ namespace Sushi.Menu.Controllers
         {
             await RunChild(_menuViewControllerFactory, token);
 
-
-            _appMenuEventInvoker.RequestFeatureWorkCompletion();
+            BubbleEvent?.Invoke(new RootAppEvent(AppActionType.Level));
         }
     }
 }

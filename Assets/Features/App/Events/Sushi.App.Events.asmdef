@@ -2,7 +2,8 @@
     "name": "Sushi.App.Events",
     "rootNamespace": "",
     "references": [
-        "Sushi.App.Data"
+        "Sushi.App.Data",
+        "Utils.Controllers"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
