@@ -1,8 +1,8 @@
 using Sushi.App.Installer;
+using Sushi.Level.Installer;
 using Sushi.Menu.Installer;
 using Sushi.SceneReference;
 using UnityEngine;
-using Utils.AddressableLoader;
 using VContainer;
 using VContainer.Unity;
 
@@ -15,15 +15,10 @@ namespace Sushi.AppScope
 
         protected override void Configure(IContainerBuilder builder)
         {
-            RegisterAssetLoader(builder);
             RegisterSceneReferences(builder);
             RegisterAppFeature(builder);
             RegisterMenuFeature(builder);
-        }
-
-        private void RegisterAssetLoader(IContainerBuilder builder)
-        {
-            builder.Register<AssetLoader>(Lifetime.Transient);
+            RegisterLevelFeature(builder);
         }
 
         private void RegisterSceneReferences(IContainerBuilder builder)
@@ -41,6 +36,11 @@ namespace Sushi.AppScope
         private void RegisterMenuFeature(IContainerBuilder builder)
         {
             builder.Register<MenuInstaller>(Lifetime.Transient);
+        }
+
+        private void RegisterLevelFeature(IContainerBuilder builder)
+        {
+            builder.Register<LevelInstaller>(Lifetime.Transient);
         }
     }
 }

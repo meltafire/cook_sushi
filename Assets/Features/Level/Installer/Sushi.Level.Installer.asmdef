@@ -1,12 +1,9 @@
 {
-    "name": "Sushi.AppScope",
+    "name": "Sushi.Level.Installer",
     "rootNamespace": "",
     "references": [
-        "Sushi.App.Installer",
-        "Sushi.Menu.Installer",
-        "Sushi.Level.Installer",
-        "Sushi.SceneReference",
-        "Utils.AddressablesLoader",
+        "Sushi.Level.Common",
+        "Sushi.Level.Conveyor",
         "Utils.Controllers",
         "Utils.Controllers.VContainerIntegration",
         "VContainer"

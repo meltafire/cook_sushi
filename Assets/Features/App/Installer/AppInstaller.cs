@@ -9,7 +9,7 @@ namespace Sushi.App.Installer
         public void Install(IContainerBuilder builder)
         {
             builder.RegisterEntryPoint<RootAppController>();
-            builder.Register<AppControllerData>(Lifetime.Transient);
+            builder.Register<AppControllerData>(Lifetime.Singleton);
         }
     }
 }

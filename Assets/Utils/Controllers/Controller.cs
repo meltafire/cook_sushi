@@ -8,10 +8,15 @@ namespace Utils.Controllers
     {
         protected Action<ControllerEvent> BubbleEvent;
 
-        protected async UniTask RunChild<T>(IFactory<T> controllerFactory, CancellationToken token) where T : Controller
+        protected UniTask RunChild<T>(IFactory<T> controllerFactory, CancellationToken token) where T : Controller
         {
             var controller = controllerFactory.Create();
 
+            return RunChild(controller, token);
+        }
+
+        protected async UniTask RunChild<T>(T controller, CancellationToken token) where T : Controller
+        {
             controller.BubbleEvent += OnBubbleEventHappen;
 
             await controller.Run(token);

@@ -11,17 +11,14 @@ namespace Sushi.Menu.Controllers
 {
     public class MenuViewController : Controller
     {
-        private readonly AssetLoader _assetLoader;
         private readonly ISceneReference _sceneReference;
 
         private MenuView _view;
         private UniTaskCompletionSource _menuCompletionSource;
 
         public MenuViewController(
-            AssetLoader assetLoader,
             ISceneReference sceneReference)
         {
-            _assetLoader = assetLoader;
             _sceneReference = sceneReference;
         }
 
@@ -41,11 +38,13 @@ namespace Sushi.Menu.Controllers
 
         private async UniTask SpawnMenu()
         {
-            var gameObject = await _assetLoader.Load(MenuConstants.MainMenuPrefabName);
+            var assetLoader = new AssetLoader();
+
+            var gameObject = await assetLoader.Load(MenuConstants.MainMenuPrefabName);
 
             _view = GameObject.Instantiate(gameObject, _sceneReference.OverlayCanvasTransform).GetComponent<MenuView>();
 
-            _assetLoader.Release();
+            assetLoader.Release();
         }
 
         private async UniTask HandleInput()

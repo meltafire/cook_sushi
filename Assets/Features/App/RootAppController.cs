@@ -1,6 +1,8 @@
 using Cysharp.Threading.Tasks;
 using Sushi.App.Data;
 using Sushi.App.Events;
+using Sushi.Level.Common.Controllers;
+using Sushi.Level.Installer;
 using Sushi.Menu.Controllers;
 using Sushi.Menu.Installer;
 using System;
@@ -16,6 +18,7 @@ namespace Sushi.App
     {
         private readonly LifetimeScope _currentScope;
         private readonly MenuInstaller _menuInstaller;
+        private readonly LevelInstaller _levelInstaller;
         private readonly AppControllerData _data;
 
         private LifetimeScope _childScope;
@@ -23,10 +26,12 @@ namespace Sushi.App
         public RootAppController(
             LifetimeScope currentScope,
             MenuInstaller menuInstaller,
+            LevelInstaller levelInstaller,
             AppControllerData data)
         {
             _currentScope = currentScope;
             _menuInstaller = menuInstaller;
+            _levelInstaller = levelInstaller;
             _data = data;
         }
 
@@ -57,15 +62,18 @@ namespace Sushi.App
                 case AppActionType.Menu:
 
                     _childScope = _currentScope.CreateChild(_menuInstaller);
-                    var controllerFactory = _childScope.Container.Resolve<IFactory<RootMenuController>>();
 
-                    return RunChild(controllerFactory, token);
+                    return RunChild(
+                        _childScope.Container.Resolve<IFactory<RootMenuController>>(),
+                        token);
 
                 case AppActionType.Level:
 
-                    Debug.Log("Level");
+                    _childScope = _currentScope.CreateChild(_levelInstaller);
 
-                    return UniTask.CompletedTask;
+                    return RunChild(
+                        _childScope.Container.Resolve<IFactory<RootLevelController>>(),
+                        token);
 
                 case AppActionType.Quit:
 

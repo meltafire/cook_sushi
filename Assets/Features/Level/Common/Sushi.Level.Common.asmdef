@@ -1,15 +1,12 @@
 {
-    "name": "Sushi.AppScope",
+    "name": "Sushi.Level.Common",
     "rootNamespace": "",
     "references": [
-        "Sushi.App.Installer",
-        "Sushi.Menu.Installer",
-        "Sushi.Level.Installer",
-        "Sushi.SceneReference",
-        "Utils.AddressablesLoader",
+        "Sushi.App.Data",
+        "Sushi.App.Events",
+        "Sushi.Level.Conveyor",
         "Utils.Controllers",
-        "Utils.Controllers.VContainerIntegration",
-        "VContainer"
+        "UniTask"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

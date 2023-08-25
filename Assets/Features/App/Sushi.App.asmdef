@@ -4,6 +4,8 @@
     "references": [
         "Sushi.App.Data",
         "Sushi.App.Events",
+        "Sushi.Level.Common",
+        "Sushi.Level.Installer",
         "Sushi.Menu",
         "Sushi.Menu.Installer",
         "UniTask",

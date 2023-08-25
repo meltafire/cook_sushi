@@ -16,11 +16,6 @@ namespace Sushi.Menu.Controllers
             _menuViewControllerFactory = menuViewControllerFactory;
         }
 
-        public UniTask StartAsync(CancellationToken cancellation)
-        {
-            return Run(cancellation);
-        }
-
         protected async override UniTask Run(CancellationToken token)
         {
             await RunChild(_menuViewControllerFactory, token);
