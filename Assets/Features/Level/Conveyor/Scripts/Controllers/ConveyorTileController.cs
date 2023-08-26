@@ -39,7 +39,7 @@ namespace Sushi.Level.Conveyor.Controllers
 
             if (_data.IsTopRow && newPosition.x > _conveyorPointProvider.TopEnd.x)
             {
-                var overShoot = _conveyorPointProvider.TopEnd.x - newPosition.x;
+                var overShoot = newPosition.x - _conveyorPointProvider.TopEnd.x;
 
                 _data.IsTopRow = false;
 
@@ -47,7 +47,7 @@ namespace Sushi.Level.Conveyor.Controllers
             }
             else if (!_data.IsTopRow && newPosition.x > _conveyorPointProvider.BottomEnd.x)
             {
-                var overShoot = _conveyorPointProvider.BottomEnd.x - newPosition.x;
+                var overShoot = newPosition.x - _conveyorPointProvider.BottomEnd.x;
 
                 _data.IsTopRow = true;
 
