@@ -2,6 +2,7 @@
 using Sushi.Level.Conveyor.Controllers;
 using Sushi.Level.Conveyor.Data;
 using Sushi.Level.Conveyor.Services;
+using Sushi.Level.Menu.Controllers;
 using Utils.Controllers.VContainerIntegration;
 using VContainer;
 using VContainer.Unity;
@@ -13,13 +14,15 @@ namespace Sushi.Level.Installer
         public void Install(IContainerBuilder builder)
         {
             builder.RegisterController<RootLevelController>();
-            builder.RegisterController<ConveyorController>();
 
             InstallConveyor(builder);
+            InstallMenu(builder);
         }
 
         private void InstallConveyor(IContainerBuilder builder)
         {
+            builder.RegisterController<ConveyorController>();
+
             builder.Register<ConveyorGameObjectData>(Lifetime.Scoped)
                 .As<IConveyorGameObjectData, IConveyorPointProvider>();
 
@@ -30,6 +33,11 @@ namespace Sushi.Level.Installer
 
             builder.Register<ConveyorTilePositionService>(Lifetime.Transient);
             builder.Register<ConveyorPositionService>(Lifetime.Transient);
+        }
+
+        private void InstallMenu(IContainerBuilder builder)
+        {
+            builder.RegisterController<LevelMenuController>();
         }
     }
 }
