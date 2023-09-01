@@ -1,6 +1,7 @@
 ﻿using Cysharp.Threading.Tasks;
 using Sushi.Level.Conveyor.Data;
 using Sushi.Level.Conveyor.Views;
+using System;
 using System.Threading;
 using UnityEngine;
 using Utils.Controllers;
@@ -13,6 +14,8 @@ namespace Sushi.Level.Conveyor.Controllers
         private readonly ConveyorTileView _view;
         private readonly ConveyorTileData _data;
 
+        private UniTaskCompletionSource _completionSource;
+
         public ConveyorTileController(
             IConveyorPointProvider conveyorPointProvider,
             ConveyorTileView view,
@@ -24,13 +27,18 @@ namespace Sushi.Level.Conveyor.Controllers
             _data = data;
         }
 
-        protected override UniTask Run(CancellationToken token)
+        protected override async UniTask Run(CancellationToken token)
         {
+            AttachResource(_view.gameObject);
+
+            _completionSource = new UniTaskCompletionSource();
+            token.Register(OnCancellationRequested);
+
             _view.OnUpdate += OnUpdateHappened;
 
-            return UniTask.CompletedTask;
+            await _completionSource.Task;
 
-            //_view.OnUpdate -= OnUpdateHappened;
+            _view.OnUpdate += OnUpdateHappened;
         }
 
         private void OnUpdateHappened()
@@ -55,6 +63,11 @@ namespace Sushi.Level.Conveyor.Controllers
             }
 
             _view.SetPosition(newPosition);
+        }
+
+        private void OnCancellationRequested()
+        {
+            _completionSource.TrySetResult();
         }
     }
 }

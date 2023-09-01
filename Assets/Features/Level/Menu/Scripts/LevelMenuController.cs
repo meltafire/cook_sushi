@@ -1,7 +1,6 @@
 using Cysharp.Threading.Tasks;
 using Sushi.Level.Menu.Data;
 using Sushi.SceneReference;
-using System;
 using System.Threading;
 using UnityEngine;
 using Utils.AddressableLoader;
@@ -9,7 +8,7 @@ using Utils.Controllers;
 
 namespace Sushi.Level.Menu.Controllers
 {
-    public class LevelMenuController : Controller, IDisposable
+    public class LevelMenuController : Controller
     {
         private readonly ISceneReference _sceneReference;
 
@@ -23,13 +22,15 @@ namespace Sushi.Level.Menu.Controllers
 
         protected override async UniTask Run(CancellationToken token)
         {
+            _completionSource = new UniTaskCompletionSource();
+
+            token.Register(OnCanceltaionRequested);
+
             await LoadConveyorPrefab();
 
             SubscribeToView();
 
-            _completionSource = new UniTaskCompletionSource();
-
-            await _completionSource.Task.AttachExternalCancellation(token);
+            await _completionSource.Task;
 
             UnsubscribeFromView();
         }
@@ -40,7 +41,11 @@ namespace Sushi.Level.Menu.Controllers
 
             var gameObject = await assetLoader.Load(LevelMenuConstants.LevelMenuPrefabName);
 
-            _view = GameObject.Instantiate(gameObject, _sceneReference.OverlayCanvasTransform).GetComponent<LevelMenuView>();
+            var spawnedGameObject = GameObject.Instantiate(gameObject, _sceneReference.OverlayCanvasTransform);
+
+            AttachResource(spawnedGameObject);
+
+            _view = spawnedGameObject.GetComponent<LevelMenuView>();
 
             assetLoader.Release();
         }
@@ -60,9 +65,9 @@ namespace Sushi.Level.Menu.Controllers
             _completionSource.TrySetResult();
         }
 
-        public void Dispose()
+        private void OnCanceltaionRequested()
         {
-            Debug.Log("LevelMenuController , done");
+            _completionSource.TrySetResult();
         }
     }
 }

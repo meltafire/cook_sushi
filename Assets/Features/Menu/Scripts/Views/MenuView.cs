@@ -11,11 +11,6 @@ namespace Sushi.Menu.Views
 
         public event Action OnButtonPressed;
 
-        public void Release()
-        {
-            Destroy(gameObject);
-        }
-
         private void OnEnable()
         {
             _button.onClick.AddListener(OnClick);

@@ -16,7 +16,6 @@ namespace Sushi.Level.Conveyor.Controllers
         private readonly ConveyorPositionService _conveyorPositionService;
 
         private ConveyorView _view;
-        private UniTaskCompletionSource _completionSource;
 
         public ConveyorController(
             ITileGameObjectData tileGameObjectData,
@@ -30,15 +29,11 @@ namespace Sushi.Level.Conveyor.Controllers
 
         protected override async UniTask Run(CancellationToken token)
         {
-            _completionSource = new UniTaskCompletionSource();
-
             await UniTask.WhenAll(PreloadTilePrefab(), LoadConveyorPrefab());
 
             _conveyorPositionService.SetupConveyorData(_view.TopStart.position, _view.BottomStart.position, _view.TileCountTotal, _view.TopTileSize);
 
-            SpawnConveyor(token);
-
-            await _completionSource.Task;
+            await SpawnConveyor(token);
         }
 
         private async UniTask PreloadTilePrefab()
@@ -60,21 +55,28 @@ namespace Sushi.Level.Conveyor.Controllers
 
             var gameObject = await assetLoader.Load(ConveyorConstants.ConveyorPrefabName);
 
-            _view = GameObject.Instantiate(gameObject).GetComponent<ConveyorView>();
+            var spawnedGameObject = GameObject.Instantiate(gameObject);
+
+            AttachResource(spawnedGameObject);
+
+            _view = spawnedGameObject.GetComponent<ConveyorView>();
 
             _tileGameObjectData.TilesParentTransform = _view.TilesTransform;
 
             assetLoader.Release();
         }
 
-        private void SpawnConveyor(CancellationToken token)
+        private UniTask SpawnConveyor(CancellationToken token)
         {
             var count = _view.TileCountTotal;
+            var tileTasks = new UniTask[count];
 
             for (var i = 0; i < count; i++)
             {
-                _tileTileControllerFactory.Create(i).RunChild(this, token).Forget();
+                tileTasks[i] = _tileTileControllerFactory.Create(i).RunChild(this, token);
             }
+
+            return UniTask.WhenAll(tileTasks);
         }
     }
 }

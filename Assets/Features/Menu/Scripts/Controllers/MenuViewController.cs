@@ -32,8 +32,6 @@ namespace Sushi.Menu.Controllers
             }
 
             await HandleInput();
-
-            ReleaseMenu();
         }
 
         private async UniTask SpawnMenu()
@@ -42,7 +40,11 @@ namespace Sushi.Menu.Controllers
 
             var gameObject = await assetLoader.Load(MenuConstants.MainMenuPrefabName);
 
-            _view = GameObject.Instantiate(gameObject, _sceneReference.OverlayCanvasTransform).GetComponent<MenuView>();
+            var spawnedGameObject = GameObject.Instantiate(gameObject, _sceneReference.OverlayCanvasTransform);
+
+            _view = spawnedGameObject.GetComponent<MenuView>();
+
+            AttachResource(spawnedGameObject);
 
             assetLoader.Release();
         }
@@ -56,11 +58,6 @@ namespace Sushi.Menu.Controllers
             await _menuCompletionSource.Task;
 
             _view.OnButtonPressed -= OnButtonPressedHappened;
-        }
-
-        private void ReleaseMenu()
-        {
-            _view.Release();
         }
 
         private void OnButtonPressedHappened()
