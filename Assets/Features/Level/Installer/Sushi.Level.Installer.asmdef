@@ -2,12 +2,12 @@
     "name": "Sushi.Level.Installer",
     "rootNamespace": "",
     "references": [
+        "Reflex",
         "Sushi.Level.Common",
         "Sushi.Level.Conveyor",
         "Sushi.Level.Menu",
         "Utils.Controllers",
-        "Utils.Controllers.VContainerIntegration",
-        "VContainer"
+        "Utils.Controllers.ReflexIntegration"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

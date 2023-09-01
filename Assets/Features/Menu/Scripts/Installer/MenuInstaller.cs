@@ -1,16 +1,15 @@
-﻿using Sushi.Menu.Controllers;
-using Utils.Controllers.VContainerIntegration;
-using VContainer;
-using VContainer.Unity;
+﻿using Reflex.Core;
+using Sushi.Menu.Controllers;
+using Utils.Controllers.ReflexIntegration;
 
 namespace Sushi.Menu.Installer
 {
     public class MenuInstaller : IInstaller
     {
-        public void Install(IContainerBuilder builder)
+        public void InstallBindings(ContainerDescriptor descriptor)
         {
-            builder.RegisterController<RootMenuController>();
-            builder.RegisterController<MenuViewController>();
+            descriptor.RegisterController<RootMenuController>();
+            descriptor.RegisterController<MenuViewController>();
         }
     }
 }

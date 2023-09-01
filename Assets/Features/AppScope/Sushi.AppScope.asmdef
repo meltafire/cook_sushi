@@ -2,14 +2,13 @@
     "name": "Sushi.AppScope",
     "rootNamespace": "",
     "references": [
+        "Reflex",
         "Sushi.App.Installer",
         "Sushi.Menu.Installer",
         "Sushi.Level.Installer",
         "Sushi.SceneReference",
         "Utils.AddressablesLoader",
-        "Utils.Controllers",
-        "Utils.Controllers.VContainerIntegration",
-        "VContainer"
+        "Utils.Controllers"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

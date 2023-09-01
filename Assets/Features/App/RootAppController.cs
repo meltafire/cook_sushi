@@ -1,4 +1,5 @@
 using Cysharp.Threading.Tasks;
+using Reflex.Core;
 using Sushi.App.Data;
 using Sushi.App.Events;
 using Sushi.Level.Common.Controllers;
@@ -7,37 +8,40 @@ using Sushi.Menu.Controllers;
 using Sushi.Menu.Installer;
 using System;
 using System.Threading;
-using UnityEngine;
 using Utils.Controllers;
-using VContainer;
-using VContainer.Unity;
 
 namespace Sushi.App
 {
-    public class RootAppController : Controller, IAsyncStartable
+    public class RootAppController : Controller, IStartable
     {
-        private readonly LifetimeScope _currentScope;
+        private static readonly string MenuContainerName = "MenuContainer";
+        private static readonly string LevelContainerName = "LevelContainer";
+
+        private readonly CancellationToken _cancellationToken;
+        private readonly Container _container;
         private readonly MenuInstaller _menuInstaller;
         private readonly LevelInstaller _levelInstaller;
         private readonly AppControllerData _data;
 
-        private LifetimeScope _childScope;
+        private Container _childContainer;
 
         public RootAppController(
-            LifetimeScope currentScope,
+            CancellationToken cancellationToken,
+            Container container,
             MenuInstaller menuInstaller,
             LevelInstaller levelInstaller,
             AppControllerData data)
         {
-            _currentScope = currentScope;
+            _cancellationToken = cancellationToken;
+            _container = container;
             _menuInstaller = menuInstaller;
             _levelInstaller = levelInstaller;
             _data = data;
         }
 
-        public UniTask StartAsync(CancellationToken token)
+        public async void Start()
         {
-            return Run(token);
+            await Run(_cancellationToken);
         }
 
         protected async override UniTask Run(CancellationToken token)
@@ -46,7 +50,8 @@ namespace Sushi.App
             {
                 await RunNextFeature(token);
 
-                _childScope.Dispose();
+                _childContainer.Dispose();
+                _childContainer = null;
 
                 if (token.IsCancellationRequested)
                 {
@@ -60,20 +65,21 @@ namespace Sushi.App
             switch (_data.ActionType)
             {
                 case AppActionType.Menu:
+                    _childContainer = _container.Scope(MenuContainerName, descriptor =>  
+                        {
+                            _menuInstaller.InstallBindings(descriptor);
+                        });
 
-                    _childScope = _currentScope.CreateChild(_menuInstaller);
-
-                    return RunChild(
-                        _childScope.Container.Resolve<IFactory<RootMenuController>>(),
-                        token);
+                    return RunChild(_childContainer.Resolve<IFactory<RootMenuController>>(), token);
 
                 case AppActionType.Level:
 
-                    _childScope = _currentScope.CreateChild(_levelInstaller);
+                    _childContainer = _container.Scope(LevelContainerName, descriptor =>  
+                        {
+                            _levelInstaller.InstallBindings(descriptor);
+                        });
 
-                    return RunChild(
-                        _childScope.Container.Resolve<IFactory<RootLevelController>>(),
-                        token);
+                    return RunChild(_childContainer.Resolve<IFactory<RootLevelController>>(), token);
 
                 case AppActionType.Quit:
 

@@ -1,46 +1,61 @@
+using Reflex.Core;
 using Sushi.App.Installer;
 using Sushi.Level.Installer;
 using Sushi.Menu.Installer;
 using Sushi.SceneReference;
+using System.Threading;
 using UnityEngine;
-using VContainer;
-using VContainer.Unity;
 
 namespace Sushi.AppScope
 {
-    public class AppLifeTimeScope : LifetimeScope
+    public class AppLifeTimeScope: MonoBehaviour, IInstaller
     {
         [SerializeField]
         private SceneHandler _sceneHandler;
 
-        protected override void Configure(IContainerBuilder builder)
+        private CancellationTokenSource _cancellationTokenSource;
+
+        public void OnDestroy()
         {
-            RegisterSceneReferences(builder);
-            RegisterAppFeature(builder);
-            RegisterMenuFeature(builder);
-            RegisterLevelFeature(builder);
+            _cancellationTokenSource.Cancel();
         }
 
-        private void RegisterSceneReferences(IContainerBuilder builder)
+        public void InstallBindings(ContainerDescriptor descriptor)
         {
-            builder.RegisterInstance<ISceneReference>(_sceneHandler);
+            RegisterSceneReferences(descriptor);
+            RegisterCommonCancellationToken(descriptor);
+            RegisterAppFeature(descriptor);
+            RegisterMenuFeature(descriptor);
+            RegisterLevelFeature(descriptor);
         }
 
-        private void RegisterAppFeature(IContainerBuilder builder)
+        private void RegisterSceneReferences(ContainerDescriptor descriptor)
+        {
+            descriptor.AddInstance(_sceneHandler, typeof(ISceneReference));
+        }
+
+        private void RegisterCommonCancellationToken(ContainerDescriptor descriptor)
+        {
+            _cancellationTokenSource = new CancellationTokenSource();
+
+            descriptor.AddInstance(_cancellationTokenSource.Token, typeof(CancellationToken));
+        }
+
+        private void RegisterAppFeature(ContainerDescriptor descriptor)
         {
             var appInstaller = new AppInstaller();
 
-            appInstaller.Install(builder);
+            appInstaller.InstallBindings(descriptor);
         }
 
-        private void RegisterMenuFeature(IContainerBuilder builder)
+        private void RegisterMenuFeature(ContainerDescriptor descriptor)
         {
-            builder.Register<MenuInstaller>(Lifetime.Transient);
+            descriptor.AddSingleton(typeof(MenuInstaller));
         }
 
-        private void RegisterLevelFeature(IContainerBuilder builder)
+        private void RegisterLevelFeature(ContainerDescriptor descriptor)
         {
-            builder.Register<LevelInstaller>(Lifetime.Transient);
+            descriptor.AddSingleton(typeof(LevelInstaller));
         }
     }
 }

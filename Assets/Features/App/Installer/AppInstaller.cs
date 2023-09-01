@@ -1,15 +1,14 @@
-﻿using VContainer.Unity;
-using VContainer;
+﻿using Reflex.Core;
 using Sushi.App.Data;
 
 namespace Sushi.App.Installer
 {
     public class AppInstaller : IInstaller
     {
-        public void Install(IContainerBuilder builder)
+        public void InstallBindings(ContainerDescriptor descriptor)
         {
-            builder.RegisterEntryPoint<RootAppController>();
-            builder.Register<AppControllerData>(Lifetime.Singleton);
+            descriptor.AddSingleton(typeof(RootAppController), typeof(IStartable));
+            descriptor.AddSingleton(typeof(AppControllerData));
         }
     }
 }

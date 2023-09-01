@@ -2,6 +2,7 @@
     "name": "Sushi.App",
     "rootNamespace": "",
     "references": [
+        "Reflex",
         "Sushi.App.Data",
         "Sushi.App.Events",
         "Sushi.Level.Common",
@@ -10,8 +11,7 @@
         "Sushi.Menu.Installer",
         "UniTask",
         "Utils.Controllers",
-        "Utils.Controllers.VContainerIntegration",
-        "VContainer"
+        "Utils.Controllers.ReflexIntegration"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

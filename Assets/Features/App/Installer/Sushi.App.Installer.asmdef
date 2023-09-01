@@ -2,9 +2,9 @@
     "name": "Sushi.App.Installer",
     "rootNamespace": "",
     "references": [
+        "Reflex",
         "Sushi.App.Data",
-        "Sushi.App",
-        "VContainer"
+        "Sushi.App"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

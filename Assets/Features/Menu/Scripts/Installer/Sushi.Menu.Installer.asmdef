@@ -2,10 +2,10 @@
     "name": "Sushi.Menu.Installer",
     "rootNamespace": "",
     "references": [
+        "Reflex",
         "Sushi.Menu",
         "Utils.Controllers",
-        "Utils.Controllers.VContainerIntegration",
-        "VContainer"
+        "Utils.Controllers.ReflexIntegration"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

@@ -1,43 +1,45 @@
-﻿using Sushi.Level.Common.Controllers;
+﻿using Reflex.Core;
+using Sushi.Level.Common.Controllers;
 using Sushi.Level.Conveyor.Controllers;
 using Sushi.Level.Conveyor.Data;
 using Sushi.Level.Conveyor.Services;
 using Sushi.Level.Menu.Controllers;
-using Utils.Controllers.VContainerIntegration;
-using VContainer;
-using VContainer.Unity;
+using Utils.Controllers.ReflexIntegration;
 
 namespace Sushi.Level.Installer
 {
-    public class LevelInstaller : IInstaller
+    public class LevelInstaller: IInstaller
     {
-        public void Install(IContainerBuilder builder)
+        public void InstallBindings(ContainerDescriptor descriptor)
         {
-            builder.RegisterController<RootLevelController>();
+            descriptor.RegisterController<RootLevelController>();
 
-            InstallConveyor(builder);
-            InstallMenu(builder);
+            InstallConveyor(descriptor);
+            InstallMenu(descriptor);
         }
 
-        private void InstallConveyor(IContainerBuilder builder)
+        private void InstallConveyor(ContainerDescriptor descriptor)
         {
-            builder.RegisterController<ConveyorController>();
+            descriptor.RegisterController<ConveyorController>();
 
-            builder.Register<ConveyorGameObjectData>(Lifetime.Scoped)
-                .As<IConveyorGameObjectData, IConveyorPointProvider>();
+            descriptor.AddSingleton(typeof(ConveyorGameObjectData),
+                typeof(IConveyorGameObjectData),
+                typeof(IConveyorPointProvider));
 
-            builder.Register<TileGameObjectData>(Lifetime.Scoped)
-                .As<ITileGameObjectData, ITileGameObjectDataProvider, ITileGameObjectDimensionProvider>();
+            descriptor.AddSingleton(typeof(TileGameObjectData),
+                typeof(ITileGameObjectData),
+                typeof(ITileGameObjectDataProvider),
+                typeof(ITileGameObjectDimensionProvider));
 
-            builder.Register<ConveyorTileControllerFactory>(Lifetime.Transient);
+            descriptor.AddTransient(typeof(ConveyorTileControllerFactory));
 
-            builder.Register<ConveyorTilePositionService>(Lifetime.Transient);
-            builder.Register<ConveyorPositionService>(Lifetime.Transient);
+            descriptor.AddTransient(typeof(ConveyorTilePositionService));
+            descriptor.AddTransient(typeof(ConveyorPositionService));
         }
 
-        private void InstallMenu(IContainerBuilder builder)
+        private void InstallMenu(ContainerDescriptor descriptor)
         {
-            builder.RegisterController<LevelMenuController>();
+            descriptor.RegisterController<LevelMenuController>();
         }
     }
 }

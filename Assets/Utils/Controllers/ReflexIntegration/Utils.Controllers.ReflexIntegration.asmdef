@@ -1,9 +1,9 @@
 {
-    "name": "Utils.Controllers.VContainerIntegration",
+    "name": "Utils.Controllers.ReflexIntegration",
     "rootNamespace": "",
     "references": [
-        "Utils.Controllers",
-        "VContainer"
+        "Reflex",
+        "Utils.Controllers"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
