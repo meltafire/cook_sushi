@@ -4,7 +4,9 @@
     "references": [
         "Reflex",
         "Sushi.App.Data",
-        "Sushi.App"
+        "Sushi.App",
+        "Utils.Controllers",
+        "Utils.Controllers.ReflexIntegration"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

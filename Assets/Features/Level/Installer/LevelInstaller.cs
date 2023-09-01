@@ -12,7 +12,7 @@ namespace Sushi.Level.Installer
     {
         public void InstallBindings(ContainerDescriptor descriptor)
         {
-            descriptor.RegisterController<RootLevelController>();
+            descriptor.RegisterController<LevelEntryPointController>();
 
             InstallConveyor(descriptor);
             InstallMenu(descriptor);

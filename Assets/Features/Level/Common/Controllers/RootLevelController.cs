@@ -8,12 +8,12 @@ using Utils.Controllers;
 
 namespace Sushi.Level.Common.Controllers
 {
-    public class RootLevelController : Controller
+    public class LevelEntryPointController : Controller
     {
         private readonly IFactory<ConveyorController> _conveyorControllerFactory;
         private readonly IFactory<LevelMenuController> _levelMenuControllerFactory;
 
-        public RootLevelController(
+        public LevelEntryPointController(
             IFactory<ConveyorController> conveyorControllerFactory,
             IFactory<LevelMenuController> levelMenuControllerFactory)
         {
@@ -25,9 +25,9 @@ namespace Sushi.Level.Common.Controllers
         {
             using (var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(token))
             {
-                RunChild(_conveyorControllerFactory, linkedCts.Token).Forget();
+                _conveyorControllerFactory.Create().RunChild(this, linkedCts.Token).Forget();
 
-                await RunChild(_levelMenuControllerFactory, linkedCts.Token);
+                await _levelMenuControllerFactory.Create().RunChild(this, linkedCts.Token);
 
                 linkedCts.Cancel();
             }

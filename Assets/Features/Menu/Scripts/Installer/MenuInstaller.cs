@@ -8,7 +8,7 @@ namespace Sushi.Menu.Installer
     {
         public void InstallBindings(ContainerDescriptor descriptor)
         {
-            descriptor.RegisterController<RootMenuController>();
+            descriptor.RegisterController<MenuEntryPointController>();
             descriptor.RegisterController<MenuViewController>();
         }
     }

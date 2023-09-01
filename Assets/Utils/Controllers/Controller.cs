@@ -1,32 +1,42 @@
 using Cysharp.Threading.Tasks;
 using System;
 using System.Threading;
+using UnityEngine;
 
 namespace Utils.Controllers
 {
-    public abstract class Controller
+    public abstract class Controller : IBubbleEventListener
     {
+        private int _id;
+
         protected Action<ControllerEvent> BubbleEvent;
 
-        protected UniTask RunChild<T>(IFactory<T> controllerFactory, CancellationToken token) where T : Controller
+        protected Controller()
         {
-            var controller = controllerFactory.Create();
-
-            return RunChild(controller, token);
+            _id = UnityEngine.Random.Range(0, 1000);
+            Debug.Log($"ctr {_id}");
         }
 
-        protected async UniTask RunChild<T>(T controller, CancellationToken token) where T : Controller
+        public async UniTask RunChild(IBubbleEventListener bubbleEventListener, CancellationToken token)
         {
-            controller.BubbleEvent += OnBubbleEventHappen;
+            if (bubbleEventListener != null)
+            {
+                BubbleEvent += bubbleEventListener.OnBubbleEventHappen;
+            }
 
-            await controller.Run(token);
+            await Run(token);
 
-            controller.BubbleEvent -= OnBubbleEventHappen;
+            if (bubbleEventListener != null)
+            {
+                BubbleEvent -= bubbleEventListener.OnBubbleEventHappen;
+            }
+
+            Debug.Log($"done {_id}");
         }
 
         protected abstract UniTask Run(CancellationToken token);
 
-        protected virtual void OnBubbleEventHappen(ControllerEvent controllerEvent)
+        public virtual void OnBubbleEventHappen(ControllerEvent controllerEvent)
         {
             BubbleEvent?.Invoke(controllerEvent);
         }

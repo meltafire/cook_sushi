@@ -1,5 +1,6 @@
 ﻿using Reflex.Core;
 using Sushi.App.Data;
+using Utils.Controllers.ReflexIntegration;
 
 namespace Sushi.App.Installer
 {
@@ -7,8 +8,10 @@ namespace Sushi.App.Installer
     {
         public void InstallBindings(ContainerDescriptor descriptor)
         {
-            descriptor.AddSingleton(typeof(RootAppController), typeof(IStartable));
+            descriptor.AddTransient(typeof(RootAppController), typeof(IStartable));
             descriptor.AddSingleton(typeof(AppControllerData));
+
+            descriptor.RegisterController<AppController>();
         }
     }
 }

@@ -6,11 +6,11 @@ using Utils.Controllers;
 
 namespace Sushi.Menu.Controllers
 {
-    public class RootMenuController : Controller
+    public class MenuEntryPointController : Controller
     {
         private readonly IFactory<MenuViewController> _menuViewControllerFactory;
 
-        public RootMenuController(
+        public MenuEntryPointController(
             IFactory<MenuViewController> menuViewControllerFactory)
         {
             _menuViewControllerFactory = menuViewControllerFactory;
@@ -18,7 +18,7 @@ namespace Sushi.Menu.Controllers
 
         protected async override UniTask Run(CancellationToken token)
         {
-            await RunChild(_menuViewControllerFactory, token);
+            await _menuViewControllerFactory.Create().RunChild(this, token);
 
             BubbleEvent?.Invoke(new RootAppEvent(AppActionType.Level));
         }

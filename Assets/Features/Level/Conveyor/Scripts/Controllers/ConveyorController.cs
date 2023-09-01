@@ -73,7 +73,7 @@ namespace Sushi.Level.Conveyor.Controllers
 
             for (var i = 0; i < count; i++)
             {
-                RunChild(_tileTileControllerFactory.Create(i), token).Forget();
+                _tileTileControllerFactory.Create(i).RunChild(this, token).Forget();
             }
         }
     }
