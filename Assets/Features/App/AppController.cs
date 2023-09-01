@@ -82,7 +82,7 @@ namespace Sushi.App
             }
         }
 
-        public override void OnBubbleEventHappen(ControllerEvent controllerEvent)
+        protected override void HandleBubbleEvent(ControllerEvent controllerEvent)
         {
             if (controllerEvent is RootAppEvent)
             {

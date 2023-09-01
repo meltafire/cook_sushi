@@ -6,18 +6,18 @@ using UnityEngine;
 
 namespace Utils.Controllers
 {
-    public abstract class Controller : IBubbleEventListener
+    public abstract class Controller
     {
         private readonly Queue<GameObject> _resourseQueue = new Queue<GameObject>();
 
         protected Action<ControllerEvent> BubbleEvent;
 
-        public void AttachResource(GameObject gameObject)
+        protected void AttachResource(GameObject gameObject)
         {
             _resourseQueue.Enqueue(gameObject);
         }
 
-        public async UniTask RunChild(IBubbleEventListener bubbleEventListener, CancellationToken token)
+        public async UniTask RunChild(Controller bubbleEventListener, CancellationToken token)
         {
             if (bubbleEventListener != null)
             {
@@ -34,12 +34,17 @@ namespace Utils.Controllers
             RemoveResources();
         }
 
-        public virtual void OnBubbleEventHappen(ControllerEvent controllerEvent)
+        protected abstract UniTask Run(CancellationToken token);
+
+        protected virtual void HandleBubbleEvent(ControllerEvent controllerEvent)
         {
-            BubbleEvent?.Invoke(controllerEvent);
         }
 
-        protected abstract UniTask Run(CancellationToken token);
+        private void OnBubbleEventHappen(ControllerEvent controllerEvent)
+        {
+            HandleBubbleEvent(controllerEvent);
+            BubbleEvent?.Invoke(controllerEvent);
+        }
 
         private void RemoveResources()
         {
