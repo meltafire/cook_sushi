@@ -25,14 +25,14 @@ namespace Sushi.Level.Common.Controllers
         {
             using (var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(token))
             {
-                _conveyorControllerFactory.Create().RunChild(this, linkedCts.Token).Forget();
+                RunChildFromFactory(_conveyorControllerFactory, linkedCts.Token).Forget();
 
-                await _levelMenuControllerFactory.Create().RunChild(this, linkedCts.Token);
+                await RunChildFromFactory(_levelMenuControllerFactory, linkedCts.Token);
 
                 linkedCts.Cancel();
             }
 
-            BubbleEvent?.Invoke(new RootAppEvent(AppActionType.Menu));
+            InvokeBubbleEvent(new RootAppEvent(AppActionType.Menu));
         }
     }
 }

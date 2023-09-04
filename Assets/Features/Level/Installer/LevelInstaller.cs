@@ -2,8 +2,11 @@
 using Sushi.Level.Common.Controllers;
 using Sushi.Level.Conveyor.Controllers;
 using Sushi.Level.Conveyor.Data;
+using Sushi.Level.Conveyor.Factory;
+using Sushi.Level.Conveyor.Factory.Data;
 using Sushi.Level.Conveyor.Services;
 using Sushi.Level.Menu.Controllers;
+using Utils.Controllers;
 using Utils.Controllers.ReflexIntegration;
 
 namespace Sushi.Level.Installer
@@ -31,7 +34,7 @@ namespace Sushi.Level.Installer
                 typeof(ITileGameObjectDataProvider),
                 typeof(ITileGameObjectDimensionProvider));
 
-            descriptor.AddTransient(typeof(ConveyorTileControllerFactory));
+            descriptor.AddTransient(typeof(ConveyorTileControllerFactory), typeof(IFactoryWithData<ConveyorTileController, ConveyorTileControllerFactoryData>));
 
             descriptor.AddTransient(typeof(ConveyorTilePositionService));
             descriptor.AddTransient(typeof(ConveyorPositionService));

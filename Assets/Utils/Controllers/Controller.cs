@@ -10,34 +10,58 @@ namespace Utils.Controllers
     {
         private readonly Queue<GameObject> _resourseQueue = new Queue<GameObject>();
 
-        protected Action<ControllerEvent> BubbleEvent;
+        private Action<ControllerEvent> BubbleEvent;
+
+        public UniTask RunChild(CancellationToken token)
+        {
+            return RunInternal(token);
+        }
+
+        public async UniTask RunChildFromFactory<T>(IFactory<T> controllerFactory, CancellationToken token) where T : Controller
+        {
+            var controllerToRun = controllerFactory.Create();
+
+            controllerToRun.BubbleEvent += OnBubbleEventHappen;
+
+            await controllerToRun.RunInternal(token);
+
+            controllerToRun.BubbleEvent -= OnBubbleEventHappen;
+        }
+
+        public async UniTask RunChildFromFactory<T, U>(IFactoryWithData<T, U> controllerFactory, U data, CancellationToken token)
+            where T : Controller
+            where U : FactoryData
+        {
+            var controllerToRun = controllerFactory.Create(data);
+
+            controllerToRun.BubbleEvent += OnBubbleEventHappen;
+
+            await controllerToRun.RunInternal(token);
+
+            controllerToRun.BubbleEvent -= OnBubbleEventHappen;
+        }
+
+        protected void InvokeBubbleEvent(ControllerEvent controllerEvent)
+        {
+            BubbleEvent?.Invoke(controllerEvent);
+        }
 
         protected void AttachResource(GameObject gameObject)
         {
             _resourseQueue.Enqueue(gameObject);
         }
 
-        public async UniTask RunChild(Controller bubbleEventListener, CancellationToken token)
-        {
-            if (bubbleEventListener != null)
-            {
-                BubbleEvent += bubbleEventListener.OnBubbleEventHappen;
-            }
-
-            await Run(token);
-
-            if (bubbleEventListener != null)
-            {
-                BubbleEvent -= bubbleEventListener.OnBubbleEventHappen;
-            }
-
-            RemoveResources();
-        }
-
         protected abstract UniTask Run(CancellationToken token);
 
         protected virtual void HandleBubbleEvent(ControllerEvent controllerEvent)
         {
+        }
+
+        private async UniTask RunInternal(CancellationToken token)
+        {
+            await Run(token);
+
+            RemoveResources();
         }
 
         private void OnBubbleEventHappen(ControllerEvent controllerEvent)

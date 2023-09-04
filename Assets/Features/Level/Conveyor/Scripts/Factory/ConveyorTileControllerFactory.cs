@@ -1,11 +1,14 @@
-﻿using Sushi.Level.Conveyor.Data;
+﻿using Sushi.Level.Conveyor.Controllers;
+using Sushi.Level.Conveyor.Data;
+using Sushi.Level.Conveyor.Factory.Data;
 using Sushi.Level.Conveyor.Services;
 using Sushi.Level.Conveyor.Views;
 using UnityEngine;
+using Utils.Controllers;
 
-namespace Sushi.Level.Conveyor.Controllers
+namespace Sushi.Level.Conveyor.Factory
 {
-    public class ConveyorTileControllerFactory
+    public class ConveyorTileControllerFactory : IFactoryWithData<ConveyorTileController, ConveyorTileControllerFactoryData>
     {
         private readonly ConveyorTilePositionService _positionService;
         private readonly ITileGameObjectDataProvider _tileGameObjectDataProvider;
@@ -21,13 +24,13 @@ namespace Sushi.Level.Conveyor.Controllers
             _conveyorPointProvider = conveyorPointProvider;
         }
 
-        public ConveyorTileController Create(int index)
+        public ConveyorTileController Create(ConveyorTileControllerFactoryData data)
         {
-            var isOnTop = _positionService.IsTileOnTopRow(index);
+            var isOnTop = _positionService.IsTileOnTopRow(data.TileIndex);
 
-            var data = new ConveyorTileData(isOnTop);
+            var controllerData = new ConveyorTileData(isOnTop);
 
-            var position = _positionService.GetPosition(index);
+            var position = _positionService.GetPosition(data.TileIndex);
 
             var view = GameObject.Instantiate(
                 _tileGameObjectDataProvider.GameObject,
@@ -39,7 +42,7 @@ namespace Sushi.Level.Conveyor.Controllers
             return new ConveyorTileController(
                 _conveyorPointProvider,
                 view,
-                data);
+                controllerData);
         }
     }
 }

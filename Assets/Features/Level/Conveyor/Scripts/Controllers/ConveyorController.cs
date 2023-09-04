@@ -1,5 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
 using Sushi.Level.Conveyor.Data;
+using Sushi.Level.Conveyor.Factory.Data;
 using Sushi.Level.Conveyor.Services;
 using Sushi.Level.Conveyor.Views;
 using System.Threading;
@@ -12,14 +13,14 @@ namespace Sushi.Level.Conveyor.Controllers
     public class ConveyorController : Controller
     {
         private readonly ITileGameObjectData _tileGameObjectData;
-        private readonly ConveyorTileControllerFactory _tileTileControllerFactory;
+        private readonly IFactoryWithData<ConveyorTileController, ConveyorTileControllerFactoryData> _tileTileControllerFactory;
         private readonly ConveyorPositionService _conveyorPositionService;
 
         private ConveyorView _view;
 
         public ConveyorController(
             ITileGameObjectData tileGameObjectData,
-            ConveyorTileControllerFactory tileTileControllerFactory,
+            IFactoryWithData<ConveyorTileController, ConveyorTileControllerFactoryData> tileTileControllerFactory,
             ConveyorPositionService conveyorPositionService)
         {
             _tileGameObjectData = tileGameObjectData;
@@ -73,7 +74,9 @@ namespace Sushi.Level.Conveyor.Controllers
 
             for (var i = 0; i < count; i++)
             {
-                tileTasks[i] = _tileTileControllerFactory.Create(i).RunChild(this, token);
+                tileTasks[i] = RunChildFromFactory(_tileTileControllerFactory,
+                    new ConveyorTileControllerFactoryData(i),
+                    token);
             }
 
             return UniTask.WhenAll(tileTasks);

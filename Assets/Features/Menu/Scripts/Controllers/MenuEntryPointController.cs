@@ -18,9 +18,9 @@ namespace Sushi.Menu.Controllers
 
         protected async override UniTask Run(CancellationToken token)
         {
-            await _menuViewControllerFactory.Create().RunChild(this, token);
+            await RunChildFromFactory(_menuViewControllerFactory, token);
 
-            BubbleEvent?.Invoke(new RootAppEvent(AppActionType.Level));
+            InvokeBubbleEvent(new RootAppEvent(AppActionType.Level));
         }
     }
 }

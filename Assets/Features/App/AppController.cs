@@ -62,7 +62,7 @@ namespace Sushi.App
                             _menuInstaller.InstallBindings(descriptor);
                         });
 
-                    return _childContainer.Resolve<IFactory<MenuEntryPointController>>().Create().RunChild(this, token);
+                    return RunChildFromFactory(_childContainer.Resolve<IFactory<MenuEntryPointController>>(), token);
 
                 case AppActionType.Level:
 
@@ -71,7 +71,7 @@ namespace Sushi.App
                             _levelInstaller.InstallBindings(descriptor);
                         });
 
-                    return _childContainer.Resolve<IFactory<LevelEntryPointController>>().Create().RunChild(this, token);
+                    return RunChildFromFactory(_childContainer.Resolve<IFactory<LevelEntryPointController>>(), token);
 
                 case AppActionType.Quit:
 

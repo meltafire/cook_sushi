@@ -17,7 +17,9 @@ namespace Sushi.App
 
         public async void Start()
         {
-            await _appControllerFactory.Create().RunChild(null, _cancellationToken);
+            var ctrl = _appControllerFactory.Create();
+
+            await _appControllerFactory.Create().RunChild(_cancellationToken);
         }
     }
 }
