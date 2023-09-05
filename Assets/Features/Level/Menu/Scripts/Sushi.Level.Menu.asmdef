@@ -2,6 +2,7 @@
     "name": "Sushi.Level.Menu",
     "rootNamespace": "",
     "references": [
+        "Sushi.Level.Common.Events",
         "Sushi.SceneReference",
         "UniTask",
         "Utils.AddressablesLoader",

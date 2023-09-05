@@ -1,14 +1,7 @@
 {
-    "name": "Sushi.AppScope",
+    "name": "Sushi.Level.Common.Events",
     "rootNamespace": "",
     "references": [
-        "Reflex",
-        "Sushi.App.LoadingScreen",
-        "Sushi.App.Installer",
-        "Sushi.Menu.Installer",
-        "Sushi.Level.Installer",
-        "Sushi.SceneReference",
-        "Utils.AddressablesLoader",
         "Utils.Controllers"
     ],
     "includePlatforms": [],

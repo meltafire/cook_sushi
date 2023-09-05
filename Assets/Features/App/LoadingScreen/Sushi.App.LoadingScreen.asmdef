@@ -1,14 +1,9 @@
 {
-    "name": "Sushi.AppScope",
+    "name": "Sushi.App.LoadingScreen",
     "rootNamespace": "",
     "references": [
-        "Reflex",
-        "Sushi.App.LoadingScreen",
-        "Sushi.App.Installer",
-        "Sushi.Menu.Installer",
-        "Sushi.Level.Installer",
-        "Sushi.SceneReference",
-        "Utils.AddressablesLoader",
+        "Sushi.App.LoadingScreen.Events",
+        "UniTask",
         "Utils.Controllers"
     ],
     "includePlatforms": [],
@@ -16,7 +11,7 @@
     "allowUnsafeCode": false,
     "overrideReferences": false,
     "precompiledReferences": [],
-    "autoReferenced": true,
+    "autoReferenced": false,
     "defineConstraints": [],
     "versionDefines": [],
     "noEngineReferences": false

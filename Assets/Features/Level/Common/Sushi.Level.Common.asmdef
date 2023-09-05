@@ -4,6 +4,8 @@
     "references": [
         "Sushi.App.Data",
         "Sushi.App.Events",
+        "Sushi.App.LoadingScreen.Events",
+        "Sushi.Level.Common.Events",
         "Sushi.Level.Conveyor",
         "Sushi.Level.Menu",
         "Utils.Controllers",

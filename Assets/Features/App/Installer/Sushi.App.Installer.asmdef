@@ -4,6 +4,7 @@
     "references": [
         "Reflex",
         "Sushi.App.Data",
+        "Sushi.App.LoadingScreen",
         "Sushi.App",
         "Utils.Controllers",
         "Utils.Controllers.ReflexIntegration"

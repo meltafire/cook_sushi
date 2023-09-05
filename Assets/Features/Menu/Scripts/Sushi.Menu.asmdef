@@ -4,11 +4,11 @@
     "references": [
         "Sushi.App.Data",
         "Sushi.App.Events",
+        "Sushi.App.LoadingScreen.Events",
         "Sushi.SceneReference",
         "UniTask",
         "Utils.AddressablesLoader",
-        "Utils.Controllers",
-        "VContainer"
+        "Utils.Controllers"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

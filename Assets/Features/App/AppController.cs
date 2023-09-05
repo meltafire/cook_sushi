@@ -9,6 +9,7 @@ using Utils.Controllers;
 using Sushi.Level.Installer;
 using Sushi.Menu.Installer;
 using Reflex.Core;
+using Sushi.App.LoadingScreen;
 
 namespace Sushi.App
 {
@@ -21,6 +22,7 @@ namespace Sushi.App
         private readonly MenuInstaller _menuInstaller;
         private readonly LevelInstaller _levelInstaller;
         private readonly AppControllerData _data;
+        private readonly IFactory<LoadingScreenController> _loadingScreenControllerFactory;
 
         private Container _childContainer;
 
@@ -28,16 +30,20 @@ namespace Sushi.App
             Container container,
             MenuInstaller menuInstaller,
             LevelInstaller levelInstaller,
-            AppControllerData data)
+            AppControllerData data,
+            IFactory<LoadingScreenController> loadingScreenControllerFactory)
         {
             _container = container;
             _menuInstaller = menuInstaller;
             _levelInstaller = levelInstaller;
             _data = data;
+            _loadingScreenControllerFactory = loadingScreenControllerFactory;
         }
 
         protected async override UniTask Run(CancellationToken token)
         {
+            RunChildFromFactory(_loadingScreenControllerFactory, token).Forget();
+
             while (_data.ActionType != AppActionType.Quit)
             {
                 await RunNextFeature(token);
@@ -84,11 +90,13 @@ namespace Sushi.App
 
         protected override void HandleBubbleEvent(ControllerEvent controllerEvent)
         {
-            if (controllerEvent is RootAppEvent)
+            if (controllerEvent is RootAppEvent rootAppEvent)
             {
-                var rootAppEvent = (RootAppEvent)controllerEvent;
-
                 _data.ActionType = rootAppEvent.AppActionType;
+            }
+            else if (controllerEvent is LoadingScreenEvent loadingScreenEvent)
+            {
+                InvokeDivingEvent(loadingScreenEvent);
             }
         }
     }

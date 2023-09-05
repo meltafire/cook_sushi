@@ -1,4 +1,5 @@
 ﻿using Cysharp.Threading.Tasks;
+using Sushi.Level.Common.Events;
 using Sushi.Level.Conveyor.Data;
 using Sushi.Level.Conveyor.Factory.Data;
 using Sushi.Level.Conveyor.Services;
@@ -74,12 +75,20 @@ namespace Sushi.Level.Conveyor.Controllers
 
             for (var i = 0; i < count; i++)
             {
-                tileTasks[i] = RunChildFromFactory(_tileTileControllerFactory,
+                tileTasks[i] = RunChildFromFactory(
+                    _tileTileControllerFactory,
                     new ConveyorTileControllerFactoryData(i),
                     token);
             }
 
+            ReportReady();
+
             return UniTask.WhenAll(tileTasks);
+        }
+
+        private void ReportReady()
+        {
+            InvokeBubbleEvent(new LevelFeatureLoadedEvent());
         }
     }
 }

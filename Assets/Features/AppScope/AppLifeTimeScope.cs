@@ -1,5 +1,6 @@
 using Reflex.Core;
 using Sushi.App.Installer;
+using Sushi.App.LoadingScreen;
 using Sushi.Level.Installer;
 using Sushi.Menu.Installer;
 using Sushi.SceneReference;
@@ -12,6 +13,9 @@ namespace Sushi.AppScope
     {
         [SerializeField]
         private SceneHandler _sceneHandler;
+
+        [SerializeField]
+        private LoadingScreenViewProvider _viewProvider;
 
         private CancellationTokenSource _cancellationTokenSource;
 
@@ -44,6 +48,8 @@ namespace Sushi.AppScope
         private void RegisterAppFeature(ContainerDescriptor descriptor)
         {
             var appInstaller = new AppInstaller();
+
+            descriptor.AddInstance(_viewProvider, typeof(ILoadingScreenViewProvider));
 
             appInstaller.InstallBindings(descriptor);
         }

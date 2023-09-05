@@ -2,10 +2,10 @@
     "name": "Sushi.Level.Conveyor",
     "rootNamespace": "",
     "references": [
+        "Sushi.Level.Common.Events",
         "Utils.AddressablesLoader",
         "Utils.Controllers",
-        "UniTask",
-        "VContainer"
+        "UniTask"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

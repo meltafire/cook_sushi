@@ -1,4 +1,5 @@
 using Cysharp.Threading.Tasks;
+using Sushi.Level.Common.Events;
 using Sushi.Level.Menu.Data;
 using Sushi.SceneReference;
 using System.Threading;
@@ -29,6 +30,8 @@ namespace Sushi.Level.Menu.Controllers
             await LoadConveyorPrefab();
 
             SubscribeToView();
+
+            ReportReady();
 
             await _completionSource.Task;
 
@@ -68,6 +71,11 @@ namespace Sushi.Level.Menu.Controllers
         private void OnCanceltaionRequested()
         {
             _completionSource.TrySetResult();
+        }
+
+        private void ReportReady()
+        {
+            InvokeBubbleEvent(new LevelFeatureLoadedEvent());
         }
     }
 }

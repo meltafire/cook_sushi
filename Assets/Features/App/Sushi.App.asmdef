@@ -5,6 +5,8 @@
         "Reflex",
         "Sushi.App.Data",
         "Sushi.App.Events",
+        "Sushi.App.LoadingScreen",
+        "Sushi.App.LoadingScreen.Events",
         "Sushi.Level.Common",
         "Sushi.Level.Installer",
         "Sushi.Menu",

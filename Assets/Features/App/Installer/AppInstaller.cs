@@ -1,5 +1,6 @@
 ﻿using Reflex.Core;
 using Sushi.App.Data;
+using Sushi.App.LoadingScreen;
 using Utils.Controllers.ReflexIntegration;
 
 namespace Sushi.App.Installer
@@ -12,6 +13,7 @@ namespace Sushi.App.Installer
             descriptor.AddSingleton(typeof(AppControllerData));
 
             descriptor.RegisterController<AppController>();
+            descriptor.RegisterController<LoadingScreenController>();
         }
     }
 }
