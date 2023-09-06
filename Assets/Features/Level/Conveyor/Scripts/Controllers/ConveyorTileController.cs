@@ -1,7 +1,7 @@
 ﻿using Cysharp.Threading.Tasks;
+using Sushi.Level.Common.Events;
 using Sushi.Level.Conveyor.Data;
 using Sushi.Level.Conveyor.Views;
-using System;
 using System.Threading;
 using UnityEngine;
 using Utils.Controllers;
@@ -34,11 +34,9 @@ namespace Sushi.Level.Conveyor.Controllers
             _completionSource = new UniTaskCompletionSource();
             token.Register(OnCancellationRequested);
 
-            _view.OnUpdate += OnUpdateHappened;
-
             await _completionSource.Task;
 
-            _view.OnUpdate += OnUpdateHappened;
+            _view.OnUpdate -= OnUpdateHappened;
         }
 
         private void OnUpdateHappened()
@@ -68,6 +66,14 @@ namespace Sushi.Level.Conveyor.Controllers
         private void OnCancellationRequested()
         {
             _completionSource.TrySetResult();
+        }
+
+        protected override void HandleDivingEvent(ControllerEvent controllerEvent)
+        {
+            if (controllerEvent is GameplayLaunchEvent)
+            {
+                _view.OnUpdate += OnUpdateHappened;
+            }
         }
     }
 }

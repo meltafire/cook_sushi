@@ -5,7 +5,7 @@ using Sushi.App.LoadingScreen;
 using Sushi.Level.Common.Events;
 using Sushi.Level.Conveyor.Controllers;
 using Sushi.Level.Menu;
-using Sushi.Level.Workplace;
+using Sushi.Level.WorkplaceIcon;
 using System.Threading;
 using Utils.Controllers;
 
@@ -55,6 +55,8 @@ namespace Sushi.Level.Common.Controllers
                 if (_loadingFeatureCount <= 0)
                 {
                     RequestLoadingScreenOff();
+
+                    RequestGameplay();
                 }
             }
         }
@@ -67,6 +69,11 @@ namespace Sushi.Level.Common.Controllers
         private void RequestLoadingScreen()
         {
             InvokeBubbleEvent(new LoadingScreenEvent(true));
+        }
+
+        private void RequestGameplay()
+        {
+            InvokeDivingEvent(new GameplayLaunchEvent());
         }
     }
 }

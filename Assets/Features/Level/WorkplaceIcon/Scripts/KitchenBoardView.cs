@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using Utils.Input;
 
-namespace Sushi.Level.Workplace
+namespace Sushi.Level.WorkplaceIcon
 {
     public class KitchenBoardView : MonoBehaviour, IClickable
     {

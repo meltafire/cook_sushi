@@ -1,11 +1,12 @@
 using Cysharp.Threading.Tasks;
 using Sushi.Level.Common.Events;
+using System;
 using System.Threading;
 using UnityEngine;
 using Utils.AddressablesLoader;
 using Utils.Controllers;
 
-namespace Sushi.Level.Workplace
+namespace Sushi.Level.WorkplaceIcon
 {
     public class KitchenBoardController : Controller
     {
@@ -19,7 +20,11 @@ namespace Sushi.Level.Workplace
 
             await LoadConveyorPrefab();
 
+            ReportReady();
+
             await _completionSource.Task;
+
+            _view.OnClick -= OnClickHappened;
         }
 
         private void OnCancellationRequested()
@@ -39,14 +44,25 @@ namespace Sushi.Level.Workplace
 
             _view = spawnedGameObject.GetComponent<KitchenBoardView>();
 
-            ReportReady();
-
             assetLoader.Release();
         }
 
         private void ReportReady()
         {
             InvokeBubbleEvent(new LevelFeatureLoadedEvent());
+        }
+
+        protected override void HandleDivingEvent(ControllerEvent controllerEvent)
+        {
+            if (controllerEvent is GameplayLaunchEvent)
+            {
+                _view.OnClick += OnClickHappened;
+            }
+        }
+
+        private void OnClickHappened()
+        {
+            throw new NotImplementedException();
         }
     }
 }

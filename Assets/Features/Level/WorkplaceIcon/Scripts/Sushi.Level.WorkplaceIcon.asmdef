@@ -1,5 +1,5 @@
 {
-    "name": "Sushi.Level.Workplace",
+    "name": "Sushi.Level.WorkplaceIcon",
     "rootNamespace": "",
     "references": [
         "Sushi.Level.Common.Events",

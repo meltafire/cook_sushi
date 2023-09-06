@@ -7,7 +7,7 @@
         "Sushi.App.LoadingScreen.Events",
         "Sushi.Level.Common.Events",
         "Sushi.Level.Conveyor",
-        "Sushi.Level.Workplace",
+        "Sushi.Level.WorkplaceIcon",
         "Sushi.Level.Menu",
         "Utils.Controllers",
         "UniTask"

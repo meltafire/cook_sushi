@@ -1,4 +1,4 @@
-﻿namespace Sushi.Level.Workplace
+﻿namespace Sushi.Level.WorkplaceIcon
 {
     public static class KitchenBoardData
     {

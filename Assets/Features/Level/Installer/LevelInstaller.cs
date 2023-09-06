@@ -6,7 +6,7 @@ using Sushi.Level.Conveyor.Factory;
 using Sushi.Level.Conveyor.Factory.Data;
 using Sushi.Level.Conveyor.Services;
 using Sushi.Level.Menu;
-using Sushi.Level.Workplace;
+using Sushi.Level.WorkplaceIcon;
 using Utils.Controllers;
 using Utils.Controllers.ReflexIntegration;
 
