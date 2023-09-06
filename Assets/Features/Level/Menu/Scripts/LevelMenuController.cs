@@ -4,10 +4,10 @@ using Sushi.Level.Menu.Data;
 using Sushi.SceneReference;
 using System.Threading;
 using UnityEngine;
-using Utils.AddressableLoader;
+using Utils.AddressablesLoader;
 using Utils.Controllers;
 
-namespace Sushi.Level.Menu.Controllers
+namespace Sushi.Level.Menu
 {
     public class LevelMenuController : Controller
     {

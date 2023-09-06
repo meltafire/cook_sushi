@@ -5,7 +5,7 @@ using Sushi.Menu.Views;
 using Sushi.SceneReference;
 using System.Threading;
 using UnityEngine;
-using Utils.AddressableLoader;
+using Utils.AddressablesLoader;
 using Utils.Controllers;
 
 namespace Sushi.Menu.Controllers

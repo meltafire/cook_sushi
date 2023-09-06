@@ -18,22 +18,27 @@ MonoBehaviour:
   m_GUID: cd746e9ee371d1c419ee943f5b228f59
   m_SerializeEntries:
   - m_GUID: 059920fd51e6e3c40b34525e2be3ced7
-    m_Address: MainMenu
+    m_Address: Menu/MainMenu
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 66f43aa87e21f2c48b27655ed407600f
-    m_Address: Conveyor/ConveyorTile
+    m_Address: Level/Conveyor/ConveyorTile
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d5af24f9f2145094a98736e1a9edcc5c
-    m_Address: Conveyor/Conveyor
+    m_Address: Level/Conveyor/Conveyor
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 694b20e56d809ef4492731b7272ffca4
-    m_Address: LevelMenu/Level
+    m_Address: Level/Menu/Level
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4d8fdf6da7256cf40a228457040a6442
+    m_Address: Level/Workplace/KitchenBoard
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

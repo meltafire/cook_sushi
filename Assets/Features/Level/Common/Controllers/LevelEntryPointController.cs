@@ -4,7 +4,8 @@ using Sushi.App.Events;
 using Sushi.App.LoadingScreen;
 using Sushi.Level.Common.Events;
 using Sushi.Level.Conveyor.Controllers;
-using Sushi.Level.Menu.Controllers;
+using Sushi.Level.Menu;
+using Sushi.Level.Workplace;
 using System.Threading;
 using Utils.Controllers;
 
@@ -12,15 +13,18 @@ namespace Sushi.Level.Common.Controllers
 {
     public class LevelEntryPointController : Controller
     {
+        private readonly IFactory<KitchenBoardController> _kitchenBoardController;
         private readonly IFactory<ConveyorController> _conveyorControllerFactory;
         private readonly IFactory<LevelMenuController> _levelMenuControllerFactory;
 
-        private int _loadingFeatureCount = 2;
+        private int _loadingFeatureCount = 3;
 
         public LevelEntryPointController(
+            IFactory<KitchenBoardController> kitchenBoardController,
             IFactory<ConveyorController> conveyorControllerFactory,
             IFactory<LevelMenuController> levelMenuControllerFactory)
         {
+            _kitchenBoardController = kitchenBoardController;
             _conveyorControllerFactory = conveyorControllerFactory;
             _levelMenuControllerFactory = levelMenuControllerFactory;
         }
@@ -30,6 +34,7 @@ namespace Sushi.Level.Common.Controllers
             using (var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(token))
             {
                 RunChildFromFactory(_conveyorControllerFactory, linkedCts.Token).Forget();
+                RunChildFromFactory(_kitchenBoardController, linkedCts.Token).Forget();
 
                 await RunChildFromFactory(_levelMenuControllerFactory, linkedCts.Token);
 

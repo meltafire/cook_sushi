@@ -6,7 +6,7 @@ using Sushi.Level.Conveyor.Services;
 using Sushi.Level.Conveyor.Views;
 using System.Threading;
 using UnityEngine;
-using Utils.AddressableLoader;
+using Utils.AddressablesLoader;
 using Utils.Controllers;
 
 namespace Sushi.Level.Conveyor.Controllers

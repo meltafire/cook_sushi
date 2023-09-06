@@ -2,7 +2,7 @@
 {
     public static class LevelMenuConstants
     {
-        public static readonly string LevelMenuPrefabName = "LevelMenu/Level";
+        public static readonly string LevelMenuPrefabName = "Level/Menu/Level";
 
     }
 }

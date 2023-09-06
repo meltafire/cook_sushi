@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 
-namespace Utils.AddressableLoader
+namespace Utils.AddressablesLoader
 {
     public class AssetLoader
     {

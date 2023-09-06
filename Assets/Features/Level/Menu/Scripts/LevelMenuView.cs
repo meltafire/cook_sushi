@@ -2,25 +2,28 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class LevelMenuView : MonoBehaviour
+namespace Sushi.Level.Menu
 {
-    [SerializeField]
-    private Button _button;
-
-    public event Action OnButtonClick;
-
-    private void OnEnable()
+    public class LevelMenuView : MonoBehaviour
     {
-        _button.onClick.AddListener(OnClickHappened);
-    }
+        [SerializeField]
+        private Button _button;
 
-    private void OnDisable()
-    {
-        _button.onClick.AddListener(OnClickHappened);
-    }
+        public event Action OnButtonClick;
 
-    private void OnClickHappened()
-    {
-        OnButtonClick?.Invoke();
+        private void OnEnable()
+        {
+            _button.onClick.AddListener(OnClickHappened);
+        }
+
+        private void OnDisable()
+        {
+            _button.onClick.AddListener(OnClickHappened);
+        }
+
+        private void OnClickHappened()
+        {
+            OnButtonClick?.Invoke();
+        }
     }
 }
