@@ -104,7 +104,7 @@ namespace Utils.Controllers
 
         private void RemoveResources()
         {
-            if (_resourseQueue.Count > 0)
+            while(_resourseQueue.Count > 0)
             {
                 GameObject.Destroy(_resourseQueue.Dequeue());
             }

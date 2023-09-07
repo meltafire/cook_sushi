@@ -5,6 +5,7 @@ using Sushi.Level.Conveyor.Data;
 using Sushi.Level.Conveyor.Factory;
 using Sushi.Level.Conveyor.Factory.Data;
 using Sushi.Level.Conveyor.Services;
+using Sushi.Level.Cooking;
 using Sushi.Level.Menu;
 using Sushi.Level.WorkplaceIcon;
 using Utils.Controllers;
@@ -21,6 +22,7 @@ namespace Sushi.Level.Installer
             InstallConveyor(descriptor);
             InstallKitchenBoard(descriptor);
             InstallMenu(descriptor);
+            InstallCooking(descriptor);
         }
 
         private void InstallConveyor(ContainerDescriptor descriptor)
@@ -50,6 +52,11 @@ namespace Sushi.Level.Installer
         private void InstallKitchenBoard(ContainerDescriptor descriptor)
         {
             descriptor.RegisterController<KitchenBoardController>();
+        }
+
+        private void InstallCooking(ContainerDescriptor descriptor)
+        {
+            descriptor.RegisterController<CookingController>();
         }
     }
 }

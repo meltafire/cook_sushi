@@ -1,13 +1,8 @@
 {
-    "name": "Sushi.Level.WorkplaceIcon",
+    "name": "Sushi.Level.WorkplaceIcon.Events",
     "rootNamespace": "",
     "references": [
-        "Sushi.Level.Common.Events",
-        "Sushi.Level.WorkplaceIcon.Events",
-        "UniTask",
-        "Utils.AddressablesLoader",
-        "Utils.Controllers",
-        "Utils.Input"
+        "Utils.Controllers"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

@@ -6,7 +6,8 @@
         "Sushi.Level.Common",
         "Sushi.Level.Conveyor",
         "Sushi.Level.Menu",
-        "Sushi.Level.Workplace",
+        "Sushi.Level.WorkplaceIcon",
+        "Sushi.Level.Cooking",
         "Utils.Controllers",
         "Utils.Controllers.ReflexIntegration"
     ],

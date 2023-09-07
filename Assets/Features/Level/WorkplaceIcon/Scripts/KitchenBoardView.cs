@@ -10,8 +10,6 @@ namespace Sushi.Level.WorkplaceIcon
 
         public void HandleClick()
         {
-            Debug.Log("Click");
-
             OnClick?.Invoke();
         }
     }

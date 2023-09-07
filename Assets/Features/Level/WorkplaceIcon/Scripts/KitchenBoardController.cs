@@ -1,6 +1,6 @@
 using Cysharp.Threading.Tasks;
 using Sushi.Level.Common.Events;
-using System;
+using Sushi.Level.WorkplaceIcon.Events;
 using System.Threading;
 using UnityEngine;
 using Utils.AddressablesLoader;
@@ -62,7 +62,7 @@ namespace Sushi.Level.WorkplaceIcon
 
         private void OnClickHappened()
         {
-            throw new NotImplementedException();
+            InvokeBubbleEvent(new KitchenBoardClickEvent());
         }
     }
 }
