@@ -29,8 +29,6 @@ namespace Sushi.Level.Conveyor.Controllers
 
         protected override async UniTask Run(CancellationToken token)
         {
-            AttachResource(_view.gameObject);
-
             _completionSource = new UniTaskCompletionSource();
             token.Register(OnCancellationRequested);
 

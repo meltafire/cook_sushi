@@ -1,26 +1,22 @@
 ﻿using Cysharp.Threading.Tasks;
 using Sushi.App.LoadingScreen;
-using Sushi.Menu.Data;
 using Sushi.Menu.Views;
-using Sushi.SceneReference;
 using System.Threading;
-using UnityEngine;
-using Utils.AddressablesLoader;
 using Utils.Controllers;
 
 namespace Sushi.Menu.Controllers
 {
     public class MenuViewController : Controller
     {
-        private readonly ISceneReference _sceneReference;
+        private readonly MenuViewProvider _menuViewProvider;
         private readonly UniTaskCompletionSource _menuCompletionSource;
 
         private MenuView _view;
 
         public MenuViewController(
-            ISceneReference sceneReference)
+            MenuViewProvider menuViewProvider)
         {
-            _sceneReference = sceneReference;
+            _menuViewProvider = menuViewProvider;
 
             _menuCompletionSource = new UniTaskCompletionSource();
         }
@@ -28,6 +24,8 @@ namespace Sushi.Menu.Controllers
         protected async override UniTask Run(CancellationToken token)
         {
             await SpawnMenu();
+
+            RequestLoadingScreenOff();
 
             if (token.IsCancellationRequested)
             {
@@ -39,19 +37,9 @@ namespace Sushi.Menu.Controllers
 
         private async UniTask SpawnMenu()
         {
-            var assetLoader = new AssetLoader();
+            AttachResource(_menuViewProvider);
 
-            var gameObject = await assetLoader.Load(MenuConstants.MainMenuPrefabName);
-
-            var spawnedGameObject = GameObject.Instantiate(gameObject, _sceneReference.OverlayCanvasTransform);
-
-            _view = spawnedGameObject.GetComponent<MenuView>();
-
-            AttachResource(spawnedGameObject);
-
-            assetLoader.Release();
-
-            RequestLoadingScreenOff();
+            _view = await _menuViewProvider.Load();
         }
 
         private async UniTask HandleInput()

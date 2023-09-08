@@ -2,7 +2,8 @@
     "name": "Utils.Controllers",
     "rootNamespace": "",
     "references": [
-        "UniTask"
+        "UniTask",
+        "Utils.AddressablesLoader"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

@@ -3,12 +3,13 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
+using Utils.AddressablesLoader;
 
 namespace Utils.Controllers
 {
     public abstract class Controller
     {
-        private readonly Queue<GameObject> _resourseQueue = new Queue<GameObject>();
+        private readonly Queue<IAssetUnloader> _resourseQueue = new Queue<IAssetUnloader>();
 
         private Action<ControllerEvent> BubbleEvent;
         private Action<ControllerEvent> DivingEvent;
@@ -44,9 +45,9 @@ namespace Utils.Controllers
             DivingEvent?.Invoke(controllerEvent);
         }
 
-        protected void AttachResource(GameObject gameObject)
+        protected void AttachResource(IAssetUnloader unloader)
         {
-            _resourseQueue.Enqueue(gameObject);
+            _resourseQueue.Enqueue(unloader);
         }
 
         protected abstract UniTask Run(CancellationToken token);
@@ -106,7 +107,8 @@ namespace Utils.Controllers
         {
             while(_resourseQueue.Count > 0)
             {
-                GameObject.Destroy(_resourseQueue.Dequeue());
+                var resource = _resourseQueue.Dequeue();
+                resource.Unload();
             }
         }
     }

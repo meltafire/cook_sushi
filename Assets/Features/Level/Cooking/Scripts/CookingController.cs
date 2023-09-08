@@ -1,25 +1,24 @@
 using Cysharp.Threading.Tasks;
 using Sushi.Level.Common.Events;
 using Sushi.Level.Cooking.Events;
-using Sushi.SceneReference;
 using System.Threading;
-using UnityEngine;
-using Utils.AddressablesLoader;
 using Utils.Controllers;
 
 namespace Sushi.Level.Cooking
 {
     public class CookingController : Controller
     {
-        private readonly ISceneReference _sceneReference;
+        private readonly CookingViewProvider _cookingViewProvider;
+        private readonly CookingUiProvider _cookingUiProvider;
 
         private CookingView _view;
         private CookingUiView _uiView;
         private UniTaskCompletionSource _completionSource;
 
-        public CookingController(ISceneReference sceneReference)
+        public CookingController(CookingViewProvider cookingViewProvider, CookingUiProvider cookingUiProvider)
         {
-            _sceneReference = sceneReference;
+            _cookingViewProvider = cookingViewProvider;
+            _cookingUiProvider = cookingUiProvider;
         }
 
         protected override async UniTask Run(CancellationToken token)
@@ -66,32 +65,16 @@ namespace Sushi.Level.Cooking
 
         private async UniTask LoadPrefab()
         {
-            var assetLoader = new AssetLoader();
+            AttachResource(_cookingViewProvider);
 
-            var gameObject = await assetLoader.Load(CookingConstantData.CookingPrefabKey);
-
-            var spawnedGameObject = GameObject.Instantiate(gameObject);
-
-            AttachResource(spawnedGameObject);
-
-            _view = spawnedGameObject.GetComponent<CookingView>();
-
-            assetLoader.Release();
+            _view = await _cookingViewProvider.Load();
         }
 
         private async UniTask LoadUiPrefab()
         {
-            var assetLoader = new AssetLoader();
+            AttachResource(_cookingUiProvider);
 
-            var gameObject = await assetLoader.Load(CookingConstantData.CookingUiPrefabKey);
-
-            var spawnedGameObject = GameObject.Instantiate(gameObject, _sceneReference.OverlayCanvasTransform);
-
-            AttachResource(spawnedGameObject);
-
-            _uiView = spawnedGameObject.GetComponent<CookingUiView>();
-
-            assetLoader.Release();
+            _uiView = await _cookingUiProvider.Instantiate();
         }
 
         private void ReportReady()

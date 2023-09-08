@@ -1,24 +1,20 @@
 using Cysharp.Threading.Tasks;
 using Sushi.Level.Common.Events;
-using Sushi.Level.Menu.Data;
-using Sushi.SceneReference;
 using System.Threading;
-using UnityEngine;
-using Utils.AddressablesLoader;
 using Utils.Controllers;
 
 namespace Sushi.Level.Menu
 {
     public class LevelMenuController : Controller
     {
-        private readonly ISceneReference _sceneReference;
+        private readonly LevelMenuProvider _levelMenuProvider;
 
         private LevelMenuView _view;
         private UniTaskCompletionSource _completionSource;
 
-        public LevelMenuController(ISceneReference sceneReference)
+        public LevelMenuController(LevelMenuProvider levelMenuProvider)
         {
-            _sceneReference = sceneReference;
+            _levelMenuProvider = levelMenuProvider;
         }
 
         protected override async UniTask Run(CancellationToken token)
@@ -40,17 +36,9 @@ namespace Sushi.Level.Menu
 
         private async UniTask LoadConveyorPrefab()
         {
-            var assetLoader = new AssetLoader();
+            AttachResource(_levelMenuProvider);
 
-            var gameObject = await assetLoader.Load(LevelMenuConstants.LevelMenuPrefabName);
-
-            var spawnedGameObject = GameObject.Instantiate(gameObject, _sceneReference.OverlayCanvasTransform);
-
-            AttachResource(spawnedGameObject);
-
-            _view = spawnedGameObject.GetComponent<LevelMenuView>();
-
-            assetLoader.Release();
+            _view = await _levelMenuProvider.Load();
         }
 
         private void SubscribeToView()

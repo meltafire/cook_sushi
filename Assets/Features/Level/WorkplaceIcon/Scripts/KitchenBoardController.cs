@@ -2,16 +2,21 @@ using Cysharp.Threading.Tasks;
 using Sushi.Level.Common.Events;
 using Sushi.Level.WorkplaceIcon.Events;
 using System.Threading;
-using UnityEngine;
-using Utils.AddressablesLoader;
 using Utils.Controllers;
 
 namespace Sushi.Level.WorkplaceIcon
 {
     public class KitchenBoardController : Controller
     {
+        private readonly KitchenBoardProvider _kitchenBoardProvider;
+
         private KitchenBoardView _view;
         private UniTaskCompletionSource _completionSource;
+
+        public KitchenBoardController(KitchenBoardProvider kitchenBoardProvider)
+        {
+            _kitchenBoardProvider = kitchenBoardProvider;
+        }
 
         protected override async UniTask Run(CancellationToken token)
         {
@@ -34,17 +39,9 @@ namespace Sushi.Level.WorkplaceIcon
 
         private async UniTask LoadConveyorPrefab()
         {
-            var assetLoader = new AssetLoader();
+            AttachResource(_kitchenBoardProvider);
 
-            var gameObject = await assetLoader.Load(KitchenBoardData.KitchenBoardPrefabKey);
-
-            var spawnedGameObject = GameObject.Instantiate(gameObject);
-
-            AttachResource(spawnedGameObject);
-
-            _view = spawnedGameObject.GetComponent<KitchenBoardView>();
-
-            assetLoader.Release();
+            _view = await _kitchenBoardProvider.Load();
         }
 
         private void ReportReady()

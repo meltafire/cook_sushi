@@ -5,7 +5,6 @@ using Sushi.Level.Conveyor.Factory.Data;
 using Sushi.Level.Conveyor.Services;
 using Sushi.Level.Conveyor.Views;
 using System.Threading;
-using UnityEngine;
 using Utils.AddressablesLoader;
 using Utils.Controllers;
 
@@ -13,6 +12,7 @@ namespace Sushi.Level.Conveyor.Controllers
 {
     public class ConveyorController : Controller
     {
+        private readonly ConveyorProvider _conveyorProvider;
         private readonly ITileGameObjectData _tileGameObjectData;
         private readonly IFactoryWithData<ConveyorTileController, ConveyorTileControllerFactoryData> _tileTileControllerFactory;
         private readonly ConveyorPositionService _conveyorPositionService;
@@ -20,10 +20,12 @@ namespace Sushi.Level.Conveyor.Controllers
         private ConveyorView _view;
 
         public ConveyorController(
+            ConveyorProvider conveyorProvider,
             ITileGameObjectData tileGameObjectData,
             IFactoryWithData<ConveyorTileController, ConveyorTileControllerFactoryData> tileTileControllerFactory,
             ConveyorPositionService conveyorPositionService)
         {
+            _conveyorProvider = conveyorProvider;
             _tileGameObjectData = tileGameObjectData;
             _tileTileControllerFactory = tileTileControllerFactory;
             _conveyorPositionService = conveyorPositionService;
@@ -48,24 +50,16 @@ namespace Sushi.Level.Conveyor.Controllers
 
             _tileGameObjectData.SetIileGameObject(gameObject, artLength);
 
-            assetLoader.Release();
+            AttachResource(assetLoader);
         }
 
         private async UniTask LoadConveyorPrefab()
         {
-            var assetLoader = new AssetLoader();
+            AttachResource(_conveyorProvider);
 
-            var gameObject = await assetLoader.Load(ConveyorConstants.ConveyorPrefabName);
-
-            var spawnedGameObject = GameObject.Instantiate(gameObject);
-
-            AttachResource(spawnedGameObject);
-
-            _view = spawnedGameObject.GetComponent<ConveyorView>();
+            _view = await _conveyorProvider.Instantiate();
 
             _tileGameObjectData.TilesParentTransform = _view.TilesTransform;
-
-            assetLoader.Release();
         }
 
         private UniTask SpawnConveyor(CancellationToken token)

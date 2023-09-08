@@ -24,7 +24,11 @@ namespace Utils.Input
                 return;
             }
 
+#if UNITY_ANDROID || UNITY_IOS
+            var hits = Physics2D.GetRayIntersectionNonAlloc(_camera.ScreenPointToRay(Touchscreen.current.primaryTouch.position.ReadValue()), _results);
+#elif UNITY_STANDALONE
             var hits = Physics2D.GetRayIntersectionNonAlloc(_camera.ScreenPointToRay(Mouse.current.position.ReadValue()), _results);
+#endif
 
             if (hits == 0)
             {

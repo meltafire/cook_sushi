@@ -10,6 +10,8 @@ namespace Sushi.Menu.Installer
         {
             descriptor.RegisterController<MenuEntryPointController>();
             descriptor.RegisterController<MenuViewController>();
+
+            descriptor.AddTransient(typeof(MenuViewProvider));
         }
     }
 }

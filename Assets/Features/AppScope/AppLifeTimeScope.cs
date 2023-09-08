@@ -21,7 +21,7 @@ namespace Sushi.AppScope
 
         public void OnDestroy()
         {
-            _cancellationTokenSource.Cancel();
+            //_cancellationTokenSource.Cancel();
         }
 
         public void InstallBindings(ContainerDescriptor descriptor)

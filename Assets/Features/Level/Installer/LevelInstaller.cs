@@ -1,5 +1,6 @@
 ﻿using Reflex.Core;
 using Sushi.Level.Common.Controllers;
+using Sushi.Level.Conveyor;
 using Sushi.Level.Conveyor.Controllers;
 using Sushi.Level.Conveyor.Data;
 using Sushi.Level.Conveyor.Factory;
@@ -27,6 +28,8 @@ namespace Sushi.Level.Installer
 
         private void InstallConveyor(ContainerDescriptor descriptor)
         {
+            descriptor.AddTransient(typeof(ConveyorProvider));
+
             descriptor.RegisterController<ConveyorController>();
 
             descriptor.AddSingleton(typeof(ConveyorGameObjectData),
@@ -46,16 +49,23 @@ namespace Sushi.Level.Installer
 
         private void InstallMenu(ContainerDescriptor descriptor)
         {
+            descriptor.AddTransient(typeof(LevelMenuProvider));
+
             descriptor.RegisterController<LevelMenuController>();
         }
 
         private void InstallKitchenBoard(ContainerDescriptor descriptor)
         {
+            descriptor.AddTransient(typeof(KitchenBoardProvider));
+
             descriptor.RegisterController<KitchenBoardController>();
         }
 
         private void InstallCooking(ContainerDescriptor descriptor)
         {
+            descriptor.AddTransient(typeof(CookingViewProvider));
+            descriptor.AddTransient(typeof(CookingUiProvider));
+
             descriptor.RegisterController<CookingController>();
         }
     }

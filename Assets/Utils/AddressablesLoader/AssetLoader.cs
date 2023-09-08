@@ -1,11 +1,11 @@
-using Cysharp.Threading.Tasks;
+﻿using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 
 namespace Utils.AddressablesLoader
 {
-    public class AssetLoader
+    public class AssetLoader : IAssetUnloader
     {
         private AsyncOperationHandle<GameObject> _handle;
 
@@ -18,7 +18,7 @@ namespace Utils.AddressablesLoader
             return HandleResult(assetName);
         }
 
-        public void Release()
+        public void Unload()
         {
             Addressables.Release(_handle);
         }
