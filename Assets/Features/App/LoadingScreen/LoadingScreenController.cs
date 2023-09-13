@@ -9,37 +9,39 @@ namespace Sushi.App.LoadingScreen
         private const int InittialRequestCount = 1;
 
         private readonly ILoadingScreenViewProvider _viewProvider;
+        private readonly ILoadingScreenEvents _events;
 
         private LoadingScreenView _view;
         private UniTaskCompletionSource _completionSource;
 
         private int _loadingScreenRequestsCount;
 
-        public LoadingScreenController(ILoadingScreenViewProvider viewProvider)
+        public LoadingScreenController(ILoadingScreenViewProvider viewProvider, ILoadingScreenEvents events)
         {
             _viewProvider = viewProvider;
+            _events = events;
+
             _loadingScreenRequestsCount = InittialRequestCount;
         }
 
-        protected override UniTask Run(CancellationToken token)
+        protected override async UniTask Run(CancellationToken token)
         {
             _completionSource = new UniTaskCompletionSource();
-
             _view = _viewProvider.View;
 
-            return _completionSource.Task;
+            _events.ShowRequested += OnShowRequested;
+
+            await _completionSource.Task;
+
+            _events.ShowRequested -= OnShowRequested;
         }
 
-        protected override void HandleDivingEvent(ControllerEvent controllerEvent)
+        private void OnShowRequested(bool isOn)
         {
-            if (controllerEvent is LoadingScreenEvent)
-            {
-                var data = (LoadingScreenEvent)controllerEvent;
-                _loadingScreenRequestsCount = data.ShouldShow ? ++_loadingScreenRequestsCount : --_loadingScreenRequestsCount;
+            _loadingScreenRequestsCount = isOn ? ++_loadingScreenRequestsCount : --_loadingScreenRequestsCount;
 
-                var shouldShow = _loadingScreenRequestsCount > 0;
-                _view.Toggle(shouldShow);
-            }
+            var shouldShow = _loadingScreenRequestsCount > 0;
+            _view.Toggle(shouldShow);
         }
     }
 }

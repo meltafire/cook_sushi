@@ -1,5 +1,4 @@
 ﻿using Cysharp.Threading.Tasks;
-using Sushi.App.LoadingScreen;
 using Sushi.Menu.Views;
 using System.Threading;
 using Utils.Controllers;
@@ -10,13 +9,16 @@ namespace Sushi.Menu.Controllers
     {
         private readonly MenuViewProvider _menuViewProvider;
         private readonly UniTaskCompletionSource _menuCompletionSource;
+        private readonly ILoadingScreenExternalEvents _loadingScreenExternalEvents;
 
         private MenuView _view;
 
         public MenuViewController(
-            MenuViewProvider menuViewProvider)
+            MenuViewProvider menuViewProvider,
+            ILoadingScreenExternalEvents loadingScreenExternalEvents)
         {
             _menuViewProvider = menuViewProvider;
+            _loadingScreenExternalEvents = loadingScreenExternalEvents;
 
             _menuCompletionSource = new UniTaskCompletionSource();
         }
@@ -60,12 +62,12 @@ namespace Sushi.Menu.Controllers
 
         private void RequestLoadingScreen()
         {
-            InvokeBubbleEvent(new LoadingScreenEvent(true));
+            _loadingScreenExternalEvents.Show(true);
         }
 
         private void RequestLoadingScreenOff()
         {
-            InvokeBubbleEvent(new LoadingScreenEvent(false));
+            _loadingScreenExternalEvents.Show(false);
         }
     }
 }

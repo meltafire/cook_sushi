@@ -3,9 +3,10 @@
     "rootNamespace": "",
     "references": [
         "Reflex",
+        "Sushi.App",
         "Sushi.App.Data",
         "Sushi.App.LoadingScreen",
-        "Sushi.App",
+        "Sushi.App.LoadingScreen.Events",
         "Utils.Controllers",
         "Utils.Controllers.ReflexIntegration"
     ],

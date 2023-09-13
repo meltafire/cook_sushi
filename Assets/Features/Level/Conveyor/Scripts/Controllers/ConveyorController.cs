@@ -1,5 +1,4 @@
 ﻿using Cysharp.Threading.Tasks;
-using Sushi.Level.Common.Events;
 using Sushi.Level.Conveyor.Data;
 using Sushi.Level.Conveyor.Factory.Data;
 using Sushi.Level.Conveyor.Services;
@@ -16,28 +15,50 @@ namespace Sushi.Level.Conveyor.Controllers
         private readonly ITileGameObjectData _tileGameObjectData;
         private readonly IFactoryWithData<ConveyorTileController, ConveyorTileControllerFactoryData> _tileTileControllerFactory;
         private readonly ConveyorPositionService _conveyorPositionService;
+        private readonly ILoadingStageControllerEvents _loadingStageControllerEvents;
 
         private ConveyorView _view;
+        private CancellationToken _token;
+        private UniTaskCompletionSource _completionSource;
 
         public ConveyorController(
             ConveyorProvider conveyorProvider,
             ITileGameObjectData tileGameObjectData,
             IFactoryWithData<ConveyorTileController, ConveyorTileControllerFactoryData> tileTileControllerFactory,
-            ConveyorPositionService conveyorPositionService)
+            ConveyorPositionService conveyorPositionService,
+            ILoadingStageControllerEvents loadingStageControllerEvents)
         {
             _conveyorProvider = conveyorProvider;
             _tileGameObjectData = tileGameObjectData;
             _tileTileControllerFactory = tileTileControllerFactory;
             _conveyorPositionService = conveyorPositionService;
+            _loadingStageControllerEvents = loadingStageControllerEvents;
         }
 
         protected override async UniTask Run(CancellationToken token)
         {
+            _completionSource = new UniTaskCompletionSource();
+            _token = token;
+
+            _loadingStageControllerEvents.LoadRequest += OnLoadRequested;
+
+            await _completionSource.Task;
+        }
+
+        private void OnLoadRequested()
+        {
+            Load().Forget();
+        }
+
+        private async UniTask Load()
+        {
+            _loadingStageControllerEvents.ReportStartedLoading();
+
             await UniTask.WhenAll(PreloadTilePrefab(), LoadConveyorPrefab());
 
             _conveyorPositionService.SetupConveyorData(_view.TopStart.position, _view.BottomStart.position, _view.TileCountTotal, _view.TopTileSize);
 
-            await SpawnConveyor(token);
+            await SpawnConveyor(_token);
         }
 
         private async UniTask PreloadTilePrefab()
@@ -62,7 +83,7 @@ namespace Sushi.Level.Conveyor.Controllers
             _tileGameObjectData.TilesParentTransform = _view.TilesTransform;
         }
 
-        private UniTask SpawnConveyor(CancellationToken token)
+        private async UniTask SpawnConveyor(CancellationToken token)
         {
             var count = _view.TileCountTotal;
             var tileTasks = new UniTask[count];
@@ -75,14 +96,17 @@ namespace Sushi.Level.Conveyor.Controllers
                     token);
             }
 
-            ReportReady();
+            _loadingStageControllerEvents.LoadRequest -= OnLoadRequested;
+            _loadingStageControllerEvents.ReportLoaded();
 
-            return UniTask.WhenAll(tileTasks);
+            await UniTask.WhenAll(tileTasks);
+
+            HandleTilesDone();
         }
 
-        private void ReportReady()
+        private void HandleTilesDone()
         {
-            InvokeBubbleEvent(new LevelFeatureLoadedEvent());
+            _completionSource.TrySetResult();
         }
     }
 }

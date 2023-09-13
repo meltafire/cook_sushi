@@ -1,6 +1,4 @@
 using Cysharp.Threading.Tasks;
-using Sushi.Level.Common.Events;
-using Sushi.Level.Cooking.Events;
 using System.Threading;
 using Utils.Controllers;
 
@@ -10,35 +8,49 @@ namespace Sushi.Level.Cooking
     {
         private readonly CookingViewProvider _cookingViewProvider;
         private readonly CookingUiProvider _cookingUiProvider;
+        private readonly ILoadingStageControllerEvents _loadingStageControllerEvents;
+        private readonly ICookingStageExternalEvents _cookingStageExternalEvents;
 
         private CookingView _view;
         private CookingUiView _uiView;
         private UniTaskCompletionSource _completionSource;
 
-        public CookingController(CookingViewProvider cookingViewProvider, CookingUiProvider cookingUiProvider)
+        public CookingController(
+            CookingViewProvider cookingViewProvider,
+            CookingUiProvider cookingUiProvider,
+            ILoadingStageControllerEvents loadingStageControllerEvents,
+            ICookingStageExternalEvents cookingStageExternalEvents)
         {
             _cookingViewProvider = cookingViewProvider;
             _cookingUiProvider = cookingUiProvider;
+            _loadingStageControllerEvents = loadingStageControllerEvents;
+            _cookingStageExternalEvents = cookingStageExternalEvents;
         }
 
         protected override async UniTask Run(CancellationToken token)
         {
+            _loadingStageControllerEvents.LoadRequest += OnLoadRequested;
+            _cookingStageExternalEvents.ShowRequest += OnShowWindowRequest;
+
             _completionSource = new UniTaskCompletionSource();
             token.Register(OnCancellationRequested);
 
-            await LoadPrefabs();
-
-            ReportReady();
-
             await _completionSource.Task;
+
+            _loadingStageControllerEvents.LoadRequest -= OnLoadRequested;
+            _cookingStageExternalEvents.ShowRequest -= OnShowWindowRequest;
         }
 
-        protected override void HandleDivingEvent(ControllerEvent controllerEvent)
+        private void OnShowWindowRequest(bool shouldShow)
         {
-            if (controllerEvent is ShowCookingEvent)
-            {
-                ShowWindow(true);
-            }
+            ShowWindow(shouldShow);
+        }
+
+        private void OnLoadRequested()
+        {
+            _loadingStageControllerEvents.ReportStartedLoading();
+
+            LoadPrefabs().Forget();
         }
 
         private async UniTask LoadPrefabs()
@@ -46,6 +58,8 @@ namespace Sushi.Level.Cooking
             await UniTask.WhenAll(LoadPrefab(), LoadUiPrefab());
 
             ShowWindow(false);
+
+            _loadingStageControllerEvents.ReportLoaded();
         }
 
         private void ShowWindow(bool shouldShow)
@@ -77,11 +91,6 @@ namespace Sushi.Level.Cooking
             _uiView = await _cookingUiProvider.Instantiate();
         }
 
-        private void ReportReady()
-        {
-            InvokeBubbleEvent(new LevelFeatureLoadedEvent());
-        }
-
         private void OnCancellationRequested()
         {
             _completionSource.TrySetResult();
@@ -89,7 +98,7 @@ namespace Sushi.Level.Cooking
 
         private void OnBackButtonClickHappen()
         {
-            ShowWindow(false);
+            _cookingStageExternalEvents.ReportBackButtonClicked();
         }
     }
 }

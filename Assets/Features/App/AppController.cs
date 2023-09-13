@@ -94,10 +94,6 @@ namespace Sushi.App
             {
                 _data.ActionType = rootAppEvent.AppActionType;
             }
-            else if (controllerEvent is LoadingScreenEvent loadingScreenEvent)
-            {
-                InvokeDivingEvent(loadingScreenEvent);
-            }
         }
     }
 }

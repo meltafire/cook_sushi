@@ -14,6 +14,8 @@ namespace Sushi.App.Installer
 
             descriptor.RegisterController<AppController>();
             descriptor.RegisterController<LoadingScreenController>();
+
+            descriptor.AddSingleton(typeof(LoadingScreenEvents), typeof(ILoadingScreenExternalEvents), typeof(ILoadingScreenEvents));
         }
     }
 }

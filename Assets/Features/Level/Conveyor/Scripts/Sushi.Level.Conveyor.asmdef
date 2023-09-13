@@ -2,7 +2,8 @@
     "name": "Sushi.Level.Conveyor",
     "rootNamespace": "",
     "references": [
-        "Sushi.Level.Common.Events",
+        "Sushi.Level.Stages.IdleStageEvents",
+        "Sushi.Level.Stages.LoadingStageEvents",
         "Utils.AddressablesLoader",
         "Utils.Controllers",
         "UniTask"

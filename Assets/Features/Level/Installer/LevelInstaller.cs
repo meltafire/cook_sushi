@@ -24,6 +24,7 @@ namespace Sushi.Level.Installer
             InstallKitchenBoard(descriptor);
             InstallMenu(descriptor);
             InstallCooking(descriptor);
+            InstallStages(descriptor);
         }
 
         private void InstallConveyor(ContainerDescriptor descriptor)
@@ -52,6 +53,8 @@ namespace Sushi.Level.Installer
             descriptor.AddTransient(typeof(LevelMenuProvider));
 
             descriptor.RegisterController<LevelMenuController>();
+
+            descriptor.AddSingleton(typeof(LevelMenuEvents), typeof(ILevelMenuEvents), typeof(ILevelMenuExternalEvents));
         }
 
         private void InstallKitchenBoard(ContainerDescriptor descriptor)
@@ -59,6 +62,8 @@ namespace Sushi.Level.Installer
             descriptor.AddTransient(typeof(KitchenBoardProvider));
 
             descriptor.RegisterController<KitchenBoardController>();
+
+            descriptor.AddSingleton(typeof(KitchenBoardIconEvents), typeof(IKitchenBoardIconEvents), typeof(IKitchenBoardIconExternalEvents));
         }
 
         private void InstallCooking(ContainerDescriptor descriptor)
@@ -67,6 +72,31 @@ namespace Sushi.Level.Installer
             descriptor.AddTransient(typeof(CookingUiProvider));
 
             descriptor.RegisterController<CookingController>();
+        }
+
+        private void InstallStages(ContainerDescriptor descriptor)
+        {
+            InstallLoadingStage(descriptor);
+            InstallIdleStage(descriptor);
+            InstallCookingStage(descriptor);
+        }
+
+        private void InstallLoadingStage(ContainerDescriptor descriptor)
+        {
+            descriptor.AddTransient(typeof(LoadingStage));
+            descriptor.AddSingleton(typeof(LoadingStageEvents), typeof(ILoadingStageEvents), typeof(ILoadingStageControllerEvents));
+        }
+
+        private void InstallIdleStage(ContainerDescriptor descriptor)
+        {
+            descriptor.AddTransient(typeof(IdleStage));
+            descriptor.AddSingleton(typeof(IdleStageEvents), typeof(IIdleStageEvents), typeof(IIdleStageControllerEvents));
+        }
+
+        private void InstallCookingStage(ContainerDescriptor descriptor)
+        {
+            descriptor.AddTransient(typeof(CookingStage));
+            descriptor.AddSingleton(typeof(CookingStageEvents), typeof(ICookingStageEvents), typeof(ICookingStageExternalEvents));
         }
     }
 }

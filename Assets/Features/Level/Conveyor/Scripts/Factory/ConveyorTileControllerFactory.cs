@@ -13,15 +13,18 @@ namespace Sushi.Level.Conveyor.Factory
         private readonly ConveyorTilePositionService _positionService;
         private readonly ITileGameObjectDataProvider _tileGameObjectDataProvider;
         private readonly IConveyorPointProvider _conveyorPointProvider;
+        private readonly IIdleStageControllerEvents _idleStageControllerEvents;
 
         public ConveyorTileControllerFactory(
             ConveyorTilePositionService positionService,
             ITileGameObjectDataProvider tileGameObjectDataProvider,
-            IConveyorPointProvider conveyorPointProvider)
+            IConveyorPointProvider conveyorPointProvider,
+            IIdleStageControllerEvents idleStageControllerEvents)
         {
             _positionService = positionService;
             _tileGameObjectDataProvider = tileGameObjectDataProvider;
             _conveyorPointProvider = conveyorPointProvider;
+            _idleStageControllerEvents = idleStageControllerEvents;
         }
 
         public ConveyorTileController Create(ConveyorTileControllerFactoryData data)
@@ -42,7 +45,8 @@ namespace Sushi.Level.Conveyor.Factory
             return new ConveyorTileController(
                 _conveyorPointProvider,
                 view,
-                controllerData);
+                controllerData,
+                _idleStageControllerEvents);
         }
     }
 }

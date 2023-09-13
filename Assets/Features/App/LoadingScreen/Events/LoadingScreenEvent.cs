@@ -1,14 +1,14 @@
-﻿using Utils.Controllers;
+﻿using System;
 
 namespace Sushi.App.LoadingScreen
 {
-    public class LoadingScreenEvent : ControllerEvent
+    public class LoadingScreenEvents : ILoadingScreenExternalEvents, ILoadingScreenEvents
     {
-        public readonly bool ShouldShow;
+        public event Action<bool> ShowRequested;
 
-        public LoadingScreenEvent(bool shouldShow)
+        public void Show(bool isOn)
         {
-            ShouldShow = shouldShow;
+            ShowRequested?.Invoke(isOn);
         }
     }
 }

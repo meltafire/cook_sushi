@@ -1,6 +1,5 @@
 ﻿using Cysharp.Threading.Tasks;
 using Sushi.SceneReference;
-using UnityEngine;
 using Utils.AddressablesLoader;
 
 namespace Sushi.Level.Cooking

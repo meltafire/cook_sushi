@@ -1,7 +1,7 @@
 ﻿using Cysharp.Threading.Tasks;
-using Sushi.Level.Common.Events;
 using Sushi.Level.Conveyor.Data;
 using Sushi.Level.Conveyor.Views;
+using System;
 using System.Threading;
 using UnityEngine;
 using Utils.Controllers;
@@ -13,28 +13,34 @@ namespace Sushi.Level.Conveyor.Controllers
         private readonly IConveyorPointProvider _conveyorPointProvider;
         private readonly ConveyorTileView _view;
         private readonly ConveyorTileData _data;
+        private readonly IIdleStageControllerEvents _idleStageControllerEvents;
 
         private UniTaskCompletionSource _completionSource;
 
         public ConveyorTileController(
             IConveyorPointProvider conveyorPointProvider,
             ConveyorTileView view,
-            ConveyorTileData data
+            ConveyorTileData data,
+            IIdleStageControllerEvents idleStageControllerEvents
             )
         {
             _conveyorPointProvider = conveyorPointProvider;
             _view = view;
             _data = data;
+            _idleStageControllerEvents = idleStageControllerEvents;
         }
 
         protected override async UniTask Run(CancellationToken token)
         {
+            _idleStageControllerEvents.LaunchGameplayRequest += OnLaunchGameplayRequest;
+
             _completionSource = new UniTaskCompletionSource();
             token.Register(OnCancellationRequested);
 
             await _completionSource.Task;
 
             _view.OnUpdate -= OnUpdateHappened;
+            _idleStageControllerEvents.LaunchGameplayRequest -= OnLaunchGameplayRequest;
         }
 
         private void OnUpdateHappened()
@@ -66,12 +72,9 @@ namespace Sushi.Level.Conveyor.Controllers
             _completionSource.TrySetResult();
         }
 
-        protected override void HandleDivingEvent(ControllerEvent controllerEvent)
+         private void OnLaunchGameplayRequest()
         {
-            if (controllerEvent is GameplayLaunchEvent)
-            {
-                _view.OnUpdate += OnUpdateHappened;
-            }
+            _view.OnUpdate += OnUpdateHappened;
         }
     }
 }

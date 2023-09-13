@@ -1,14 +1,11 @@
 ﻿using Cysharp.Threading.Tasks;
 using Sushi.App.Data;
 using Sushi.App.Events;
-using Sushi.App.LoadingScreen;
-using Sushi.Level.Common.Events;
 using Sushi.Level.Conveyor.Controllers;
 using Sushi.Level.Cooking;
-using Sushi.Level.Cooking.Events;
 using Sushi.Level.Menu;
 using Sushi.Level.WorkplaceIcon;
-using Sushi.Level.WorkplaceIcon.Events;
+using System.Collections.Generic;
 using System.Threading;
 using Utils.Controllers;
 
@@ -16,19 +13,36 @@ namespace Sushi.Level.Common.Controllers
 {
     public class LevelEntryPointController : Controller
     {
+        private readonly ILoadingScreenExternalEvents _loadingScreenExternalEvents;
+        private readonly Dictionary<LevelStages, IStage> _stages;
+
+
         private readonly IFactory<KitchenBoardController> _kitchenBoardControllerFactory;
         private readonly IFactory<ConveyorController> _conveyorControllerFactory;
         private readonly IFactory<LevelMenuController> _levelMenuControllerFactory;
         private readonly IFactory<CookingController> _cookingControllerFactory;
 
-        private int _loadingFeatureCount = 4;
-
         public LevelEntryPointController(
+            ILoadingScreenExternalEvents loadingScreenExternalEvents,
+            LoadingStage loadingStage,
+            IdleStage idleStage,
+            CookingStage cookingStage,
+
+
             IFactory<KitchenBoardController> kitchenBoardControllerFactory,
             IFactory<ConveyorController> conveyorControllerFactory,
             IFactory<LevelMenuController> levelMenuControllerFactory,
             IFactory<CookingController> cookingControllerFactory)
         {
+            _loadingScreenExternalEvents = loadingScreenExternalEvents;
+
+            _stages = new Dictionary<LevelStages, IStage>()
+            {
+                {LevelStages.Loading, loadingStage},
+                {LevelStages.Idle, idleStage},
+                {LevelStages.Cooking, cookingStage},
+            };
+
             _kitchenBoardControllerFactory = kitchenBoardControllerFactory;
             _conveyorControllerFactory = conveyorControllerFactory;
             _levelMenuControllerFactory = levelMenuControllerFactory;
@@ -39,11 +53,14 @@ namespace Sushi.Level.Common.Controllers
         {
             using (var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(token))
             {
-                RunChildFromFactory(_conveyorControllerFactory, linkedCts.Token).Forget();
-                RunChildFromFactory(_kitchenBoardControllerFactory, linkedCts.Token).Forget();
-                RunChildFromFactory(_cookingControllerFactory, linkedCts.Token).Forget();
+                var linkedToken = linkedCts.Token;
 
-                await RunChildFromFactory(_levelMenuControllerFactory, linkedCts.Token);
+                RunChildFromFactory(_conveyorControllerFactory, linkedToken).Forget();
+                RunChildFromFactory(_kitchenBoardControllerFactory, linkedToken).Forget();
+                RunChildFromFactory(_cookingControllerFactory, linkedToken).Forget();
+                RunChildFromFactory(_levelMenuControllerFactory, linkedToken).Forget();
+
+                await RunStages(linkedToken);
 
                 linkedCts.Cancel();
             }
@@ -53,43 +70,19 @@ namespace Sushi.Level.Common.Controllers
             InvokeBubbleEvent(new RootAppEvent(AppActionType.Menu));
         }
 
-        protected override void HandleBubbleEvent(ControllerEvent controllerEvent)
+        private async UniTask RunStages(CancellationToken token)
         {
-            if (controllerEvent is LevelFeatureLoadedEvent)
+            var stageType = LevelStages.Loading;
+
+            while (stageType != LevelStages.Quit)
             {
-                --_loadingFeatureCount;
-
-                if (_loadingFeatureCount <= 0)
-                {
-                    RequestLoadingScreenOff();
-
-                    RequestGameplay();
-                }
+                stageType = await _stages[stageType].Run(token);
             }
-            else if (controllerEvent is KitchenBoardClickEvent)
-            {
-                ShowCookingWindow();
-            }
-        }
-
-        private void RequestLoadingScreenOff()
-        {
-            InvokeBubbleEvent(new LoadingScreenEvent(false));
         }
 
         private void RequestLoadingScreen()
         {
-            InvokeBubbleEvent(new LoadingScreenEvent(true));
-        }
-
-        private void RequestGameplay()
-        {
-            InvokeDivingEvent(new GameplayLaunchEvent());
-        }
-
-        private void ShowCookingWindow()
-        {
-            InvokeDivingEvent(new ShowCookingEvent());
+            _loadingScreenExternalEvents.Show(true);
         }
     }
 }

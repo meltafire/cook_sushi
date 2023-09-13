@@ -8,9 +8,8 @@
         "Sushi.Level.Common.Events",
         "Sushi.Level.Conveyor",
         "Sushi.Level.Cooking",
-        "Sushi.Level.Cooking.Events",
         "Sushi.Level.WorkplaceIcon",
-        "Sushi.Level.WorkplaceIcon.Events",
+        "Sushi.Level.Stages",
         "Sushi.Level.Menu",
         "Utils.Controllers",
         "UniTask"

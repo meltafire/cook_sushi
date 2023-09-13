@@ -1,0 +1,22 @@
+{
+    "name": "Sushi.Level.Stages",
+    "rootNamespace": "",
+    "references": [
+        "Sushi.App.LoadingScreen.Events",
+        "Sushi.Level.Menu.Events",
+        "Sushi.Level.WorkplaceIcon.Events",
+        "Sushi.Level.Stages.CookingStageEvents",
+        "Sushi.Level.Stages.IdleStageEvents",
+        "Sushi.Level.Stages.LoadingStageEvents",
+        "UniTask"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
