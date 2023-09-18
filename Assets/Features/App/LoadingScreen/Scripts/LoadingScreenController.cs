@@ -6,8 +6,9 @@ namespace Sushi.App.LoadingScreen
 {
     public class LoadingScreenController : Controller
     {
-        private const int InittialRequestCount = 1;
+        private const int InittialRequestCount = 0;
 
+        private readonly LoadingScreenProvider _provider;
         private readonly ILoadingScreenViewProvider _viewProvider;
         private readonly ILoadingScreenEvents _events;
 
@@ -16,9 +17,10 @@ namespace Sushi.App.LoadingScreen
 
         private int _loadingScreenRequestsCount;
 
-        public LoadingScreenController(ILoadingScreenViewProvider viewProvider, ILoadingScreenEvents events)
+        public LoadingScreenController(ILoadingScreenViewProvider viewProvider, LoadingScreenProvider provider, ILoadingScreenEvents events)
         {
             _viewProvider = viewProvider;
+            _provider = provider;
             _events = events;
 
             _loadingScreenRequestsCount = InittialRequestCount;
@@ -27,7 +29,8 @@ namespace Sushi.App.LoadingScreen
         protected override async UniTask Run(CancellationToken token)
         {
             _completionSource = new UniTaskCompletionSource();
-            _view = _viewProvider.View;
+
+            await LoadPrefab();
 
             _events.ShowRequested += OnShowRequested;
 
@@ -36,10 +39,24 @@ namespace Sushi.App.LoadingScreen
             _events.ShowRequested -= OnShowRequested;
         }
 
+        private async UniTask LoadPrefab()
+        {
+            AttachResource(_provider);
+
+            _view = await _provider.Instantiate(_viewProvider.ParrentTransfrom);
+
+            Toggle();
+        }
+
         private void OnShowRequested(bool isOn)
         {
             _loadingScreenRequestsCount = isOn ? ++_loadingScreenRequestsCount : --_loadingScreenRequestsCount;
 
+            Toggle();
+        }
+
+        private void Toggle()
+        {
             var shouldShow = _loadingScreenRequestsCount > 0;
             _view.Toggle(shouldShow);
         }

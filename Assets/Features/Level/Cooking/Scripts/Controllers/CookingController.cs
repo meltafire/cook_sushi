@@ -10,6 +10,7 @@ namespace Sushi.Level.Cooking
         private readonly CookingUiProvider _cookingUiProvider;
         private readonly ILoadingStageControllerEvents _loadingStageControllerEvents;
         private readonly ICookingStageExternalEvents _cookingStageExternalEvents;
+        private readonly CookingControllerData _data;
 
         private CookingView _view;
         private CookingUiView _uiView;
@@ -25,6 +26,8 @@ namespace Sushi.Level.Cooking
             _cookingUiProvider = cookingUiProvider;
             _loadingStageControllerEvents = loadingStageControllerEvents;
             _cookingStageExternalEvents = cookingStageExternalEvents;
+
+            _data = new CookingControllerData();
         }
 
         protected override async UniTask Run(CancellationToken token)
@@ -39,42 +42,6 @@ namespace Sushi.Level.Cooking
 
             _loadingStageControllerEvents.LoadRequest -= OnLoadRequested;
             _cookingStageExternalEvents.ShowRequest -= OnShowWindowRequest;
-        }
-
-        private void OnShowWindowRequest(bool shouldShow)
-        {
-            ShowWindow(shouldShow);
-        }
-
-        private void OnLoadRequested()
-        {
-            _loadingStageControllerEvents.ReportStartedLoading();
-
-            LoadPrefabs().Forget();
-        }
-
-        private async UniTask LoadPrefabs()
-        {
-            await UniTask.WhenAll(LoadPrefab(), LoadUiPrefab());
-
-            ShowWindow(false);
-
-            _loadingStageControllerEvents.ReportLoaded();
-        }
-
-        private void ShowWindow(bool shouldShow)
-        {
-            _view.Toggle(shouldShow);
-            _uiView.Toggle(shouldShow);
-
-            if (shouldShow)
-            {
-                _uiView.OnBackButtonClick += OnBackButtonClickHappen;
-            }
-            else
-            {
-                _uiView.OnBackButtonClick -= OnBackButtonClickHappen;
-            }
         }
 
         private async UniTask LoadPrefab()
@@ -94,6 +61,100 @@ namespace Sushi.Level.Cooking
         private void OnCancellationRequested()
         {
             _completionSource.TrySetResult();
+        }
+
+        private void OnLoadRequested()
+        {
+            _loadingStageControllerEvents.ReportStartedLoading();
+
+            LoadPrefabs().Forget();
+        }
+
+        private async UniTask LoadPrefabs()
+        {
+            await UniTask.WhenAll(LoadPrefab(), LoadUiPrefab());
+
+            ShowWindow(false);
+
+            _loadingStageControllerEvents.ReportLoaded();
+        }
+
+        private void OnShowWindowRequest(bool shouldShow)
+        {
+            ShowWindow(shouldShow);
+        }
+
+        private void ShowWindow(bool shouldShow)
+        {
+            _view.Toggle(shouldShow);
+            _uiView.Toggle(shouldShow);
+
+            if (shouldShow)
+            {
+                _uiView.OnBackButtonClick += OnBackButtonClickHappen;
+            }
+            else
+            {
+                _uiView.OnBackButtonClick -= OnBackButtonClickHappen;
+            }
+
+            HideAllSubViews();
+
+            switch (_data.DishType)
+            {
+                case DishType.None:
+                    ShowDishMenu();
+                    break;
+
+                case DishType.Nigiri:
+                    break;
+
+                case DishType.Maki:
+                    ShowCookingMaki();
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        private void HideAllSubViews()
+        {
+            _uiView.CookingTypeMenuUiView.Toggle(false);
+        }
+
+        private void ShowDishMenu()
+        {
+            var cookingTypeMenuView = _uiView.CookingTypeMenuUiView;
+
+            cookingTypeMenuView.Toggle(true);
+
+            cookingTypeMenuView.OnButtonClick += OnCookingTypeClick;
+        }
+
+        private void OnCookingTypeClick(DishType type)
+        {
+            var cookingTypeMenuView = _uiView.CookingTypeMenuUiView;
+
+            cookingTypeMenuView.Toggle(false);
+            cookingTypeMenuView.OnButtonClick -= OnCookingTypeClick;
+
+            _data.DishType = type;
+
+            ShowCookingMaki();
+        }
+
+        private void ShowCookingMaki()
+        {
+            var makiView = _view.CookingMakiView;
+
+            makiView.Toggle(true);
+
+            ShowCookingMakiBaseIngridients();
+        }
+
+        private void ShowCookingMakiBaseIngridients()
+        {
         }
 
         private void OnBackButtonClickHappen()

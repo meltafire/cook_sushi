@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Sprite Rendering
+  m_EditorClassIdentifier: 
+  m_GroupName: Sprite Rendering
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 3d7bc6cd62975e745b6562aa02b1f713
+  m_SerializeEntries:
+  - m_GUID: a97c105638bdf8b4a8650670310a4cd3
+    m_Address: Packages/com.unity.render-pipelines.universal/Runtime/Materials/Sprite-Lit-Default.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e260cfa7296ee7642b167f1eb5be5023
+    m_Address: Packages/com.unity.render-pipelines.universal/Shaders/2D/Sprite-Lit-Default.shader
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: e7d21dd6c69b4404aac84b4fa228f6a3, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: e82e81129e32177489fac0221653c7a8, type: 2}
+    - {fileID: 11400000, guid: c0e6babcffaff9743b71099e6a2faae6, type: 2}

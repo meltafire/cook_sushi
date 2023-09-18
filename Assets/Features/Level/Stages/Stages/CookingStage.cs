@@ -10,7 +10,8 @@ public class CookingStage : IStage
 
     private LevelStages _result;
 
-    public CookingStage(ICookingStageEvents cookingStageEvents,
+    public CookingStage(
+        ICookingStageEvents cookingStageEvents,
         ILevelMenuExternalEvents levelMenuEvents)
     {
         _cookingStageEvents = cookingStageEvents;

@@ -5,8 +5,8 @@ namespace Sushi.App.LoadingScreen
     public class LoadingScreenViewProvider : MonoBehaviour, ILoadingScreenViewProvider
     {
         [SerializeField]
-        private LoadingScreenView _view;
+        private Transform _transform;
 
-        public LoadingScreenView View => _view;
+        public Transform ParrentTransfrom => _transform;
     }
 }

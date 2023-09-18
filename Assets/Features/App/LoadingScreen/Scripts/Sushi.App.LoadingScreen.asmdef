@@ -4,6 +4,7 @@
     "references": [
         "Sushi.App.LoadingScreen.Events",
         "UniTask",
+        "Utils.AddressablesLoader",
         "Utils.Controllers"
     ],
     "includePlatforms": [],

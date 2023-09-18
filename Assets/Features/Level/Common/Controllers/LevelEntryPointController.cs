@@ -26,7 +26,7 @@ namespace Sushi.Level.Common.Controllers
             ILoadingScreenExternalEvents loadingScreenExternalEvents,
             LoadingStage loadingStage,
             IdleStage idleStage,
-            CookingStage cookingStage,
+            CookingStage сookingStage,
 
 
             IFactory<KitchenBoardController> kitchenBoardControllerFactory,
@@ -40,7 +40,7 @@ namespace Sushi.Level.Common.Controllers
             {
                 {LevelStages.Loading, loadingStage},
                 {LevelStages.Idle, idleStage},
-                {LevelStages.Cooking, cookingStage},
+                {LevelStages.Cooking, сookingStage},
             };
 
             _kitchenBoardControllerFactory = kitchenBoardControllerFactory;

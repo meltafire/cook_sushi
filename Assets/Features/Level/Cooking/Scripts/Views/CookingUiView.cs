@@ -8,8 +8,18 @@ namespace Sushi.Level.Cooking
     {
         [SerializeField]
         private Button _backButton;
+        [SerializeField]
+        private CookingTypeMenuUiView _cookingTypeMenuUiView;
+        [SerializeField]
+        private CookingIngridientsGridView _baseIngridientsGrid;
+        [SerializeField]
+        private CookingIngridientsGridView _ingridientsGrid;
 
         public event Action OnBackButtonClick;
+
+        public CookingTypeMenuUiView CookingTypeMenuUiView => _cookingTypeMenuUiView;
+        public CookingIngridientsGridView BaseIngridientsGrid => _baseIngridientsGrid;
+        public CookingIngridientsGridView IngridientsGrid => _ingridientsGrid;
 
         public void Toggle(bool shouldTurnOn)
         {
