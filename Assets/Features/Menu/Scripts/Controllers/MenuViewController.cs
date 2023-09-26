@@ -1,40 +1,44 @@
-﻿using Cysharp.Threading.Tasks;
+﻿using Assets.Features.Menu.Scripts.Data;
+using Cysharp.Threading.Tasks;
 using Sushi.Menu.Views;
 using System.Threading;
 using Utils.Controllers;
 
 namespace Sushi.Menu.Controllers
 {
-    public class MenuViewController : Controller
+    public class MenuViewController : BaseMenuViewController
     {
         private readonly MenuViewProvider _menuViewProvider;
-        private readonly UniTaskCompletionSource _menuCompletionSource;
-        private readonly ILoadingScreenExternalEvents _loadingScreenExternalEvents;
 
+        private UniTaskCompletionSource _menuCompletionSource;
         private MenuView _view;
 
-        public MenuViewController(
-            MenuViewProvider menuViewProvider,
-            ILoadingScreenExternalEvents loadingScreenExternalEvents)
+        public MenuViewController(MenuViewProvider menuViewProvider)
         {
             _menuViewProvider = menuViewProvider;
-            _loadingScreenExternalEvents = loadingScreenExternalEvents;
-
-            _menuCompletionSource = new UniTaskCompletionSource();
         }
 
-        protected async override UniTask Run(CancellationToken token)
+        public override UniTask Initialzie(CancellationToken token)
         {
-            await SpawnMenu();
+            return SpawnMenu();
+        }
 
-            RequestLoadingScreenOff();
-
-            if (token.IsCancellationRequested)
-            {
-                return;
-            }
-
+        public override async UniTask<MenuResults> Launch(CancellationToken token)
+        {
             await HandleInput();
+
+            return MenuResults.Level;
+        }
+
+        private async UniTask HandleInput()
+        {
+            _menuCompletionSource = new UniTaskCompletionSource();
+
+            _view.OnButtonPressed += OnButtonPressedHappened;
+
+            await _menuCompletionSource.Task;
+
+            _view.OnButtonPressed -= OnButtonPressedHappened;
         }
 
         private async UniTask SpawnMenu()
@@ -44,30 +48,14 @@ namespace Sushi.Menu.Controllers
             _view = await _menuViewProvider.Load();
         }
 
-        private async UniTask HandleInput()
-        {
-            _view.OnButtonPressed += OnButtonPressedHappened;
-
-            await _menuCompletionSource.Task;
-
-            _view.OnButtonPressed -= OnButtonPressedHappened;
-
-            RequestLoadingScreen();
-        }
-
         private void OnButtonPressedHappened()
         {
             _menuCompletionSource.TrySetResult();
         }
+    }
 
-        private void RequestLoadingScreen()
-        {
-            _loadingScreenExternalEvents.Show(true);
-        }
-
-        private void RequestLoadingScreenOff()
-        {
-            _loadingScreenExternalEvents.Show(false);
-        }
+    public abstract class BaseMenuViewController : ResourcefulController
+    {
+        public abstract UniTask<MenuResults> Launch(CancellationToken token);
     }
 }

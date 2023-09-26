@@ -3,8 +3,8 @@
     "rootNamespace": "",
     "references": [
         "Sushi.App.Data",
-        "Sushi.App.Events",
         "Sushi.App.LoadingScreen.Events",
+        "Sushi.Menu.Data",
         "Sushi.SceneReference",
         "UniTask",
         "Utils.AddressablesLoader",

@@ -2,10 +2,16 @@ using System;
 
 public class LevelMenuEvents : ILevelMenuEvents, ILevelMenuExternalEvents
 {
-    public event Action ButtonClicked;
+    public event Action OnClick;
+    public event Action<bool> ToggleRequest;
 
-    public void HandleButtonClicked()
+    public void ReportButtonClick()
     {
-        ButtonClicked?.Invoke();
+        OnClick?.Invoke();
+    }
+
+    public void RequestButtonToggle(bool isOn)
+    {
+        ToggleRequest?.Invoke(isOn);
     }
 }

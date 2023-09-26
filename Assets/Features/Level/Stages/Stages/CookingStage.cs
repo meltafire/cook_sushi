@@ -21,14 +21,14 @@ public class CookingStage : IStage
     public async UniTask<LevelStages> Run(CancellationToken token)
     {
         _completionSource = new UniTaskCompletionSource();
-        _levelMenuEvents.ButtonClicked += OnMenuButtonClicked;
+        _levelMenuEvents.OnClick += OnMenuButtonClicked;
         _cookingStageEvents.BackButtonClicked += OnBackButtonClicked;
 
         _cookingStageEvents.RequestShow(true);
 
         await _completionSource.Task;
 
-        _levelMenuEvents.ButtonClicked -= OnMenuButtonClicked;
+        _levelMenuEvents.OnClick -= OnMenuButtonClicked;
         _cookingStageEvents.BackButtonClicked -= OnBackButtonClicked;
 
         return _result;

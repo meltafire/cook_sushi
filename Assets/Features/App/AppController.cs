@@ -1,6 +1,5 @@
 ﻿using Cysharp.Threading.Tasks;
 using Sushi.App.Data;
-using Sushi.App.Events;
 using Sushi.Level.Common.Controllers;
 using Sushi.Menu.Controllers;
 using System.Threading;
@@ -10,10 +9,11 @@ using Sushi.Level.Installer;
 using Sushi.Menu.Installer;
 using Reflex.Core;
 using Sushi.App.LoadingScreen;
+using Assets.Features.Menu.Scripts.Data;
 
 namespace Sushi.App
 {
-    public class AppController : Controller
+    public class AppController : ILaunchableController
     {
         private static readonly string MenuContainerName = "MenuContainer";
         private static readonly string LevelContainerName = "LevelContainer";
@@ -25,6 +25,7 @@ namespace Sushi.App
         private readonly IFactory<LoadingScreenController> _loadingScreenControllerFactory;
 
         private Container _childContainer;
+        private LoadingScreenController _loadingScreenController;
 
         public AppController(
             Container container,
@@ -40,10 +41,15 @@ namespace Sushi.App
             _loadingScreenControllerFactory = loadingScreenControllerFactory;
         }
 
-        protected async override UniTask Run(CancellationToken token)
+        public UniTask Initialzie(CancellationToken token)
         {
-            RunChildFromFactory(_loadingScreenControllerFactory, token).Forget();
+            var _loadingScreenController = _loadingScreenControllerFactory.Create();
 
+            return _loadingScreenController.Initialzie(token);
+        }
+
+        public async UniTask Launch(CancellationToken token)
+        {
             while (_data.ActionType != AppActionType.Quit)
             {
                 await RunNextFeature(token);
@@ -58,41 +64,69 @@ namespace Sushi.App
             }
         }
 
-        private UniTask RunNextFeature(CancellationToken token)
+        public void Dispose()
+        {
+            _loadingScreenController.Dispose();
+        }
+
+        private async UniTask RunNextFeature(CancellationToken token)
         {
             switch (_data.ActionType)
             {
                 case AppActionType.Menu:
-                    _childContainer = _container.Scope(MenuContainerName, descriptor =>  
-                        {
-                            _menuInstaller.InstallBindings(descriptor);
-                        });
+                    await RunMenu(token);
 
-                    return RunChildFromFactory(_childContainer.Resolve<IFactory<MenuEntryPointController>>(), token);
+                    return;
 
                 case AppActionType.Level:
+                    await RunLevel(token);
 
-                    _childContainer = _container.Scope(LevelContainerName, descriptor =>  
-                        {
-                            _levelInstaller.InstallBindings(descriptor);
-                        });
-
-                    return RunChildFromFactory(_childContainer.Resolve<IFactory<LevelEntryPointController>>(), token);
-
-                case AppActionType.Quit:
-
-                    return UniTask.CompletedTask;
+                    return;
 
                 default:
                     throw new ArgumentOutOfRangeException();
             }
         }
 
-        protected override void HandleBubbleEvent(ControllerEvent controllerEvent)
+        private async UniTask RunMenu(CancellationToken token)
         {
-            if (controllerEvent is RootAppEvent rootAppEvent)
+            _childContainer = _container.Scope(MenuContainerName, descriptor =>
+                {
+                    _menuInstaller.InstallBindings(descriptor);
+                });
+
+            var controller = _childContainer.Resolve<IFactory<MenuEntryPointController>>().Create();
+
+            await controller.Initialzie(token);
+            var result = await controller.Launch(token);
+            controller.Dispose();
+
+            HandleMenuResult(result);
+        }
+
+        private async UniTask RunLevel(CancellationToken token)
+        {
+            _childContainer = _container.Scope(LevelContainerName, descriptor =>
+                {
+                    _levelInstaller.InstallBindings(descriptor);
+                });
+
+            var controller = _childContainer.Resolve<IFactory<LevelEntryPointController>>().Create();
+
+            await controller.Initialzie(token);
+            await controller.Launch(token);
+            controller.Dispose();
+        }
+
+        private void HandleMenuResult(MenuResults result)
+        {
+            if (result == MenuResults.Level)
             {
-                _data.ActionType = rootAppEvent.AppActionType;
+                _data.ActionType = AppActionType.Level;
+            }
+            else
+            {
+                _data.ActionType = AppActionType.Quit;
             }
         }
     }

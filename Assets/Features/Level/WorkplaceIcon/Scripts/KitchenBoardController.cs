@@ -4,52 +4,46 @@ using Utils.Controllers;
 
 namespace Sushi.Level.WorkplaceIcon
 {
-    public class KitchenBoardController : Controller
+    public class KitchenBoardController : BaseKitchenBoardController
     {
         private readonly KitchenBoardProvider _kitchenBoardProvider;
-        private readonly ILoadingStageControllerEvents _loadingStageControllerEvents;
-        private readonly IIdleStageControllerEvents _idleStageControllerEvents;
         private readonly IKitchenBoardIconEvents _kitchenBoardIconEvents;
 
         private KitchenBoardView _view;
-        private UniTaskCompletionSource _completionSource;
 
         public KitchenBoardController(
             KitchenBoardProvider kitchenBoardProvider,
-            ILoadingStageControllerEvents loadingStageControllerEvents,
-            IIdleStageControllerEvents idleStageControllerEvents,
             IKitchenBoardIconEvents kitchenBoardIconEvents)
         {
             _kitchenBoardProvider = kitchenBoardProvider;
-            _loadingStageControllerEvents = loadingStageControllerEvents;
-            _idleStageControllerEvents = idleStageControllerEvents;
             _kitchenBoardIconEvents = kitchenBoardIconEvents;
         }
 
-        protected override async UniTask Run(CancellationToken token)
+        public override async UniTask Initialzie(CancellationToken token)
         {
-            _completionSource = new UniTaskCompletionSource();
-            _loadingStageControllerEvents.LoadRequest += OnLoadRequested;
-            _idleStageControllerEvents.LaunchGameplayRequest += OnLaunchGameplayRequest;
+            await LoadConveyorPrefab();
 
-            token.Register(OnCancellationRequested);
+            _kitchenBoardIconEvents.ToggleRequest += OnToggleRequested;
+        }
 
-            await _completionSource.Task;
-
-            _loadingStageControllerEvents.LoadRequest -= OnLoadRequested;
-            _idleStageControllerEvents.LaunchGameplayRequest -= OnLaunchGameplayRequest;
+        public override void Dispose()
+        {
+            _kitchenBoardIconEvents.ToggleRequest -= OnToggleRequested;
             _view.OnClick -= OnClickHappened;
+
+            base.Dispose();
         }
 
-        private void OnLoadRequested()
+        private void OnToggleRequested(bool isOn)
         {
-            _loadingStageControllerEvents.ReportStartedLoading();
-            LoadConveyorPrefab().Forget();
-        }
-
-        private void OnCancellationRequested()
-        {
-            _completionSource.TrySetResult();
+            if (isOn)
+            {
+                _view.OnClick += OnClickHappened;
+            }
+            else
+            {
+                _view.OnClick -= OnClickHappened;
+            }
         }
 
         private async UniTask LoadConveyorPrefab()
@@ -57,18 +51,16 @@ namespace Sushi.Level.WorkplaceIcon
             AttachResource(_kitchenBoardProvider);
 
             _view = await _kitchenBoardProvider.Load();
-
-           _loadingStageControllerEvents.ReportLoaded();
-        }
-
-        private void OnLaunchGameplayRequest()
-        {
-            _view.OnClick += OnClickHappened;
         }
 
         private void OnClickHappened()
         {
             _kitchenBoardIconEvents.ReportButtonClick();
         }
+    }
+
+    public abstract class BaseKitchenBoardController : ResourcefulController
+    {
+
     }
 }

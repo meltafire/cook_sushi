@@ -1,6 +1,6 @@
 using System;
 
-public interface IKitchenBoardIconEvents
+public interface ILevelMenuEvents
 {
     public event Action<bool> ToggleRequest;
     public void ReportButtonClick();

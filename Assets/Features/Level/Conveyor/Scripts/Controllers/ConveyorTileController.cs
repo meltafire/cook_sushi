@@ -1,21 +1,18 @@
 ﻿using Cysharp.Threading.Tasks;
 using Sushi.Level.Conveyor.Data;
 using Sushi.Level.Conveyor.Views;
-using System;
 using System.Threading;
 using UnityEngine;
 using Utils.Controllers;
 
 namespace Sushi.Level.Conveyor.Controllers
 {
-    public class ConveyorTileController : Controller
+    public class ConveyorTileController : ResourcefulController
     {
         private readonly IConveyorPointProvider _conveyorPointProvider;
         private readonly ConveyorTileView _view;
         private readonly ConveyorTileData _data;
         private readonly IIdleStageControllerEvents _idleStageControllerEvents;
-
-        private UniTaskCompletionSource _completionSource;
 
         public ConveyorTileController(
             IConveyorPointProvider conveyorPointProvider,
@@ -30,17 +27,19 @@ namespace Sushi.Level.Conveyor.Controllers
             _idleStageControllerEvents = idleStageControllerEvents;
         }
 
-        protected override async UniTask Run(CancellationToken token)
+        public override UniTask Initialzie(CancellationToken token)
         {
             _idleStageControllerEvents.LaunchGameplayRequest += OnLaunchGameplayRequest;
 
-            _completionSource = new UniTaskCompletionSource();
-            token.Register(OnCancellationRequested);
+            return UniTask.CompletedTask;
+        }
 
-            await _completionSource.Task;
-
+        public override void Dispose()
+        {
             _view.OnUpdate -= OnUpdateHappened;
             _idleStageControllerEvents.LaunchGameplayRequest -= OnLaunchGameplayRequest;
+
+            base.Dispose();
         }
 
         private void OnUpdateHappened()
@@ -65,11 +64,6 @@ namespace Sushi.Level.Conveyor.Controllers
             }
 
             _view.SetPosition(newPosition);
-        }
-
-        private void OnCancellationRequested()
-        {
-            _completionSource.TrySetResult();
         }
 
          private void OnLaunchGameplayRequest()

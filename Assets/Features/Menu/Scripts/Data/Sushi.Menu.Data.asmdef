@@ -1,9 +1,7 @@
 {
-    "name": "Sushi.App.Events",
+    "name": "Sushi.Menu.Data",
     "rootNamespace": "",
     "references": [
-        "Sushi.App.Data",
-        "Utils.Controllers"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

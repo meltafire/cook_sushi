@@ -1,6 +1,4 @@
 ﻿using Cysharp.Threading.Tasks;
-using Sushi.App.Data;
-using Sushi.App.Events;
 using Sushi.Level.Conveyor.Controllers;
 using Sushi.Level.Cooking;
 using Sushi.Level.Menu;
@@ -11,7 +9,7 @@ using Utils.Controllers;
 
 namespace Sushi.Level.Common.Controllers
 {
-    public class LevelEntryPointController : Controller
+    public class LevelEntryPointController : ILaunchableController
     {
         private readonly ILoadingScreenExternalEvents _loadingScreenExternalEvents;
         private readonly Dictionary<LevelStages, IStage> _stages;
@@ -21,6 +19,11 @@ namespace Sushi.Level.Common.Controllers
         private readonly IFactory<ConveyorController> _conveyorControllerFactory;
         private readonly IFactory<LevelMenuController> _levelMenuControllerFactory;
         private readonly IFactory<CookingController> _cookingControllerFactory;
+
+        private KitchenBoardController _kitchenBoardController;
+        private ConveyorController _conveyorController;
+        private LevelMenuController _levelMenuController;
+        private CookingController _cookingController;
 
         public LevelEntryPointController(
             ILoadingScreenExternalEvents loadingScreenExternalEvents,
@@ -49,25 +52,34 @@ namespace Sushi.Level.Common.Controllers
             _cookingControllerFactory = cookingControllerFactory;
         }
 
-        protected async override UniTask Run(CancellationToken token)
+        public async UniTask Initialzie(CancellationToken token)
         {
-            using (var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(token))
-            {
-                var linkedToken = linkedCts.Token;
+            _kitchenBoardController = _kitchenBoardControllerFactory.Create();
+            await _kitchenBoardController.Initialzie(token);
 
-                RunChildFromFactory(_conveyorControllerFactory, linkedToken).Forget();
-                RunChildFromFactory(_kitchenBoardControllerFactory, linkedToken).Forget();
-                RunChildFromFactory(_cookingControllerFactory, linkedToken).Forget();
-                RunChildFromFactory(_levelMenuControllerFactory, linkedToken).Forget();
+            _conveyorController = _conveyorControllerFactory.Create();
+            await _conveyorController.Initialzie(token);
 
-                await RunStages(linkedToken);
+            _levelMenuController = _levelMenuControllerFactory.Create();
+            await _levelMenuController.Initialzie(token);
 
-                linkedCts.Cancel();
-            }
+            _cookingController = _cookingControllerFactory.Create();
+            await _cookingController.Initialzie(token);
+        }
+
+        public void Dispose()
+        {
+            _kitchenBoardController.Dispose();
+            _conveyorController.Dispose();
+            _levelMenuController.Dispose();
+            _cookingController.Dispose();
+        }
+
+        public async UniTask Launch(CancellationToken token)
+        {
+            await RunStages(token);
 
             RequestLoadingScreen();
-
-            InvokeBubbleEvent(new RootAppEvent(AppActionType.Menu));
         }
 
         private async UniTask RunStages(CancellationToken token)

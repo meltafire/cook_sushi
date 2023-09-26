@@ -10,6 +10,7 @@
         "Sushi.Level.Common",
         "Sushi.Level.Installer",
         "Sushi.Menu",
+        "Sushi.Menu.Data",
         "Sushi.Menu.Installer",
         "UniTask",
         "Utils.Controllers",

@@ -9,56 +9,50 @@ using Utils.Controllers;
 
 namespace Sushi.Level.Conveyor.Controllers
 {
-    public class ConveyorController : Controller
+    public class ConveyorController : ResourcefulController
     {
         private readonly ConveyorProvider _conveyorProvider;
         private readonly ITileGameObjectData _tileGameObjectData;
         private readonly IFactoryWithData<ConveyorTileController, ConveyorTileControllerFactoryData> _tileTileControllerFactory;
         private readonly ConveyorPositionService _conveyorPositionService;
-        private readonly ILoadingStageControllerEvents _loadingStageControllerEvents;
 
         private ConveyorView _view;
-        private CancellationToken _token;
-        private UniTaskCompletionSource _completionSource;
+        private ConveyorTileController[] _conveyorTiles;
 
         public ConveyorController(
             ConveyorProvider conveyorProvider,
             ITileGameObjectData tileGameObjectData,
             IFactoryWithData<ConveyorTileController, ConveyorTileControllerFactoryData> tileTileControllerFactory,
-            ConveyorPositionService conveyorPositionService,
-            ILoadingStageControllerEvents loadingStageControllerEvents)
+            ConveyorPositionService conveyorPositionService)
         {
             _conveyorProvider = conveyorProvider;
             _tileGameObjectData = tileGameObjectData;
             _tileTileControllerFactory = tileTileControllerFactory;
             _conveyorPositionService = conveyorPositionService;
-            _loadingStageControllerEvents = loadingStageControllerEvents;
         }
 
-        protected override async UniTask Run(CancellationToken token)
+        public override UniTask Initialzie(CancellationToken token)
         {
-            _completionSource = new UniTaskCompletionSource();
-            _token = token;
-
-            _loadingStageControllerEvents.LoadRequest += OnLoadRequested;
-
-            await _completionSource.Task;
+            return Load(token);
         }
 
-        private void OnLoadRequested()
+        public override void Dispose()
         {
-            Load().Forget();
+            foreach(var tile in _conveyorTiles)
+            {
+                tile.Dispose();
+            }
+
+            base.Dispose();
         }
 
-        private async UniTask Load()
+        private async UniTask Load(CancellationToken token)
         {
-            _loadingStageControllerEvents.ReportStartedLoading();
-
             await UniTask.WhenAll(PreloadTilePrefab(), LoadConveyorPrefab());
 
             _conveyorPositionService.SetupConveyorData(_view.TopStart.position, _view.BottomStart.position, _view.TileCountTotal, _view.TopTileSize);
 
-            await SpawnConveyor(_token);
+            await SpawnConveyor(token);
         }
 
         private async UniTask PreloadTilePrefab()
@@ -83,30 +77,22 @@ namespace Sushi.Level.Conveyor.Controllers
             _tileGameObjectData.TilesParentTransform = _view.TilesTransform;
         }
 
-        private async UniTask SpawnConveyor(CancellationToken token)
+        private UniTask SpawnConveyor(CancellationToken token)
         {
             var count = _view.TileCountTotal;
-            var tileTasks = new UniTask[count];
+            _conveyorTiles = new ConveyorTileController[count];
+            var initiAlizationTasks = new UniTask[count];
 
             for (var i = 0; i < count; i++)
             {
-                tileTasks[i] = RunChildFromFactory(
-                    _tileTileControllerFactory,
-                    new ConveyorTileControllerFactoryData(i),
-                    token);
+                var conveyorTile = _conveyorTiles[i];
+
+                conveyorTile = _tileTileControllerFactory.Create(new ConveyorTileControllerFactoryData(i));
+
+                initiAlizationTasks[i] = conveyorTile.Initialzie(token);
             }
 
-            _loadingStageControllerEvents.LoadRequest -= OnLoadRequested;
-            _loadingStageControllerEvents.ReportLoaded();
-
-            await UniTask.WhenAll(tileTasks);
-
-            HandleTilesDone();
-        }
-
-        private void HandleTilesDone()
-        {
-            _completionSource.TrySetResult();
+            return UniTask.WhenAll(initiAlizationTasks);
         }
     }
 }

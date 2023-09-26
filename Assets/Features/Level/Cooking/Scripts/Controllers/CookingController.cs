@@ -4,44 +4,40 @@ using Utils.Controllers;
 
 namespace Sushi.Level.Cooking
 {
-    public class CookingController : Controller
+    public class CookingController : ResourcefulController
     {
         private readonly CookingViewProvider _cookingViewProvider;
         private readonly CookingUiProvider _cookingUiProvider;
-        private readonly ILoadingStageControllerEvents _loadingStageControllerEvents;
         private readonly ICookingStageExternalEvents _cookingStageExternalEvents;
         private readonly CookingControllerData _data;
 
         private CookingView _view;
         private CookingUiView _uiView;
-        private UniTaskCompletionSource _completionSource;
 
         public CookingController(
             CookingViewProvider cookingViewProvider,
             CookingUiProvider cookingUiProvider,
-            ILoadingStageControllerEvents loadingStageControllerEvents,
             ICookingStageExternalEvents cookingStageExternalEvents)
         {
             _cookingViewProvider = cookingViewProvider;
             _cookingUiProvider = cookingUiProvider;
-            _loadingStageControllerEvents = loadingStageControllerEvents;
             _cookingStageExternalEvents = cookingStageExternalEvents;
 
             _data = new CookingControllerData();
         }
 
-        protected override async UniTask Run(CancellationToken token)
+        public override async UniTask Initialzie(CancellationToken token)
         {
-            _loadingStageControllerEvents.LoadRequest += OnLoadRequested;
+            await LoadPrefabs();
+
             _cookingStageExternalEvents.ShowRequest += OnShowWindowRequest;
+        }
 
-            _completionSource = new UniTaskCompletionSource();
-            token.Register(OnCancellationRequested);
-
-            await _completionSource.Task;
-
-            _loadingStageControllerEvents.LoadRequest -= OnLoadRequested;
+        public override void Dispose()
+        {
             _cookingStageExternalEvents.ShowRequest -= OnShowWindowRequest;
+
+            base.Dispose();
         }
 
         private async UniTask LoadPrefab()
@@ -58,25 +54,11 @@ namespace Sushi.Level.Cooking
             _uiView = await _cookingUiProvider.Instantiate();
         }
 
-        private void OnCancellationRequested()
-        {
-            _completionSource.TrySetResult();
-        }
-
-        private void OnLoadRequested()
-        {
-            _loadingStageControllerEvents.ReportStartedLoading();
-
-            LoadPrefabs().Forget();
-        }
-
         private async UniTask LoadPrefabs()
         {
             await UniTask.WhenAll(LoadPrefab(), LoadUiPrefab());
 
             ShowWindow(false);
-
-            _loadingStageControllerEvents.ReportLoaded();
         }
 
         private void OnShowWindowRequest(bool shouldShow)

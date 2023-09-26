@@ -5,32 +5,18 @@ using UnityEngine;
 using UnityEngine.U2D;
 using Utils.Controllers;
 
-public class CookingIngredientController : Controller
+public class CookingIngredientController : ResourcefulController
 {
     private readonly CookingIngredientViewProvider _viewProvider;
-    private readonly ILoadingStageControllerEvents _loadingStageControllerEvents;
     private readonly CookingIngridientType _cookingIngridientType;
     private readonly SpriteAtlas _ingridientsAtlas;
     private readonly Transform _parentTransform;
 
     private CookingIngredientView _view;
-    private UniTaskCompletionSource _completionSource;
 
-    protected override async UniTask Run(CancellationToken token)
+    public override UniTask Initialzie(CancellationToken token)
     {
-        _completionSource = new UniTaskCompletionSource();
-
-        _loadingStageControllerEvents.LoadRequest += OnLoadRequested;
-
-        await _completionSource.Task;
-    }
-
-    private void OnLoadRequested()
-    {
-        _loadingStageControllerEvents.LoadRequest -= OnLoadRequested;
-        _loadingStageControllerEvents.ReportStartedLoading();
-
-        LoadPrefab().Forget();
+        return LoadPrefab();
     }
 
     private async UniTask LoadPrefab()

@@ -2,47 +2,20 @@ using Cysharp.Threading.Tasks;
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using UnityEngine;
 using Utils.AddressablesLoader;
+using static Utils.Controllers.ResourcefulController;
 
 namespace Utils.Controllers
 {
-    public abstract class Controller
+    public abstract class ResourcefulController : IController
     {
         private readonly Queue<IAssetUnloader> _resourseQueue = new Queue<IAssetUnloader>();
 
-        private Action<ControllerEvent> BubbleEvent;
-        private Action<ControllerEvent> DivingEvent;
+        public abstract UniTask Initialzie(CancellationToken token);
 
-        public UniTask RunChild(CancellationToken token)
+        public virtual void Dispose()
         {
-            return RunInternalLogic(token);
-        }
-
-        public UniTask RunChildFromFactory<T>(IFactory<T> controllerFactory, CancellationToken token) where T : Controller
-        {
-            var controllerToRun = controllerFactory.Create();
-
-            return RunChildInternal(controllerToRun, token);
-        }
-
-        public UniTask RunChildFromFactory<T, U>(IFactoryWithData<T, U> controllerFactory, U data, CancellationToken token)
-            where T : Controller
-            where U : FactoryData
-        {
-            var controllerToRun = controllerFactory.Create(data);
-
-            return RunChildInternal(controllerToRun, token);
-        }
-
-        protected void InvokeBubbleEvent(ControllerEvent controllerEvent)
-        {
-            BubbleEvent?.Invoke(controllerEvent);
-        }
-
-        protected void InvokeDivingEvent(ControllerEvent controllerEvent)
-        {
-            DivingEvent?.Invoke(controllerEvent);
+            DisposeResources();
         }
 
         protected void AttachResource(IAssetUnloader unloader)
@@ -50,60 +23,7 @@ namespace Utils.Controllers
             _resourseQueue.Enqueue(unloader);
         }
 
-        protected abstract UniTask Run(CancellationToken token);
-
-        protected virtual void HandleBubbleEvent(ControllerEvent controllerEvent)
-        {
-        }
-
-        protected virtual void HandleDivingEvent(ControllerEvent controllerEvent)
-        {
-        }
-
-        private async UniTask RunChildInternal(Controller controllerToRun, CancellationToken token)
-        {
-            controllerToRun.BubbleEvent += OnBubbleEventHappen;
-
-            await controllerToRun.RunInternal(this, token);
-
-            controllerToRun.BubbleEvent -= OnBubbleEventHappen;
-        }
-
-        private async UniTask RunInternal(Controller parentController, CancellationToken token)
-        {
-            if(parentController != null)
-            {
-                parentController.DivingEvent += OnDivingEventHappen;
-            }
-
-            await RunInternalLogic(token);
-
-            if(parentController != null)
-            {
-                parentController.DivingEvent -= OnDivingEventHappen;
-            }
-        }
-
-        private async UniTask RunInternalLogic(CancellationToken token)
-        {
-            await Run(token);
-
-            RemoveResources();
-        }
-
-        private void OnBubbleEventHappen(ControllerEvent controllerEvent)
-        {
-            HandleBubbleEvent(controllerEvent);
-            BubbleEvent?.Invoke(controllerEvent);
-        }
-
-        private void OnDivingEventHappen(ControllerEvent controllerEvent)
-        {
-            HandleDivingEvent(controllerEvent);
-            DivingEvent?.Invoke(controllerEvent);
-        }
-
-        private void RemoveResources()
+        private void DisposeResources()
         {
             while(_resourseQueue.Count > 0)
             {
@@ -111,5 +31,16 @@ namespace Utils.Controllers
                 resource.Unload();
             }
         }
+    }
+
+    public interface ILaunchableController : IController
+    {
+        public UniTask Launch(CancellationToken token);
+    }
+
+    public interface IController
+    {
+        public UniTask Initialzie(CancellationToken token);
+        public void Dispose();
     }
 }

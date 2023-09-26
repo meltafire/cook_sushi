@@ -2,7 +2,7 @@
 
 namespace Utils.Controllers.ReflexIntegration
 {
-    public class Factory<T> : IFactory<T> where T : Controller
+    public class Factory<T> : IFactory<T> where T : IController
     {
         private readonly Container _container;
 

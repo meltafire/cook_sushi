@@ -4,7 +4,7 @@ using Utils.Controllers;
 
 namespace Sushi.App.LoadingScreen
 {
-    public class LoadingScreenController : Controller
+    public class LoadingScreenController : ResourcefulController
     {
         private const int InittialRequestCount = 0;
 
@@ -13,7 +13,6 @@ namespace Sushi.App.LoadingScreen
         private readonly ILoadingScreenEvents _events;
 
         private LoadingScreenView _view;
-        private UniTaskCompletionSource _completionSource;
 
         private int _loadingScreenRequestsCount;
 
@@ -26,17 +25,20 @@ namespace Sushi.App.LoadingScreen
             _loadingScreenRequestsCount = InittialRequestCount;
         }
 
-        protected override async UniTask Run(CancellationToken token)
+        public override async UniTask Initialzie(CancellationToken token)
         {
-            _completionSource = new UniTaskCompletionSource();
+            _events.ShowRequested += OnShowRequested;
 
             await LoadPrefab();
 
-            _events.ShowRequested += OnShowRequested;
+            Toggle();
+        }
 
-            await _completionSource.Task;
-
+        public override void Dispose()
+        {
             _events.ShowRequested -= OnShowRequested;
+
+            base.Dispose();
         }
 
         private async UniTask LoadPrefab()

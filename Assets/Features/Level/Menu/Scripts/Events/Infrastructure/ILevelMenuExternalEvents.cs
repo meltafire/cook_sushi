@@ -1,6 +1,6 @@
 using System;
 
-public interface IKitchenBoardIconExternalEvents
+public interface ILevelMenuExternalEvents
 {
     public event Action OnClick;
 

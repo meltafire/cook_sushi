@@ -26,12 +26,16 @@ public class IdleStage : IStage
 
         _idleStageEvents.LaunchGameplay();
 
-        _levelMenuEvents.ButtonClicked += OnMenuButtonClicked;
+        ToggleButtons(true);
+
+        _levelMenuEvents.OnClick += OnMenuButtonClicked;
         _kitchenBoardIconExternalEvents.OnClick += OnCookingButtonClicked;
 
         await _completionSource.Task;
 
-        _levelMenuEvents.ButtonClicked -= OnMenuButtonClicked;
+        ToggleButtons(false);
+
+        _levelMenuEvents.OnClick -= OnMenuButtonClicked;
         _kitchenBoardIconExternalEvents.OnClick -= OnCookingButtonClicked;
 
         return _result;
@@ -48,6 +52,14 @@ public class IdleStage : IStage
     {
         _result = LevelStages.Cooking;
 
+        _kitchenBoardIconExternalEvents.RequestButtonToggle(false);
+
         _completionSource.TrySetResult();
+    }
+
+    private void ToggleButtons(bool isOn)
+    {
+        _kitchenBoardIconExternalEvents.RequestButtonToggle(isOn);
+        _levelMenuEvents.RequestButtonToggle(isOn);
     }
 }

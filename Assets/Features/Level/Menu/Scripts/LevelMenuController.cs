@@ -1,45 +1,48 @@
 using Cysharp.Threading.Tasks;
+using System;
 using System.Threading;
 using Utils.Controllers;
 
 namespace Sushi.Level.Menu
 {
-    public class LevelMenuController : Controller
+    public class LevelMenuController : ResourcefulController
     {
         private readonly LevelMenuProvider _levelMenuProvider;
-        private readonly ILoadingStageControllerEvents _loadingStageControllerEvents;
         private readonly ILevelMenuEvents _levelMenuEvents;
 
         private LevelMenuView _view;
-        private UniTaskCompletionSource _completionSource;
 
-        public LevelMenuController(LevelMenuProvider levelMenuProvider, ILoadingStageControllerEvents loadingStageControllerEvents, ILevelMenuEvents levelMenuEvents)
+        public LevelMenuController(LevelMenuProvider levelMenuProvider, ILevelMenuEvents levelMenuEvents)
         {
             _levelMenuProvider = levelMenuProvider;
-            _loadingStageControllerEvents = loadingStageControllerEvents;
             _levelMenuEvents = levelMenuEvents;
         }
 
-        protected override async UniTask Run(CancellationToken token)
+        public override async UniTask Initialzie(CancellationToken token)
         {
-            _completionSource = new UniTaskCompletionSource();
+            _levelMenuEvents.ToggleRequest += OnToggleRequested;
 
-            _loadingStageControllerEvents.LoadRequest += OnLoadRequested;
-
-            token.Register(OnCanceltaionRequested);
-
-            await _completionSource.Task;
-
-            UnsubscribeFromView();
-
-            _loadingStageControllerEvents.LoadRequest -= OnLoadRequested;
+            await LoadLevelMenuPrefab();
         }
 
-        private void OnLoadRequested()
+        private void OnToggleRequested(bool isOn)
         {
-            _loadingStageControllerEvents.ReportStartedLoading();
+            if (isOn)
+            {
+                _view.OnButtonClick += OnButtonClickHappened;
+            }
+            else
+            {
+                _view.OnButtonClick -= OnButtonClickHappened;
+            }
+        }
 
-            LoadLevelMenuPrefab().Forget();
+        public override void Dispose()
+        {
+            _levelMenuEvents.ToggleRequest -= OnToggleRequested;
+            _view.OnButtonClick -= OnButtonClickHappened;
+
+            base.Dispose();
         }
 
         private async UniTask LoadLevelMenuPrefab()
@@ -47,32 +50,11 @@ namespace Sushi.Level.Menu
             AttachResource(_levelMenuProvider);
 
             _view = await _levelMenuProvider.Load();
-
-            _loadingStageControllerEvents.ReportLoaded();
-
-            SubscribeToView();
-        }
-
-        private void SubscribeToView()
-        {
-            _view.OnButtonClick += OnButtonClickHappened;
-        }
-
-        private void UnsubscribeFromView()
-        {
-            _view.OnButtonClick -= OnButtonClickHappened;
         }
 
         private void OnButtonClickHappened()
         {
-            _levelMenuEvents.HandleButtonClicked();
-
-            _completionSource.TrySetResult();
-        }
-
-        private void OnCanceltaionRequested()
-        {
-            _completionSource.TrySetResult();
+            _levelMenuEvents.ReportButtonClick();
         }
     }
 }
