@@ -23,6 +23,7 @@ namespace Sushi.App
         private readonly LevelInstaller _levelInstaller;
         private readonly AppControllerData _data;
         private readonly IFactory<LoadingScreenController> _loadingScreenControllerFactory;
+        private readonly ILoadingScreenExternalEvents _loadingScreenExternalEvents;
 
         private Container _childContainer;
         private LoadingScreenController _loadingScreenController;
@@ -32,13 +33,15 @@ namespace Sushi.App
             MenuInstaller menuInstaller,
             LevelInstaller levelInstaller,
             AppControllerData data,
-            IFactory<LoadingScreenController> loadingScreenControllerFactory)
+            IFactory<LoadingScreenController> loadingScreenControllerFactory,
+            ILoadingScreenExternalEvents loadingScreenExternalEvents)
         {
             _container = container;
             _menuInstaller = menuInstaller;
             _levelInstaller = levelInstaller;
             _data = data;
             _loadingScreenControllerFactory = loadingScreenControllerFactory;
+            _loadingScreenExternalEvents = loadingScreenExternalEvents;
         }
 
         public UniTask Initialzie(CancellationToken token)
@@ -97,8 +100,14 @@ namespace Sushi.App
 
             var controller = _childContainer.Resolve<IFactory<MenuEntryPointController>>().Create();
 
+            _loadingScreenExternalEvents.Show(true);
             await controller.Initialzie(token);
+            _loadingScreenExternalEvents.Show(false);
+
+
             var result = await controller.Launch(token);
+
+            _loadingScreenExternalEvents.Show(true);
             controller.Dispose();
 
             HandleMenuResult(result);
@@ -113,9 +122,16 @@ namespace Sushi.App
 
             var controller = _childContainer.Resolve<IFactory<LevelEntryPointController>>().Create();
 
+            _loadingScreenExternalEvents.Show(true);
             await controller.Initialzie(token);
+            _loadingScreenExternalEvents.Show(false);
+
             await controller.Launch(token);
+
+            _loadingScreenExternalEvents.Show(true);
             controller.Dispose();
+
+            _data.ActionType = AppActionType.Menu;
         }
 
         private void HandleMenuResult(MenuResults result)

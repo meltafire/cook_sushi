@@ -11,7 +11,6 @@ namespace Sushi.Level.Common.Controllers
 {
     public class LevelEntryPointController : ILaunchableController
     {
-        private readonly ILoadingScreenExternalEvents _loadingScreenExternalEvents;
         private readonly Dictionary<LevelStages, IStage> _stages;
 
 
@@ -26,7 +25,6 @@ namespace Sushi.Level.Common.Controllers
         private CookingController _cookingController;
 
         public LevelEntryPointController(
-            ILoadingScreenExternalEvents loadingScreenExternalEvents,
             LoadingStage loadingStage,
             IdleStage idleStage,
             CookingStage сookingStage,
@@ -37,8 +35,6 @@ namespace Sushi.Level.Common.Controllers
             IFactory<LevelMenuController> levelMenuControllerFactory,
             IFactory<CookingController> cookingControllerFactory)
         {
-            _loadingScreenExternalEvents = loadingScreenExternalEvents;
-
             _stages = new Dictionary<LevelStages, IStage>()
             {
                 {LevelStages.Loading, loadingStage},
@@ -78,23 +74,16 @@ namespace Sushi.Level.Common.Controllers
         public async UniTask Launch(CancellationToken token)
         {
             await RunStages(token);
-
-            RequestLoadingScreen();
         }
 
         private async UniTask RunStages(CancellationToken token)
         {
-            var stageType = LevelStages.Loading;
+            var stageType = LevelStages.Idle;
 
             while (stageType != LevelStages.Quit)
             {
                 stageType = await _stages[stageType].Run(token);
             }
-        }
-
-        private void RequestLoadingScreen()
-        {
-            _loadingScreenExternalEvents.Show(true);
         }
     }
 }

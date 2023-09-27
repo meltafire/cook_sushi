@@ -85,11 +85,11 @@ namespace Sushi.Level.Conveyor.Controllers
 
             for (var i = 0; i < count; i++)
             {
-                var conveyorTile = _conveyorTiles[i];
+                var tile = _tileTileControllerFactory.Create(new ConveyorTileControllerFactoryData(i));
 
-                conveyorTile = _tileTileControllerFactory.Create(new ConveyorTileControllerFactoryData(i));
+                _conveyorTiles[i] = tile;
 
-                initiAlizationTasks[i] = conveyorTile.Initialzie(token);
+                initiAlizationTasks[i] = tile.Initialzie(token);
             }
 
             return UniTask.WhenAll(initiAlizationTasks);
