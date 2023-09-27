@@ -1,4 +1,5 @@
-﻿using Cysharp.Threading.Tasks;
+﻿using Assets.Features.Level.Conveyor.Scripts.Events;
+using Cysharp.Threading.Tasks;
 using Sushi.Level.Conveyor.Data;
 using Sushi.Level.Conveyor.Views;
 using System.Threading;
@@ -12,24 +13,24 @@ namespace Sushi.Level.Conveyor.Controllers
         private readonly IConveyorPointProvider _conveyorPointProvider;
         private readonly ConveyorTileView _view;
         private readonly ConveyorTileData _data;
-        private readonly IIdleStageControllerEvents _idleStageControllerEvents;
+        private readonly IConveyorTileEvents _events;
 
         public ConveyorTileController(
             IConveyorPointProvider conveyorPointProvider,
             ConveyorTileView view,
             ConveyorTileData data,
-            IIdleStageControllerEvents idleStageControllerEvents
+            IConveyorTileEvents events
             )
         {
             _conveyorPointProvider = conveyorPointProvider;
             _view = view;
             _data = data;
-            _idleStageControllerEvents = idleStageControllerEvents;
+            _events = events;
         }
 
         public override UniTask Initialzie(CancellationToken token)
         {
-            _idleStageControllerEvents.LaunchGameplayRequest += OnLaunchGameplayRequest;
+            _events.ToggleMovementRequest += OnToggleMovementRequest;
 
             return UniTask.CompletedTask;
         }
@@ -37,7 +38,7 @@ namespace Sushi.Level.Conveyor.Controllers
         public override void Dispose()
         {
             _view.OnUpdate -= OnUpdateHappened;
-            _idleStageControllerEvents.LaunchGameplayRequest -= OnLaunchGameplayRequest;
+            _events.ToggleMovementRequest -= OnToggleMovementRequest;
 
             base.Dispose();
         }
@@ -66,9 +67,16 @@ namespace Sushi.Level.Conveyor.Controllers
             _view.SetPosition(newPosition);
         }
 
-         private void OnLaunchGameplayRequest()
+         private void OnToggleMovementRequest(bool isOn)
         {
-            _view.OnUpdate += OnUpdateHappened;
+            if(isOn)
+            {
+                _view.OnUpdate += OnUpdateHappened;
+            }
+            else
+            {
+                _view.OnUpdate -= OnUpdateHappened;
+            }
         }
     }
 }

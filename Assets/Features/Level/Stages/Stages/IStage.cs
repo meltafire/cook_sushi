@@ -3,5 +3,5 @@ using System.Threading;
 
 public interface IStage
 {
-    public UniTask<LevelStages> Run(CancellationToken token);
+    public UniTask Run(CancellationToken token);
 }

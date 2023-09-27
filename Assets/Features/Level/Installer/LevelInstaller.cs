@@ -11,6 +11,9 @@ using Sushi.Level.Menu;
 using Sushi.Level.WorkplaceIcon;
 using Utils.Controllers;
 using Utils.Controllers.ReflexIntegration;
+using Assets.Features.Level.Stages.Tools;
+using Assets.Features.Level.Conveyor.Scripts.Events;
+using Assets.Features.Level.Cooking.Scripts.Events;
 
 namespace Sushi.Level.Installer
 {
@@ -46,6 +49,10 @@ namespace Sushi.Level.Installer
 
             descriptor.AddTransient(typeof(ConveyorTilePositionService));
             descriptor.AddTransient(typeof(ConveyorPositionService));
+
+            descriptor.AddSingleton(typeof(ConveyorTileEvents),
+                typeof(IConveyorTileExternalEvents),
+                typeof(IConveyorTileEvents));
         }
 
         private void InstallMenu(ContainerDescriptor descriptor)
@@ -72,31 +79,18 @@ namespace Sushi.Level.Installer
             descriptor.AddTransient(typeof(CookingUiProvider));
 
             descriptor.RegisterController<CookingController>();
+
+            descriptor.AddSingleton(typeof(CookingControllerEvents), typeof(ICookingControllerEvents), typeof(ICookingControllerExternalEvents));
         }
 
         private void InstallStages(ContainerDescriptor descriptor)
         {
-            InstallLoadingStage(descriptor);
-            InstallIdleStage(descriptor);
-            InstallCookingStage(descriptor);
-        }
-
-        private void InstallLoadingStage(ContainerDescriptor descriptor)
-        {
-            descriptor.AddTransient(typeof(LoadingStage));
-            descriptor.AddSingleton(typeof(LoadingStageEvents), typeof(ILoadingStageEvents), typeof(ILoadingStageControllerEvents));
-        }
-
-        private void InstallIdleStage(ContainerDescriptor descriptor)
-        {
+            descriptor.AddTransient(typeof(LevelStagesFacade));
             descriptor.AddTransient(typeof(IdleStage));
-            descriptor.AddSingleton(typeof(IdleStageEvents), typeof(IIdleStageEvents), typeof(IIdleStageControllerEvents));
-        }
-
-        private void InstallCookingStage(ContainerDescriptor descriptor)
-        {
             descriptor.AddTransient(typeof(CookingStage));
-            descriptor.AddSingleton(typeof(CookingStageEvents), typeof(ICookingStageEvents), typeof(ICookingStageExternalEvents));
+
+            descriptor.RegisterStage<IdleStage>();
+            descriptor.RegisterStage<CookingStage>();
         }
     }
 }

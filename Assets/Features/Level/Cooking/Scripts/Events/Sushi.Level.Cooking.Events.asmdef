@@ -1,12 +1,7 @@
 {
-    "name": "Sushi.Level.Cooking",
+    "name": "Sushi.Level.Cooking.Events",
     "rootNamespace": "",
     "references": [
-        "Sushi.Level.Cooking.Events",
-        "Sushi.SceneReference",
-        "UniTask",
-        "Utils.AddressablesLoader",
-        "Utils.Controllers"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

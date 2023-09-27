@@ -1,3 +1,4 @@
+using Assets.Features.Level.Cooking.Scripts.Events;
 using Cysharp.Threading.Tasks;
 using System.Threading;
 using Utils.Controllers;
@@ -8,8 +9,8 @@ namespace Sushi.Level.Cooking
     {
         private readonly CookingViewProvider _cookingViewProvider;
         private readonly CookingUiProvider _cookingUiProvider;
-        private readonly ICookingStageExternalEvents _cookingStageExternalEvents;
         private readonly CookingControllerData _data;
+        private readonly ICookingControllerEvents _events;
 
         private CookingView _view;
         private CookingUiView _uiView;
@@ -17,11 +18,11 @@ namespace Sushi.Level.Cooking
         public CookingController(
             CookingViewProvider cookingViewProvider,
             CookingUiProvider cookingUiProvider,
-            ICookingStageExternalEvents cookingStageExternalEvents)
+            ICookingControllerEvents events)
         {
             _cookingViewProvider = cookingViewProvider;
             _cookingUiProvider = cookingUiProvider;
-            _cookingStageExternalEvents = cookingStageExternalEvents;
+            _events = events;
 
             _data = new CookingControllerData();
         }
@@ -30,12 +31,12 @@ namespace Sushi.Level.Cooking
         {
             await LoadPrefabs();
 
-            _cookingStageExternalEvents.ShowRequest += OnShowWindowRequest;
+            _events.ShowRequest += OnShowWindowRequest;
         }
 
         public override void Dispose()
         {
-            _cookingStageExternalEvents.ShowRequest -= OnShowWindowRequest;
+            _events.ShowRequest -= OnShowWindowRequest;
 
             base.Dispose();
         }
@@ -141,7 +142,7 @@ namespace Sushi.Level.Cooking
 
         private void OnBackButtonClickHappen()
         {
-            _cookingStageExternalEvents.ReportBackButtonClicked();
+            _events.ReportBackButtonClicked();
         }
     }
 }

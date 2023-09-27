@@ -11,13 +11,11 @@ namespace Sushi.Level.Common.Controllers
 {
     public class LevelEntryPointController : ILaunchableController
     {
-        private readonly Dictionary<LevelStages, IStage> _stages;
-
-
         private readonly IFactory<KitchenBoardController> _kitchenBoardControllerFactory;
         private readonly IFactory<ConveyorController> _conveyorControllerFactory;
         private readonly IFactory<LevelMenuController> _levelMenuControllerFactory;
         private readonly IFactory<CookingController> _cookingControllerFactory;
+        private readonly LevelStagesFacade _levelStagesFacade;
 
         private KitchenBoardController _kitchenBoardController;
         private ConveyorController _conveyorController;
@@ -25,27 +23,17 @@ namespace Sushi.Level.Common.Controllers
         private CookingController _cookingController;
 
         public LevelEntryPointController(
-            LoadingStage loadingStage,
-            IdleStage idleStage,
-            CookingStage сookingStage,
-
-
             IFactory<KitchenBoardController> kitchenBoardControllerFactory,
             IFactory<ConveyorController> conveyorControllerFactory,
             IFactory<LevelMenuController> levelMenuControllerFactory,
-            IFactory<CookingController> cookingControllerFactory)
+            IFactory<CookingController> cookingControllerFactory,
+            LevelStagesFacade levelStagesFacade)
         {
-            _stages = new Dictionary<LevelStages, IStage>()
-            {
-                {LevelStages.Loading, loadingStage},
-                {LevelStages.Idle, idleStage},
-                {LevelStages.Cooking, сookingStage},
-            };
-
             _kitchenBoardControllerFactory = kitchenBoardControllerFactory;
             _conveyorControllerFactory = conveyorControllerFactory;
             _levelMenuControllerFactory = levelMenuControllerFactory;
             _cookingControllerFactory = cookingControllerFactory;
+            _levelStagesFacade = levelStagesFacade;
         }
 
         public async UniTask Initialzie(CancellationToken token)
@@ -71,19 +59,9 @@ namespace Sushi.Level.Common.Controllers
             _cookingController.Dispose();
         }
 
-        public async UniTask Launch(CancellationToken token)
+        public UniTask Launch(CancellationToken token)
         {
-            await RunStages(token);
-        }
-
-        private async UniTask RunStages(CancellationToken token)
-        {
-            var stageType = LevelStages.Idle;
-
-            while (stageType != LevelStages.Quit)
-            {
-                stageType = await _stages[stageType].Run(token);
-            }
+            return  _levelStagesFacade.Launch(token);
         }
     }
 }
