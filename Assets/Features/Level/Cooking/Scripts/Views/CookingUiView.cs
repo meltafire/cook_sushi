@@ -26,6 +26,11 @@ namespace Sushi.Level.Cooking
             gameObject.SetActive(shouldTurnOn);
         }
 
+        public void ToggleBackButton(bool isOn)
+        {
+            _backButton.gameObject.SetActive(isOn);
+        }
+
         private void OnEnable()
         {
             _backButton.onClick.AddListener(OnBackButtonClickHappen);

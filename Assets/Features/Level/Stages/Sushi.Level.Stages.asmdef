@@ -4,6 +4,7 @@
     "references": [
         "Reflex",
         "Sushi.App.LoadingScreen.Events",
+        "Sushi.GameData",
         "Sushi.Level.Conveyor.Events",
         "Sushi.Level.Cooking.Events",
         "Sushi.Level.Menu.Events",

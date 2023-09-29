@@ -1,11 +1,9 @@
 ﻿using Cysharp.Threading.Tasks;
 using System.Threading;
-using UnityEditor;
-using UnityEngine;
 
-namespace Assets.Features.Level.Stages.Stages.Cooking
+namespace Assets.Features.Level.Cooking.Scripts.States
 {
-    public class CookingChooseDishStage : IStage
+    public class NigiriState : ICookingControllerState
     {
         public UniTask Run(CancellationToken token)
         {

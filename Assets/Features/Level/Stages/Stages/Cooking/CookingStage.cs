@@ -5,32 +5,32 @@ using System.Threading;
 public class CookingStage : IStage
 {
     private readonly ICookingControllerExternalEvents _cookingControllerExternalEvents;
+    private readonly ICookingControllerBackButtonExternalEvents _backButtonExternalEvents;
 
-    private UniTaskCompletionSource _completionSource;
+    private CancellationTokenSource _cancellationTokenSource;
 
-    public CookingStage(
-        ICookingControllerExternalEvents cookingControllerExternalEvents
-        )
+    public CookingStage(ICookingControllerExternalEvents cookingControllerExternalEvents, ICookingControllerBackButtonExternalEvents backButtonExternalEvents)
     {
         _cookingControllerExternalEvents = cookingControllerExternalEvents;
+        _backButtonExternalEvents = backButtonExternalEvents;
     }
 
     public async UniTask Run(CancellationToken token)
     {
-        _completionSource = new UniTaskCompletionSource();
-        _cookingControllerExternalEvents.BackButtonClicked += OnBackButtonClicked;
-
         _cookingControllerExternalEvents.RequestShow(true);
 
-        await _completionSource.Task;
+        _cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(token);
 
-        _cookingControllerExternalEvents.BackButtonClicked -= OnBackButtonClicked;
+        _backButtonExternalEvents.RequestToggleBackButton(false);
+        _cookingControllerExternalEvents.BackButtonClicked += OnBackButtonClicked;
     }
 
     private void OnBackButtonClicked()
     {
-        _cookingControllerExternalEvents.RequestShow(false);
+        _cookingControllerExternalEvents.BackButtonClicked -= OnBackButtonClicked;
 
-        _completionSource.TrySetResult();
+        _cancellationTokenSource.Cancel();
+
+        _cookingControllerExternalEvents.RequestShow(false);
     }
 }

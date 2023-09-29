@@ -2,11 +2,14 @@
     "name": "Sushi.Level.Cooking",
     "rootNamespace": "",
     "references": [
+        "Reflex",
+        "Sushi.GameData",
         "Sushi.Level.Cooking.Events",
         "Sushi.SceneReference",
         "UniTask",
         "Utils.AddressablesLoader",
-        "Utils.Controllers"
+        "Utils.Controllers",
+        "Utils.Controllers.ReflexIntegration"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

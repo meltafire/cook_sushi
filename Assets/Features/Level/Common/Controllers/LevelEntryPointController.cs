@@ -1,9 +1,9 @@
-﻿using Cysharp.Threading.Tasks;
+﻿using Assets.Features.Level.Cooking.Scripts.Controllers;
+using Cysharp.Threading.Tasks;
 using Sushi.Level.Conveyor.Controllers;
 using Sushi.Level.Cooking;
 using Sushi.Level.Menu;
 using Sushi.Level.WorkplaceIcon;
-using System.Collections.Generic;
 using System.Threading;
 using Utils.Controllers;
 
@@ -14,25 +14,25 @@ namespace Sushi.Level.Common.Controllers
         private readonly IFactory<KitchenBoardController> _kitchenBoardControllerFactory;
         private readonly IFactory<ConveyorController> _conveyorControllerFactory;
         private readonly IFactory<LevelMenuController> _levelMenuControllerFactory;
-        private readonly IFactory<CookingController> _cookingControllerFactory;
+        private readonly IFactory<RootCookingController> _rootCookingControllerFactory;
         private readonly LevelStagesFacade _levelStagesFacade;
 
         private KitchenBoardController _kitchenBoardController;
         private ConveyorController _conveyorController;
         private LevelMenuController _levelMenuController;
-        private CookingController _cookingController;
+        private RootCookingController _rootCookingController;
 
         public LevelEntryPointController(
             IFactory<KitchenBoardController> kitchenBoardControllerFactory,
             IFactory<ConveyorController> conveyorControllerFactory,
             IFactory<LevelMenuController> levelMenuControllerFactory,
-            IFactory<CookingController> cookingControllerFactory,
+            IFactory<RootCookingController> rootCookingControllerFactory,
             LevelStagesFacade levelStagesFacade)
         {
             _kitchenBoardControllerFactory = kitchenBoardControllerFactory;
             _conveyorControllerFactory = conveyorControllerFactory;
             _levelMenuControllerFactory = levelMenuControllerFactory;
-            _cookingControllerFactory = cookingControllerFactory;
+            _rootCookingControllerFactory = rootCookingControllerFactory;
             _levelStagesFacade = levelStagesFacade;
         }
 
@@ -47,8 +47,8 @@ namespace Sushi.Level.Common.Controllers
             _levelMenuController = _levelMenuControllerFactory.Create();
             await _levelMenuController.Initialzie(token);
 
-            _cookingController = _cookingControllerFactory.Create();
-            await _cookingController.Initialzie(token);
+            _rootCookingController = _rootCookingControllerFactory.Create();
+            await _rootCookingController.Initialzie(token);
         }
 
         public void Dispose()
@@ -56,7 +56,7 @@ namespace Sushi.Level.Common.Controllers
             _kitchenBoardController.Dispose();
             _conveyorController.Dispose();
             _levelMenuController.Dispose();
-            _cookingController.Dispose();
+            _rootCookingController.Dispose();
         }
 
         public UniTask Launch(CancellationToken token)

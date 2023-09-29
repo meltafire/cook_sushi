@@ -14,10 +14,12 @@ using Utils.Controllers.ReflexIntegration;
 using Assets.Features.Level.Stages.Tools;
 using Assets.Features.Level.Conveyor.Scripts.Events;
 using Assets.Features.Level.Cooking.Scripts.Events;
+using Assets.Features.Level.Cooking.Scripts.States;
+using Assets.Features.Level.Cooking.Scripts.Controllers;
 
 namespace Sushi.Level.Installer
 {
-    public class LevelInstaller: IInstaller
+    public class LevelInstaller : IInstaller
     {
         public void InstallBindings(ContainerDescriptor descriptor)
         {
@@ -78,9 +80,12 @@ namespace Sushi.Level.Installer
             descriptor.AddTransient(typeof(CookingViewProvider));
             descriptor.AddTransient(typeof(CookingUiProvider));
 
-            descriptor.RegisterController<CookingController>();
+            descriptor.RegisterController<RootCookingController>();
 
-            descriptor.AddSingleton(typeof(CookingControllerEvents), typeof(ICookingControllerEvents), typeof(ICookingControllerExternalEvents));
+            descriptor.AddSingleton(typeof(CookingControllerEvents),
+                        typeof(ICookingControllerEvents),
+                        typeof(ICookingControllerExternalEvents),
+                        typeof(ICookingControllerBackButtonExternalEvents));
         }
 
         private void InstallStages(ContainerDescriptor descriptor)

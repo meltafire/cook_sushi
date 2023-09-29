@@ -1,9 +1,7 @@
 using Cysharp.Threading.Tasks;
-using System;
 using System.Collections.Generic;
 using System.Threading;
 using Utils.AddressablesLoader;
-using static Utils.Controllers.ResourcefulController;
 
 namespace Utils.Controllers
 {

@@ -1,11 +1,9 @@
 ﻿using Cysharp.Threading.Tasks;
 using System.Threading;
-using UnityEditor;
-using UnityEngine;
 
-namespace Assets.Features.Level.Stages.Stages.Cooking.Maki
+namespace Assets.Features.Level.Cooking.Scripts.States
 {
-    public class CookingMakiIngridientsStage : IStage
+    public class MakiState : ICookingControllerState
     {
         public UniTask Run(CancellationToken token)
         {

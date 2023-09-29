@@ -25,6 +25,16 @@ namespace Sushi.Level.Cooking
             _makiButton.onClick.RemoveListener(OnMakiButtonClick);
         }
 
+        public void ToggleNigiriButton(bool isOn)
+        {
+            _nigiriButton.gameObject.SetActive(isOn);
+        }
+
+        public void ToggleMakiButton(bool isOn)
+        {
+            _makiButton.gameObject.SetActive(isOn);
+        }
+
         public void Toggle(bool isOn)
         {
             transform.gameObject.SetActive(isOn);
