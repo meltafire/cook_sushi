@@ -8,21 +8,22 @@ namespace Assets.Features.Level.Cooking.Scripts.Events
         ICookingControllerExternalEvents,
         ICookingControllerBackButtonExternalEvents
     {
-        public event Action<bool> ShowRequest;
+        public event Action ShowRequest;
         public event Action BackButtonClicked;
         public event Action<bool> ToggleBackButton;
         public event Action<HashSet<DishType>> ShowDishSelectionRequest;
         public event Action HideDishSelectionRequest;
         public event Action<DishType> DishSelected;
+        public event Action PopupClosed;
 
         public void ReportBackButtonClicked()
         {
             BackButtonClicked?.Invoke();
         }
 
-        public void RequestShow(bool toggle)
+        public void RequestShow()
         {
-            ShowRequest?.Invoke(toggle);
+            ShowRequest?.Invoke();
         }
 
         public void RequestToggleBackButton(bool isOn)
@@ -43,6 +44,11 @@ namespace Assets.Features.Level.Cooking.Scripts.Events
         public void ReportDishSelected(DishType dishType)
         {
             DishSelected?.Invoke(dishType);
+        }
+
+        public void ReportPopupClosed()
+        {
+            PopupClosed?.Invoke();
         }
     }
 }

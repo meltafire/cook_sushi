@@ -4,15 +4,9 @@ using Assets.Features.Level.Cooking.Scripts.States;
 using Cysharp.Threading.Tasks;
 using Reflex.Core;
 using System.Threading;
-using Utils.Controllers;
 
 namespace Sushi.Level.Cooking
 {
-    public abstract class BaseCookingController : ResourcefulController
-    {
-
-    }
-
     public class CookingController : BaseCookingController, IStateChanger
     {
         private readonly CookingView _view;
@@ -61,9 +55,9 @@ namespace Sushi.Level.Cooking
             _state.Run(_token).Forget();
         }
 
-        private void OnShowWindowRequest(bool shouldShow)
+        private void OnShowWindowRequest()
         {
-            ShowWindow(shouldShow);
+            ShowWindow(true);
         }
 
         private void ShowWindow(bool shouldShow)
@@ -86,11 +80,13 @@ namespace Sushi.Level.Cooking
         private void ResetView()
         {
             HideAllSubViews();
+            OnToggleBackButton(true);
         }
 
         private void OnBackButtonClickHappen()
         {
-            _events.ReportBackButtonClicked();
+            ShowWindow(false);
+            _events.ReportPopupClosed();
         }
 
         private void OnToggleBackButton(bool isOn)

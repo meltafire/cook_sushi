@@ -48,8 +48,6 @@ public class IdleStage : IStage
 
     private async void OnCookingButtonClicked()
     {
-        _kitchenBoardIconExternalEvents.RequestButtonToggle(false);
-
         var cookingStage = _cookingStageFactory.Create();
 
         await cookingStage.Run(_menuQuitTokenSource.Token);

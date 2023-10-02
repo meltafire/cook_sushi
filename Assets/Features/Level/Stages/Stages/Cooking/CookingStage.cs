@@ -5,32 +5,28 @@ using System.Threading;
 public class CookingStage : IStage
 {
     private readonly ICookingControllerExternalEvents _cookingControllerExternalEvents;
-    private readonly ICookingControllerBackButtonExternalEvents _backButtonExternalEvents;
+    private readonly UniTaskCompletionSource _uniTaskCompletionSource;
 
-    private CancellationTokenSource _cancellationTokenSource;
-
-    public CookingStage(ICookingControllerExternalEvents cookingControllerExternalEvents, ICookingControllerBackButtonExternalEvents backButtonExternalEvents)
+    public CookingStage(ICookingControllerExternalEvents cookingControllerExternalEvents)
     {
         _cookingControllerExternalEvents = cookingControllerExternalEvents;
-        _backButtonExternalEvents = backButtonExternalEvents;
+
+        _uniTaskCompletionSource = new UniTaskCompletionSource();
     }
 
-    public async UniTask Run(CancellationToken token)
+    public UniTask Run(CancellationToken token)
     {
-        _cookingControllerExternalEvents.RequestShow(true);
+        _cookingControllerExternalEvents.RequestShow();
 
-        _cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(token);
+        _cookingControllerExternalEvents.PopupClosed += OnPopupClosed;
 
-        _backButtonExternalEvents.RequestToggleBackButton(false);
-        _cookingControllerExternalEvents.BackButtonClicked += OnBackButtonClicked;
+        return _uniTaskCompletionSource.Task;
     }
 
-    private void OnBackButtonClicked()
+    private void OnPopupClosed()
     {
-        _cookingControllerExternalEvents.BackButtonClicked -= OnBackButtonClicked;
+        _cookingControllerExternalEvents.PopupClosed -= OnPopupClosed;
 
-        _cancellationTokenSource.Cancel();
-
-        _cookingControllerExternalEvents.RequestShow(false);
+        _uniTaskCompletionSource.TrySetResult();
     }
 }

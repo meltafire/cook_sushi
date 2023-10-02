@@ -4,8 +4,8 @@ namespace Assets.Features.Level.Cooking.Scripts.Events
 {
     public interface ICookingControllerExternalEvents
     {
-        public void RequestShow(bool toggle);
+        public void RequestShow();
 
-        public event Action BackButtonClicked;
+        public event Action PopupClosed;
     }
 }
