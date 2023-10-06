@@ -1,28 +1,46 @@
-using Assets.Features.Level.Cooking.Scripts.Controllers.Infrastructure;
+using Assets.Features.Level.Cooking.Scripts.Data;
 using Assets.Features.Level.Cooking.Scripts.Events;
 using Assets.Features.Level.Cooking.Scripts.States;
+using Assets.Features.Level.Cooking.Scripts.Views.Infrastructure;
 using Cysharp.Threading.Tasks;
-using Reflex.Core;
+using System.Collections.Generic;
 using System.Threading;
+using Utils.Controllers;
 
 namespace Sushi.Level.Cooking
 {
-    public class CookingController : BaseCookingController, IStateChanger
+    public class CookingController : ResourcefulController
     {
         private readonly CookingView _view;
         private readonly CookingUiView _uiView;
+        private readonly IRecipeSelectionButtonEvents _recipeSelectionButtonEvents;
         private readonly ICookingControllerEvents _events;
-        private readonly Container _container;
+        private readonly Dictionary<ControllerStatesType, ICookingControllerState> _statesDisctionary;
 
-        private ICookingControllerState _state;
         private CancellationToken _token;
 
-        public CookingController(CookingView view, CookingUiView uiView, ICookingControllerEvents events, Container container)
+        public CookingController(
+            CookingView view,
+            CookingUiView uiView,
+            IRecipeSelectionButtonEvents recipeSelectionButtonEvents,
+            ICookingControllerEvents events,
+            IngridientsState ingridientsState,
+            RecepieSelectionState recepieSelectionState,
+            MakiIngridientsState makiIngridientsState,
+            FinalizationState finalizationState)
         {
             _view = view;
             _uiView = uiView;
+            _recipeSelectionButtonEvents = recipeSelectionButtonEvents;
             _events = events;
-            _container = container;
+
+            _statesDisctionary = new Dictionary<ControllerStatesType, ICookingControllerState>()
+            {
+                { ControllerStatesType.RecepieSelectionState, recepieSelectionState},
+                { ControllerStatesType.IngridientsState, ingridientsState},
+                { ControllerStatesType.MakiIngridientsState, makiIngridientsState},
+                { ControllerStatesType.FinalizationState, finalizationState},
+            };
         }
 
         public override UniTask Initialzie(CancellationToken token)
@@ -33,9 +51,7 @@ namespace Sushi.Level.Cooking
 
             ResetView();
 
-           var initialState = _container.Resolve<DishSelectionState>();
-
-            SetState(initialState);
+            Start().Forget();
             _events.ShowRequest += OnShowWindowRequest;
 
             return UniTask.CompletedTask;
@@ -48,11 +64,20 @@ namespace Sushi.Level.Cooking
             base.Dispose();
         }
 
-        public void SetState(ICookingControllerState state)
+        private async UniTask Start()
         {
-            _state = state;
+            var stateType = ControllerStatesType.RecepieSelectionState;
+            var ingridients = new List<CookingAction>();
 
-            _state.Run(_token).Forget();
+            while(!_token.IsCancellationRequested)
+            {
+                if (stateType == ControllerStatesType.RecepieSelectionState)
+                {
+                    ingridients.Clear();
+                }
+
+               stateType = await _statesDisctionary[stateType].Run(ingridients, _token);
+            }
         }
 
         private void OnShowWindowRequest()
@@ -68,19 +93,17 @@ namespace Sushi.Level.Cooking
             if (shouldShow)
             {
                 _uiView.OnBackButtonClick += OnBackButtonClickHappen;
-                _events.ToggleBackButton += OnToggleBackButton;
             }
             else
             {
                 _uiView.OnBackButtonClick -= OnBackButtonClickHappen;
-                _events.ToggleBackButton -= OnToggleBackButton;
             }
         }
 
         private void ResetView()
         {
             HideAllSubViews();
-            OnToggleBackButton(true);
+            ToggleBackButton(true);
         }
 
         private void OnBackButtonClickHappen()
@@ -89,32 +112,19 @@ namespace Sushi.Level.Cooking
             _events.ReportPopupClosed();
         }
 
-        private void OnToggleBackButton(bool isOn)
+        private void ToggleBackButton(bool isOn)
         {
             _uiView.ToggleBackButton(isOn);
         }
 
         private void HideAllSubViews()
         {
-            _uiView.CookingTypeMenuUiView.Toggle(false);
+            _recipeSelectionButtonEvents.ShowButtons(false);
+        }
+
+        public void ShowBackButton(bool isOn)
+        {
+            _uiView.ToggleBackButton(isOn);
         }
     }
-
-public interface ICookingStatusProvider
-{
-    public CookingStatus GetStatus();
-    public void Reset();
-}
-
-
-
-public enum CookingStatus
-{
-    Exit = 0,
-    Done = 1,
-    DishType = 2,
-    MakiBaseIngridients = 3,
-    MakiFillingCount = 4,
-    MakiFillingPlacement = 5,
-}
 }

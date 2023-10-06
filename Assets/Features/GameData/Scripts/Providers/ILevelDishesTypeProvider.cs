@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Assets.Features.GameData.Scripts.Data;
+using System.Collections.Generic;
 
 namespace Assets.Features.GameData.Scripts.Providers
 {

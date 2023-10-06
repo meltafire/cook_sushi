@@ -5,9 +5,9 @@ namespace Sushi.Level.Cooking
     public class CookingView : MonoBehaviour
     {
         [SerializeField]
-        private CookingMakiView _cookingMakiView;
+        private Transform _cookingMakiTransform;
 
-        public CookingMakiView CookingMakiView => _cookingMakiView;
+        public Transform CookingMakiTransform => _cookingMakiTransform;
 
         public void Toggle(bool shouldTurnOn)
         {

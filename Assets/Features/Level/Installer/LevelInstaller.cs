@@ -85,7 +85,8 @@ namespace Sushi.Level.Installer
             descriptor.AddSingleton(typeof(CookingControllerEvents),
                         typeof(ICookingControllerEvents),
                         typeof(ICookingControllerExternalEvents),
-                        typeof(ICookingControllerBackButtonExternalEvents));
+                        typeof(ICookingControllerBackButtonExternalEvents)
+                        );
         }
 
         private void InstallStages(ContainerDescriptor descriptor)

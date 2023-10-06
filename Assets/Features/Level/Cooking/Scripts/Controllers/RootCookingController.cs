@@ -1,5 +1,7 @@
-﻿using Assets.Features.Level.Cooking.Scripts.Controllers.Infrastructure;
+﻿using Assets.Features.Level.Cooking.Scripts.Handler;
+using Assets.Features.Level.Cooking.Scripts.Handler.Infrastructure;
 using Assets.Features.Level.Cooking.Scripts.States;
+using Assets.Features.Level.Cooking.Scripts.Views.Infrastructure;
 using Cysharp.Threading.Tasks;
 using Reflex.Core;
 using Sushi.Level.Cooking;
@@ -19,7 +21,7 @@ namespace Assets.Features.Level.Cooking.Scripts.Controllers
         private Container _childContainer;
         private CookingView _view;
         private CookingUiView _uiView;
-        private BaseCookingController _controller;
+        private CookingController _controller;
 
         public RootCookingController(CookingViewProvider cookingViewProvider, CookingUiProvider cookingUiProvider, Container container)
         {
@@ -36,16 +38,19 @@ namespace Assets.Features.Level.Cooking.Scripts.Controllers
                 {
                     descriptor.AddInstance(_view, typeof(CookingView));
                     descriptor.AddInstance(_uiView, typeof(CookingUiView));
-                    descriptor.AddInstance(_uiView.CookingTypeMenuUiView, typeof(CookingTypeMenuUiView));
+                    descriptor.AddInstance(_uiView.CookingTypeMenuUiView, typeof(IRecipeSelectionButtonEvents));
 
-                    descriptor.AddSingleton(typeof(CookingController), typeof(BaseCookingController), typeof(IStateChanger));
+                    descriptor.AddSingleton(typeof(CookingController));
 
-                    descriptor.AddTransient(typeof(DishSelectionState));
-                    descriptor.AddTransient(typeof(MakiState));
-                    descriptor.AddTransient(typeof(NigiriState));
+                    descriptor.AddTransient(typeof(RecepieSelectionState));
+                    descriptor.AddTransient(typeof(MakiIngridientsState));
+                    descriptor.AddTransient(typeof(IngridientsState));
+                    descriptor.AddTransient(typeof(FinalizationState));
+
+                    descriptor.AddSingleton(typeof(RecepieHandler), typeof(IRecepieSchemeDrawer));
                 });
 
-            _controller = _childContainer.Resolve<BaseCookingController>();
+            _controller = _childContainer.Resolve<CookingController>();
 
             await _controller.Initialzie(token);
         }

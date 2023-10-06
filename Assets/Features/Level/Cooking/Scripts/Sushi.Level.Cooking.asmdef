@@ -7,6 +7,7 @@
         "Sushi.Level.Cooking.Events",
         "Sushi.SceneReference",
         "UniTask",
+        "Unity.TextMeshPro",
         "Utils.AddressablesLoader",
         "Utils.Controllers",
         "Utils.Controllers.ReflexIntegration"

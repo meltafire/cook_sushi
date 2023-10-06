@@ -1,5 +1,12 @@
-public enum DishType
+﻿using UnityEditor;
+using UnityEngine;
+
+namespace Assets.Features.GameData.Scripts.Data
 {
-    Nigiri = 1,
-    Maki = 2,
+    public enum DishType
+    {
+        Nigiri,
+        Maki,
+        UraMaki
+    }
 }

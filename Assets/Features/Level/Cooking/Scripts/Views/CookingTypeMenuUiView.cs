@@ -1,17 +1,18 @@
+using Assets.Features.Level.Cooking.Scripts.Views.Infrastructure;
 using System;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace Sushi.Level.Cooking
 {
-    public class CookingTypeMenuUiView : MonoBehaviour
+    public class CookingTypeMenuUiView : MonoBehaviour, IRecipeSelectionButtonEvents
     {
         [SerializeField]
         private Button _nigiriButton;
         [SerializeField]
         private Button _makiButton;
 
-        public event Action<DishType> OnButtonClick;
+        public event Action<CookingScheme> SchemeChosen;
 
         private void OnEnable()
         {
@@ -35,19 +36,19 @@ namespace Sushi.Level.Cooking
             _makiButton.gameObject.SetActive(isOn);
         }
 
-        public void Toggle(bool isOn)
-        {
-            transform.gameObject.SetActive(isOn);
-        }
-
         private void OnNigiriButtonClick()
         {
-            OnButtonClick?.Invoke(DishType.Nigiri);
+            SchemeChosen?.Invoke(CookingScheme.Nigiri);
         }
 
         private void OnMakiButtonClick()
         {
-            OnButtonClick?.Invoke(DishType.Maki);
+            SchemeChosen?.Invoke(CookingScheme.Maki);
+        }
+
+        public void ShowButtons(bool isOn)
+        {
+            transform.gameObject.SetActive(isOn);
         }
     }
 }
