@@ -1,5 +1,6 @@
 using Assets.Features.GameData.Scripts.Data;
 using Assets.Features.GameData.Scripts.Providers;
+using Assets.Features.Level.Cooking.Scripts.Controllers.Display;
 using Assets.Features.Level.Cooking.Scripts.Controllers.Ingridients;
 using Assets.Features.Level.Cooking.Scripts.Data;
 using Assets.Features.Level.Cooking.Scripts.Events;
@@ -22,7 +23,8 @@ namespace Sushi.Level.Cooking
         private readonly ILevelDishesTypeProvider _levelDishesTypeProvider;
         private readonly IFactory<CookingMakiRecepieController> _makiRecepieControllerFactory;
         private readonly IFactory<CookingNigiriRecepieController> _nigiriRecepieControllerFactory;
-        private readonly List<CookingRecepieController> _cookingRecepieControllers = new List<CookingRecepieController>();
+        private readonly IFactory<CookingDisplayMakiRecepieController> _displayMakiRecepieControllerFactory;
+        private readonly List<ResourcefulController> _dynamicControllers = new List<ResourcefulController>();
 
         private CancellationToken _token;
 
@@ -34,6 +36,7 @@ namespace Sushi.Level.Cooking
             ILevelDishesTypeProvider levelDishesTypeProvider,
             IFactory<CookingMakiRecepieController> makiRecepieControllerFactory,
             IFactory<CookingNigiriRecepieController> nigiriRecepieControllerFactory,
+            IFactory<CookingDisplayMakiRecepieController> displayMakiRecepieControllerFactory,
             IngridientsState ingridientsState,
             RecepieSelectionState recepieSelectionState,
             MakiIngridientsState makiIngridientsState,
@@ -46,6 +49,7 @@ namespace Sushi.Level.Cooking
             _levelDishesTypeProvider = levelDishesTypeProvider;
             _makiRecepieControllerFactory = makiRecepieControllerFactory;
             _nigiriRecepieControllerFactory = nigiriRecepieControllerFactory;
+            _displayMakiRecepieControllerFactory = displayMakiRecepieControllerFactory;
 
             _statesDisctionary = new Dictionary<ControllerStatesType, ICookingControllerState>()
             {
@@ -143,17 +147,18 @@ namespace Sushi.Level.Cooking
 
             if(types.Contains(DishType.Maki))
             {
-                _cookingRecepieControllers.Add(_makiRecepieControllerFactory.Create());
+                _dynamicControllers.Add(_makiRecepieControllerFactory.Create());
+                _dynamicControllers.Add(_displayMakiRecepieControllerFactory.Create());
             }
 
             if(types.Contains(DishType.Nigiri))
             {
-                _cookingRecepieControllers.Add(_nigiriRecepieControllerFactory.Create());
+                _dynamicControllers.Add(_nigiriRecepieControllerFactory.Create());
             }
 
             var loadingTasks = new List<UniTask>();
 
-            foreach(var controller in _cookingRecepieControllers)
+            foreach(var controller in _dynamicControllers)
             {
                 loadingTasks.Add(controller.Initialzie(token));
             }
@@ -163,7 +168,7 @@ namespace Sushi.Level.Cooking
 
         private void DisposeRecepieButtons()
         {
-            foreach(var controller in _cookingRecepieControllers)
+            foreach(var controller in _dynamicControllers)
             {
                 controller.Dispose();
             }

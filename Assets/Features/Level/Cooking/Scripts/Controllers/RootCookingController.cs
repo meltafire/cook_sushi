@@ -1,7 +1,10 @@
-﻿using Assets.Features.Level.Cooking.Scripts.Controllers.Ingridients;
+﻿using Assets.Features.Level.Cooking.Scripts.Controllers.Display;
+using Assets.Features.Level.Cooking.Scripts.Controllers.Ingridients;
+using Assets.Features.Level.Cooking.Scripts.Events.Display.Infrastructure;
 using Assets.Features.Level.Cooking.Scripts.Events.Ingridients;
 using Assets.Features.Level.Cooking.Scripts.Handler;
 using Assets.Features.Level.Cooking.Scripts.Handler.Infrastructure;
+using Assets.Features.Level.Cooking.Scripts.Providers.Display;
 using Assets.Features.Level.Cooking.Scripts.Providers.Ingridients;
 using Assets.Features.Level.Cooking.Scripts.States;
 using Assets.Features.Level.Cooking.Scripts.Views.Display.Infrastructure;
@@ -56,8 +59,6 @@ namespace Assets.Features.Level.Cooking.Scripts.Controllers
                     descriptor.AddTransient(typeof(IngridientsState));
                     descriptor.AddTransient(typeof(FinalizationState));
 
-                    descriptor.AddSingleton(typeof(RecepieHandler), typeof(IRecepieSchemeDrawer));
-
                     IsntallCookingIngredients(descriptor);
                 });
 
@@ -97,6 +98,10 @@ namespace Assets.Features.Level.Cooking.Scripts.Controllers
 
         private void IsntallCookingIngredients(ContainerDescriptor descriptor)
         {
+            descriptor.AddSingleton(typeof(RecepieHandler), typeof(IRecepieSchemeDrawer));
+
+            descriptor.AddSingleton(typeof(MakiDisplayEvents), typeof(IMakiDisplayEvents), typeof(IMakiDisplayExternalEvents));
+
             descriptor.AddSingleton(typeof(RecipeSelectionEvents),
             typeof(IRecipeSelectionEvents),
             typeof(IRecipeSelectionExternalEvents)
@@ -106,6 +111,9 @@ namespace Assets.Features.Level.Cooking.Scripts.Controllers
 
             descriptor.RegisterController<CookingMakiRecepieController>();
             descriptor.RegisterController<CookingNigiriRecepieController>();
+
+            descriptor.RegisterController<CookingDisplayMakiRecepieController>();
+            descriptor.AddTransient(typeof(CookingDisplayMakiInstantiator));
 
             descriptor.AddTransient(typeof(CookingMakiRecepieAssetProvider));
             descriptor.AddTransient(typeof(CookingNigiriRecepieAssetProvider));
