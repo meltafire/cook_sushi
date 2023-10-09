@@ -1,6 +1,7 @@
 ﻿using Assets.Features.GameData.Scripts.Data;
 using Assets.Features.Level.Cooking.Scripts.Data;
 using Assets.Features.Level.Cooking.Scripts.Events;
+using Assets.Features.Level.Cooking.Scripts.Events.Infrastructure;
 using Assets.Features.Level.Cooking.Scripts.Handler.Infrastructure;
 using Assets.Features.Level.Cooking.Scripts.Views.Infrastructure;
 using Cysharp.Threading.Tasks;
@@ -16,23 +17,26 @@ namespace Assets.Features.Level.Cooking.Scripts.States
         private readonly IRecipeSelectionExternalEvents _recipeSelectionButtonEvents;
         private readonly IRecepieSchemeDrawer _drawer;
         private readonly CookingRecepieUiView _view;
+        private readonly ICookingControllerRecepieButtonsExternalEvents _buttonEvents;
 
-        private List<CookingAction> _actions;
+        private Stack<CookingAction> _actions;
         private UniTaskCompletionSource<DishType> _completionSource;
 
         public RecepieSelectionState(
             ICookingControllerBackButtonExternalEvents controllerServiceMethods,
             IRecipeSelectionExternalEvents recipeSelectionButtonEvents,
             IRecepieSchemeDrawer drawer,
-            CookingRecepieUiView view)
+            CookingRecepieUiView view,
+            ICookingControllerRecepieButtonsExternalEvents buttonEvents)
         {
             _controllerServiceMethods = controllerServiceMethods;
             _recipeSelectionButtonEvents = recipeSelectionButtonEvents;
             _drawer = drawer;
             _view = view;
+            _buttonEvents = buttonEvents;
         }
 
-        public async UniTask<ControllerStatesType> Run(List<CookingAction> actions, CancellationToken token)
+        public async UniTask<ControllerStatesType> Run(Stack<CookingAction> actions, CancellationToken token)
         {
             _completionSource = new UniTaskCompletionSource<DishType>();
 
@@ -41,6 +45,8 @@ namespace Assets.Features.Level.Cooking.Scripts.States
             _controllerServiceMethods.RequestToggleBackButton(true);
 
             _view.ShowButtons(true);
+            _buttonEvents.ToggleDone(false);
+            _buttonEvents.ToggleRevert(false);
             _recipeSelectionButtonEvents.SchemeChosen += OnSchemeChosen;
 
             var result = await _completionSource.Task;
@@ -56,7 +62,7 @@ namespace Assets.Features.Level.Cooking.Scripts.States
         {
             var cookingAction = (CookingAction)scheme;
 
-            _actions.Add(cookingAction);
+            _actions.Push(cookingAction);
 
             _drawer.ShowIngridient(cookingAction);
 

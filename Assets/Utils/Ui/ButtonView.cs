@@ -9,6 +9,11 @@ public class ButtonView : MonoBehaviour
 
     public event Action OnButtonPressed;
 
+    public void Toggle(bool isOn)
+    {
+        gameObject.SetActive(isOn);
+    }
+
     private void OnEnable()
     {
         _button.onClick.AddListener(OnClick);

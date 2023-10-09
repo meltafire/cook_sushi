@@ -15,10 +15,11 @@ namespace Sushi.Level.Cooking
 {
     public class CookingController : ResourcefulController
     {
+        private readonly ICookingControllerEvents _events;
         private readonly CookingView _view;
         private readonly ICookingUiView _uiView;
         private readonly CookingRecepieUiView _recepieView;
-        private readonly ICookingControllerEvents _events;
+
         private readonly Dictionary<ControllerStatesType, ICookingControllerState> _statesDisctionary;
         private readonly ILevelDishesTypeProvider _levelDishesTypeProvider;
         private readonly IFactory<CookingMakiRecepieController> _makiRecepieControllerFactory;
@@ -29,10 +30,10 @@ namespace Sushi.Level.Cooking
         private CancellationToken _token;
 
         public CookingController(
+            ICookingControllerEvents events,
             CookingView view,
             ICookingUiView uiView,
             CookingRecepieUiView recepieView,
-            ICookingControllerEvents events,
             ILevelDishesTypeProvider levelDishesTypeProvider,
             IFactory<CookingMakiRecepieController> makiRecepieControllerFactory,
             IFactory<CookingNigiriRecepieController> nigiriRecepieControllerFactory,
@@ -42,10 +43,10 @@ namespace Sushi.Level.Cooking
             MakiIngridientsState makiIngridientsState,
             FinalizationState finalizationState)
         {
+            _events = events;
             _view = view;
             _uiView = uiView;
             _recepieView = recepieView;
-            _events = events;
             _levelDishesTypeProvider = levelDishesTypeProvider;
             _makiRecepieControllerFactory = makiRecepieControllerFactory;
             _nigiriRecepieControllerFactory = nigiriRecepieControllerFactory;
@@ -69,7 +70,15 @@ namespace Sushi.Level.Cooking
             ResetView();
 
             Start().Forget();
+
             _events.ShowRequest += OnShowWindowRequest;
+            _events.ToggleDoneButton += OnToggleDoneButton;
+            _events.ToggleBackButton += OnToggleBackButton;
+            _events.ToggleRevertButton += OnToggleRevertButton;
+
+            _uiView.BackButtonView.OnButtonPressed += OnBackButtonClickHappen;
+            _uiView.RevertButtonView.OnButtonPressed += OnRevertButtonClickHappen;
+            _uiView.DoneButtonView.OnButtonPressed += OnDoneButtonClickHappen;
 
             return SpawnRecepieButtons(token);
         }
@@ -79,6 +88,13 @@ namespace Sushi.Level.Cooking
             DisposeRecepieButtons();
 
             _events.ShowRequest -= OnShowWindowRequest;
+            _events.ToggleDoneButton -= OnToggleDoneButton;
+            _events.ToggleBackButton -= OnToggleBackButton;
+            _events.ToggleRevertButton -= OnToggleRevertButton;
+
+            _uiView.BackButtonView.OnButtonPressed -= OnBackButtonClickHappen;
+            _uiView.RevertButtonView.OnButtonPressed -= OnRevertButtonClickHappen;
+            _uiView.DoneButtonView.OnButtonPressed -= OnDoneButtonClickHappen;
 
             base.Dispose();
         }
@@ -86,7 +102,7 @@ namespace Sushi.Level.Cooking
         private async UniTask Start()
         {
             var stateType = ControllerStatesType.RecepieSelectionState;
-            var ingridients = new List<CookingAction>();
+            var ingridients = new Stack<CookingAction>();
 
             while (!_token.IsCancellationRequested)
             {
@@ -108,32 +124,21 @@ namespace Sushi.Level.Cooking
         {
             _view.Toggle(shouldShow);
             _uiView.Toggle(shouldShow);
-
-            if (shouldShow)
-            {
-                _uiView.OnBackButtonClick += OnBackButtonClickHappen;
-            }
-            else
-            {
-                _uiView.OnBackButtonClick -= OnBackButtonClickHappen;
-            }
         }
 
         private void ResetView()
         {
             HideAllSubViews();
-            ToggleBackButton(true);
+            
+            _uiView.BackButtonView.Toggle(true);
+            _uiView.DoneButtonView.Toggle(false);
+            _uiView.RevertButtonView.Toggle(false);
         }
 
         private void OnBackButtonClickHappen()
         {
             ShowWindow(false);
             _events.ReportPopupClosed();
-        }
-
-        private void ToggleBackButton(bool isOn)
-        {
-            _uiView.ToggleBackButton(isOn);
         }
 
         private void HideAllSubViews()
@@ -172,6 +177,31 @@ namespace Sushi.Level.Cooking
             {
                 controller.Dispose();
             }
+        }
+
+        private void OnDoneButtonClickHappen()
+        {
+            _events.ReportDonePressed();
+        }
+
+        private void OnRevertButtonClickHappen()
+        {
+            _events.ReportRevertPressed();
+        }
+
+        private void OnToggleRevertButton(bool isOn)
+        {
+            _uiView.RevertButtonView.Toggle(isOn);
+        }
+
+        private void OnToggleBackButton(bool isOn)
+        {
+            _uiView.BackButtonView.Toggle(isOn);
+        }
+
+        private void OnToggleDoneButton(bool isOn)
+        {
+            _uiView.DoneButtonView.Toggle(isOn);
         }
     }
 }

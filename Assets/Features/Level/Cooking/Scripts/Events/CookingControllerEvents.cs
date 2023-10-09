@@ -1,39 +1,25 @@
-﻿using Assets.Features.GameData.Scripts.Data;
+﻿using Assets.Features.Level.Cooking.Scripts.Events.Infrastructure;
 using System;
-using System.Collections.Generic;
 
 namespace Assets.Features.Level.Cooking.Scripts.Events
 {
     public class CookingControllerEvents :
         ICookingControllerEvents,
         ICookingControllerExternalEvents,
-        ICookingControllerBackButtonExternalEvents
+        ICookingControllerBackButtonExternalEvents,
+        ICookingControllerRecepieButtonsExternalEvents
     {
         public event Action ShowRequest;
-        public event Action<HashSet<DishType>> ShowDishSelectionRequest;
-        public event Action HideDishSelectionRequest;
-        public event Action<DishType> DishSelected;
-        public event Action PopupClosed;
         public event Action<bool> ToggleBackButton;
+        public event Action<bool> ToggleRevertButton;
+        public event Action<bool> ToggleDoneButton;
+        public event Action PopupClosed;
+        public event Action RevertPressed;
+        public event Action DonePressed;
 
         public void RequestShow()
         {
             ShowRequest?.Invoke();
-        }
-
-        public void ShowDishSelection(HashSet<DishType> set)
-        {
-            ShowDishSelectionRequest?.Invoke(set);
-        }
-
-        public void HideDishSelection()
-        {
-            HideDishSelectionRequest?.Invoke();
-        }
-
-        public void ReportDishSelected(DishType dishType)
-        {
-            DishSelected?.Invoke(dishType);
         }
 
         public void ReportPopupClosed()
@@ -44,6 +30,26 @@ namespace Assets.Features.Level.Cooking.Scripts.Events
         public void RequestToggleBackButton(bool isOn)
         {
             ToggleBackButton?.Invoke(isOn);
+        }
+
+        public void ReportRevertPressed()
+        {
+            RevertPressed?.Invoke();
+        }
+
+        public void ReportDonePressed()
+        {
+            DonePressed?.Invoke();
+        }
+
+        public void ToggleRevert(bool isOn)
+        {
+            ToggleRevertButton?.Invoke(isOn);
+        }
+
+        public void ToggleDone(bool isOn)
+        {
+            ToggleDoneButton?.Invoke(isOn);
         }
     }
 }

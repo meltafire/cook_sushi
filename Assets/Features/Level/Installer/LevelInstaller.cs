@@ -18,6 +18,7 @@ using Assets.Features.Level.Cooking.Scripts.Controllers;
 using Assets.Features.Level.Cooking.Scripts.Events.Ingridients;
 using Assets.Features.Level.Cooking.Scripts.Views.Infrastructure;
 using Assets.Features.Level.Cooking.Scripts.Providers.Ingridients;
+using Assets.Features.Level.Cooking.Scripts.Events.Infrastructure;
 
 namespace Sushi.Level.Installer
 {
@@ -87,7 +88,8 @@ namespace Sushi.Level.Installer
             descriptor.AddSingleton(typeof(CookingControllerEvents),
                         typeof(ICookingControllerEvents),
                         typeof(ICookingControllerExternalEvents),
-                        typeof(ICookingControllerBackButtonExternalEvents)
+                        typeof(ICookingControllerBackButtonExternalEvents),
+                        typeof(ICookingControllerRecepieButtonsExternalEvents)
                         );
         }
 

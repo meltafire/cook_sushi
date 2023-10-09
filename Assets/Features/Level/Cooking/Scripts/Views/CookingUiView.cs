@@ -1,16 +1,18 @@
 using Assets.Features.Level.Cooking.Scripts.Views.Display.Infrastructure;
 using Assets.Features.Level.Cooking.Scripts.Views.Infrastructure;
 using Assets.Features.Level.Cooking.Scripts.Views.Ingridients.Infrastructure;
-using System;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace Sushi.Level.Cooking
 {
     public class CookingUiView : MonoBehaviour, ICookingUiView, IIngridientsDispalyParentTransformProvider, IIngridientsParentTransformProvider
     {
         [SerializeField]
-        private Button _backButton;
+        private ButtonView _backButton;
+        [SerializeField]
+        private ButtonView _revertButton;
+        [SerializeField]
+        private ButtonView _doneButton;
         [SerializeField]
         private CookingRecepieUiView _cookingRecepieUiView;
         [SerializeField]
@@ -18,35 +20,17 @@ namespace Sushi.Level.Cooking
         [SerializeField]
         private RectTransform _ingridientsParentTransform;
 
-        public event Action OnBackButtonClick;
-
         public CookingRecepieUiView CookingRecepieUiView => _cookingRecepieUiView;
         public RectTransform IngridientsDispalyParentTransform => _ingridientsDispalyParentTransform;
         public RectTransform IngridientsParentTransform => _ingridientsParentTransform;
 
-        public void Toggle(bool shouldTurnOn)
-        {
-            gameObject.SetActive(shouldTurnOn);
-        }
+        public ButtonView BackButtonView => _backButton;
+        public ButtonView DoneButtonView => _doneButton;
+        public ButtonView RevertButtonView => _revertButton;
 
-        public void ToggleBackButton(bool isOn)
+        public void Toggle(bool isOn)
         {
-            _backButton.gameObject.SetActive(isOn);
-        }
-
-        private void OnEnable()
-        {
-            _backButton.onClick.AddListener(OnBackButtonClickHappen);
-        }
-
-        private void OnDisable()
-        {
-            _backButton.onClick.AddListener(OnBackButtonClickHappen);
-        }
-
-        private void OnBackButtonClickHappen()
-        {
-            OnBackButtonClick?.Invoke();
+            gameObject.SetActive(isOn);
         }
     }
 }

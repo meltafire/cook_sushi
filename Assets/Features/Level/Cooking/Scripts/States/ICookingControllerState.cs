@@ -7,6 +7,6 @@ namespace Assets.Features.Level.Cooking.Scripts.States
 {
     public interface ICookingControllerState
     {
-        public UniTask<ControllerStatesType> Run(List<CookingAction> actions, CancellationToken token);
+        public UniTask<ControllerStatesType> Run(Stack<CookingAction> actions, CancellationToken token);
     }
 }

@@ -113,7 +113,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bd4a130957c03948a41d13b5871596f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _backButton: {fileID: 1358939770440948749}
+  _backButton: {fileID: 1488544473211942579}
+  _revertButton: {fileID: 3787488190072295103}
+  _doneButton: {fileID: 1648132300957433096}
   _cookingRecepieUiView: {fileID: 5515396315112526778}
   _ingridientsDispalyParentTransform: {fileID: 3538816199949030584}
   _ingridientsParentTransform: {fileID: 469922976932908677}
@@ -374,6 +376,7 @@ GameObject:
   - component: {fileID: 3332359491136148545}
   - component: {fileID: 4469173645875512091}
   - component: {fileID: 5210514049595905023}
+  - component: {fileID: 1648132300957433096}
   m_Layer: 5
   m_Name: 'DoneButton '
   m_TagString: Untagged
@@ -483,6 +486,19 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &1648132300957433096
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2946192671202196806}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9fe98f08854c9014d97ba71b9a8527ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _button: {fileID: 5210514049595905023}
 --- !u!1 &4228776918267526873
 GameObject:
   m_ObjectHideFlags: 0
@@ -495,6 +511,7 @@ GameObject:
   - component: {fileID: 9065685548160614359}
   - component: {fileID: 5239272838722960299}
   - component: {fileID: 1358939770440948749}
+  - component: {fileID: 1488544473211942579}
   m_Layer: 5
   m_Name: BackButton
   m_TagString: Untagged
@@ -604,6 +621,19 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &1488544473211942579
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4228776918267526873}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9fe98f08854c9014d97ba71b9a8527ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _button: {fileID: 1358939770440948749}
 --- !u!1 &5480109982028021180
 GameObject:
   m_ObjectHideFlags: 0
@@ -750,6 +780,7 @@ GameObject:
   - component: {fileID: 8645539376139071850}
   - component: {fileID: 5464752932563287418}
   - component: {fileID: 2081430787306289170}
+  - component: {fileID: 3787488190072295103}
   m_Layer: 5
   m_Name: RevertButton
   m_TagString: Untagged
@@ -859,6 +890,19 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &3787488190072295103
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5498410960563177026}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9fe98f08854c9014d97ba71b9a8527ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _button: {fileID: 2081430787306289170}
 --- !u!1 &6532009255864330023
 GameObject:
   m_ObjectHideFlags: 0
