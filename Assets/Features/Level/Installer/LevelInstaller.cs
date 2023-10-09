@@ -14,8 +14,10 @@ using Utils.Controllers.ReflexIntegration;
 using Assets.Features.Level.Stages.Tools;
 using Assets.Features.Level.Conveyor.Scripts.Events;
 using Assets.Features.Level.Cooking.Scripts.Events;
-using Assets.Features.Level.Cooking.Scripts.States;
 using Assets.Features.Level.Cooking.Scripts.Controllers;
+using Assets.Features.Level.Cooking.Scripts.Events.Ingridients;
+using Assets.Features.Level.Cooking.Scripts.Views.Infrastructure;
+using Assets.Features.Level.Cooking.Scripts.Providers.Ingridients;
 
 namespace Sushi.Level.Installer
 {

@@ -2,9 +2,9 @@ using UnityEngine;
 
 namespace Sushi.Level.Cooking
 {
-    public class CookingMakiView : MonoBehaviour
+    public class CookingRecepieUiView : MonoBehaviour
     {
-        public void Toggle(bool isOn)
+        public void ShowButtons(bool isOn)
         {
             transform.gameObject.SetActive(isOn);
         }

@@ -1,3 +1,6 @@
+using Assets.Features.GameData.Scripts.Data;
+using Assets.Features.GameData.Scripts.Providers;
+using Assets.Features.Level.Cooking.Scripts.Controllers.Ingridients;
 using Assets.Features.Level.Cooking.Scripts.Data;
 using Assets.Features.Level.Cooking.Scripts.Events;
 using Assets.Features.Level.Cooking.Scripts.States;
@@ -12,18 +15,25 @@ namespace Sushi.Level.Cooking
     public class CookingController : ResourcefulController
     {
         private readonly CookingView _view;
-        private readonly CookingUiView _uiView;
-        private readonly IRecipeSelectionButtonEvents _recipeSelectionButtonEvents;
+        private readonly ICookingUiView _uiView;
+        private readonly CookingRecepieUiView _recepieView;
         private readonly ICookingControllerEvents _events;
         private readonly Dictionary<ControllerStatesType, ICookingControllerState> _statesDisctionary;
+        private readonly ILevelDishesTypeProvider _levelDishesTypeProvider;
+        private readonly IFactory<CookingMakiRecepieController> _makiRecepieControllerFactory;
+        private readonly IFactory<CookingNigiriRecepieController> _nigiriRecepieControllerFactory;
+        private readonly List<CookingRecepieController> _cookingRecepieControllers = new List<CookingRecepieController>();
 
         private CancellationToken _token;
 
         public CookingController(
             CookingView view,
-            CookingUiView uiView,
-            IRecipeSelectionButtonEvents recipeSelectionButtonEvents,
+            ICookingUiView uiView,
+            CookingRecepieUiView recepieView,
             ICookingControllerEvents events,
+            ILevelDishesTypeProvider levelDishesTypeProvider,
+            IFactory<CookingMakiRecepieController> makiRecepieControllerFactory,
+            IFactory<CookingNigiriRecepieController> nigiriRecepieControllerFactory,
             IngridientsState ingridientsState,
             RecepieSelectionState recepieSelectionState,
             MakiIngridientsState makiIngridientsState,
@@ -31,8 +41,11 @@ namespace Sushi.Level.Cooking
         {
             _view = view;
             _uiView = uiView;
-            _recipeSelectionButtonEvents = recipeSelectionButtonEvents;
+            _recepieView = recepieView;
             _events = events;
+            _levelDishesTypeProvider = levelDishesTypeProvider;
+            _makiRecepieControllerFactory = makiRecepieControllerFactory;
+            _nigiriRecepieControllerFactory = nigiriRecepieControllerFactory;
 
             _statesDisctionary = new Dictionary<ControllerStatesType, ICookingControllerState>()
             {
@@ -54,11 +67,13 @@ namespace Sushi.Level.Cooking
             Start().Forget();
             _events.ShowRequest += OnShowWindowRequest;
 
-            return UniTask.CompletedTask;
+            return SpawnRecepieButtons(token);
         }
 
         public override void Dispose()
         {
+            DisposeRecepieButtons();
+
             _events.ShowRequest -= OnShowWindowRequest;
 
             base.Dispose();
@@ -69,14 +84,14 @@ namespace Sushi.Level.Cooking
             var stateType = ControllerStatesType.RecepieSelectionState;
             var ingridients = new List<CookingAction>();
 
-            while(!_token.IsCancellationRequested)
+            while (!_token.IsCancellationRequested)
             {
                 if (stateType == ControllerStatesType.RecepieSelectionState)
                 {
                     ingridients.Clear();
                 }
 
-               stateType = await _statesDisctionary[stateType].Run(ingridients, _token);
+                stateType = await _statesDisctionary[stateType].Run(ingridients, _token);
             }
         }
 
@@ -119,12 +134,39 @@ namespace Sushi.Level.Cooking
 
         private void HideAllSubViews()
         {
-            _recipeSelectionButtonEvents.ShowButtons(false);
+            _recepieView.ShowButtons(false);
         }
 
-        public void ShowBackButton(bool isOn)
+        private UniTask SpawnRecepieButtons(CancellationToken token)
         {
-            _uiView.ToggleBackButton(isOn);
+            var types = _levelDishesTypeProvider.GetLevelDishTypes();
+
+            if(types.Contains(DishType.Maki))
+            {
+                _cookingRecepieControllers.Add(_makiRecepieControllerFactory.Create());
+            }
+
+            if(types.Contains(DishType.Nigiri))
+            {
+                _cookingRecepieControllers.Add(_nigiriRecepieControllerFactory.Create());
+            }
+
+            var loadingTasks = new List<UniTask>();
+
+            foreach(var controller in _cookingRecepieControllers)
+            {
+                loadingTasks.Add(controller.Initialzie(token));
+            }
+
+            return UniTask.WhenAll(loadingTasks);
+        }
+
+        private void DisposeRecepieButtons()
+        {
+            foreach(var controller in _cookingRecepieControllers)
+            {
+                controller.Dispose();
+            }
         }
     }
 }

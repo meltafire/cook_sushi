@@ -1,32 +1,35 @@
-﻿using Assets.Features.Level.Cooking.Scripts.Handler.Infrastructure;
+﻿using Assets.Features.Level.Cooking.Scripts.Data;
+using Assets.Features.Level.Cooking.Scripts.Events.Display.Infrastructure;
+using Assets.Features.Level.Cooking.Scripts.Handler.Infrastructure;
+using System.Collections.Generic;
 
 namespace Assets.Features.Level.Cooking.Scripts.Handler
 {
     public class RecepieHandler : IRecepieSchemeDrawer
     {
         private readonly IMakiDisplayExternaEvents _makiDisplayExternaEvents;
+        private readonly Stack<CookingAction> _drawedElements = new Stack<CookingAction>();
 
-        public void ShowIngridient(CookingScheme scheme)
+        public void ShowIngridient(CookingAction scheme)
         {
+            _drawedElements.Push(scheme);
+
             Toggle(scheme, true);
         }
 
-        public void HideIngridient(CookingScheme scheme)
+        public void RevertIngridient()
         {
+            var scheme = _drawedElements.Pop();
+
             Toggle(scheme, false);
         }
 
-        private void Toggle(CookingScheme scheme, bool isOn)
+        private void Toggle(CookingAction scheme, bool isOn)
         {
-            if(scheme == CookingScheme.Maki)
+            if(scheme == CookingAction.Maki)
             {
                 _makiDisplayExternaEvents.Show(isOn);
             }
         }
-    }
-
-    public interface IMakiDisplayExternaEvents
-    {
-        public void Show(bool isOn);
     }
 }

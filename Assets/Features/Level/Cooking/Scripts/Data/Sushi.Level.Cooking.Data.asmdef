@@ -1,0 +1,16 @@
+{
+    "name": "Sushi.Level.Cooking.Data",
+    "rootNamespace": "",
+    "references": [
+        "Sushi.GameData"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

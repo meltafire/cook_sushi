@@ -85,7 +85,6 @@ GameObject:
   m_Component:
   - component: {fileID: 823404343858714307}
   - component: {fileID: 356826733237443299}
-  - component: {fileID: -4372087789667978123}
   m_Layer: 5
   m_Name: StartMaki
   m_TagString: Untagged
@@ -135,18 +134,6 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
---- !u!114 &-4372087789667978123
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5345379681261624612}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8a330662bb2ad764cb2fa6ad47ab7bd6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &6747298468186690075
 GameObject:
   m_ObjectHideFlags: 0

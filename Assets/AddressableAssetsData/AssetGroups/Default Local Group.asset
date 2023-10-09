@@ -67,6 +67,21 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e7e2d047df02cb54ca50e790c0acd184
+    m_Address: Level/Cooking/Display/IngridientDisplay
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 66510270d0ff6174cb43a9aa8638f2b0
+    m_Address: Level/Cooking/Prefabs/Ingridients/NigiriButton
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 21bd22040fe7e5e42abc4e0e363a5c4d
+    m_Address: Level/Cooking/Prefabs/Ingridients/MakiButton
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: e7d21dd6c69b4404aac84b4fa228f6a3, type: 2}
   m_SchemaSet:

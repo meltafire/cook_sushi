@@ -2,6 +2,7 @@
     "name": "Sushi.Level.Cooking.Events",
     "rootNamespace": "",
     "references": [
+        "Sushi.Level.Cooking.Data",
         "Sushi.GameData"
     ],
     "includePlatforms": [],

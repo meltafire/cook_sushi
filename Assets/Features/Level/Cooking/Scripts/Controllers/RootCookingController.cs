@@ -1,12 +1,18 @@
-﻿using Assets.Features.Level.Cooking.Scripts.Handler;
+﻿using Assets.Features.Level.Cooking.Scripts.Controllers.Ingridients;
+using Assets.Features.Level.Cooking.Scripts.Events.Ingridients;
+using Assets.Features.Level.Cooking.Scripts.Handler;
 using Assets.Features.Level.Cooking.Scripts.Handler.Infrastructure;
+using Assets.Features.Level.Cooking.Scripts.Providers.Ingridients;
 using Assets.Features.Level.Cooking.Scripts.States;
+using Assets.Features.Level.Cooking.Scripts.Views.Display.Infrastructure;
 using Assets.Features.Level.Cooking.Scripts.Views.Infrastructure;
+using Assets.Features.Level.Cooking.Scripts.Views.Ingridients.Infrastructure;
 using Cysharp.Threading.Tasks;
 using Reflex.Core;
 using Sushi.Level.Cooking;
 using System.Threading;
 using Utils.Controllers;
+using Utils.Controllers.ReflexIntegration;
 
 namespace Assets.Features.Level.Cooking.Scripts.Controllers
 {
@@ -37,8 +43,11 @@ namespace Assets.Features.Level.Cooking.Scripts.Controllers
             _childContainer = _container.Scope(RootCookingControllerName, descriptor =>
                 {
                     descriptor.AddInstance(_view, typeof(CookingView));
-                    descriptor.AddInstance(_uiView, typeof(CookingUiView));
-                    descriptor.AddInstance(_uiView.CookingTypeMenuUiView, typeof(IRecipeSelectionButtonEvents));
+                    descriptor.AddInstance(_uiView,
+                        typeof(ICookingUiView),
+                        typeof(IIngridientsDispalyParentTransformProvider),
+                        typeof(IIngridientsParentTransformProvider)
+                        );
 
                     descriptor.AddSingleton(typeof(CookingController));
 
@@ -48,6 +57,8 @@ namespace Assets.Features.Level.Cooking.Scripts.Controllers
                     descriptor.AddTransient(typeof(FinalizationState));
 
                     descriptor.AddSingleton(typeof(RecepieHandler), typeof(IRecepieSchemeDrawer));
+
+                    IsntallCookingIngredients(descriptor);
                 });
 
             _controller = _childContainer.Resolve<CookingController>();
@@ -82,6 +93,22 @@ namespace Assets.Features.Level.Cooking.Scripts.Controllers
             AttachResource(_cookingUiProvider);
 
             _uiView = await _cookingUiProvider.Instantiate();
+        }
+
+        private void IsntallCookingIngredients(ContainerDescriptor descriptor)
+        {
+            descriptor.AddSingleton(typeof(RecipeSelectionEvents),
+            typeof(IRecipeSelectionEvents),
+            typeof(IRecipeSelectionExternalEvents)
+            );
+
+            descriptor.AddInstance(_uiView.CookingRecepieUiView, typeof(CookingRecepieUiView));
+
+            descriptor.RegisterController<CookingMakiRecepieController>();
+            descriptor.RegisterController<CookingNigiriRecepieController>();
+
+            descriptor.AddTransient(typeof(CookingMakiRecepieAssetProvider));
+            descriptor.AddTransient(typeof(CookingNigiriRecepieAssetProvider));
         }
     }
 }

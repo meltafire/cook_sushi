@@ -8,7 +8,7 @@ public class CookingDisplayIngridientView : MonoBehaviour
     [SerializeField]
     private TMP_Text _count;
 
-    public void Show(bool isOn)
+    public void Toggle(bool isOn)
     {
         gameObject.SetActive(isOn);
     }

@@ -4,13 +4,15 @@
     "references": [
         "Reflex",
         "Sushi.GameData",
+        "Sushi.Level.Cooking.Data",
         "Sushi.Level.Cooking.Events",
         "Sushi.SceneReference",
         "UniTask",
         "Unity.TextMeshPro",
         "Utils.AddressablesLoader",
         "Utils.Controllers",
-        "Utils.Controllers.ReflexIntegration"
+        "Utils.Controllers.ReflexIntegration",
+        "Utils.Ui"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
