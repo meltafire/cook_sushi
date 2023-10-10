@@ -1,5 +1,4 @@
-﻿using UnityEditor;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Assets.Features.Level.Cooking.Scripts.Views.Display.Infrastructure
 {

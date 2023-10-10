@@ -10,14 +10,14 @@ namespace Assets.Features.Level.Cooking.Scripts.Controllers.Ingridients
 {
     public abstract class CookingRecepieController: ResourcefulController
     {
-        private readonly IIngridientsParentTransformProvider _parentTransformProvider;
+        private readonly IRecepieParentTransformProvider _parentTransformProvider;
         private readonly CookingRecepieButtonAssetInstantiator _assetInstantiator;
         private readonly IRecipeSelectionEvents _events;
 
         private ButtonView _view;
 
         public CookingRecepieController(
-            IIngridientsParentTransformProvider parentTransformProvider,
+            IRecepieParentTransformProvider parentTransformProvider,
             CookingRecepieButtonAssetInstantiator assetInstantiator,
             IRecipeSelectionEvents events)
         {
@@ -51,7 +51,7 @@ namespace Assets.Features.Level.Cooking.Scripts.Controllers.Ingridients
         {
             AttachResource(_assetInstantiator);
 
-            _view = await _assetInstantiator.Load(_parentTransformProvider.IngridientsParentTransform);
+            _view = await _assetInstantiator.Load(_parentTransformProvider.Transform);
         }
     }
 }

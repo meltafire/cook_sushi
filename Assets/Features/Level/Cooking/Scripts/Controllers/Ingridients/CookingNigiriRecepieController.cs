@@ -8,7 +8,7 @@ namespace Assets.Features.Level.Cooking.Scripts.Controllers.Ingridients
     public class CookingNigiriRecepieController : CookingRecepieController
     {
         public CookingNigiriRecepieController(
-            IIngridientsParentTransformProvider parentTransformProvider,
+            IRecepieParentTransformProvider parentTransformProvider,
             CookingNigiriRecepieAssetProvider ingridientProvider,
             IRecipeSelectionEvents events)
              : base(parentTransformProvider, ingridientProvider, events)

@@ -1,7 +1,4 @@
-﻿using UnityEditor;
-using UnityEngine;
-
-namespace Assets.Features.Level.Cooking.Scripts.Data
+﻿namespace Assets.Features.Level.Cooking.Scripts.Data
 {
     public enum ControllerStatesType
     {

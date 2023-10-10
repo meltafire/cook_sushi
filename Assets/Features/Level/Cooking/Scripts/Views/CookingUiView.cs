@@ -1,11 +1,8 @@
-using Assets.Features.Level.Cooking.Scripts.Views.Display.Infrastructure;
-using Assets.Features.Level.Cooking.Scripts.Views.Infrastructure;
-using Assets.Features.Level.Cooking.Scripts.Views.Ingridients.Infrastructure;
 using UnityEngine;
 
 namespace Sushi.Level.Cooking
 {
-    public class CookingUiView : MonoBehaviour, ICookingUiView, IIngridientsDispalyParentTransformProvider, IIngridientsParentTransformProvider
+    public class CookingUiView : MonoBehaviour
     {
         [SerializeField]
         private ButtonView _backButton;
@@ -14,14 +11,14 @@ namespace Sushi.Level.Cooking
         [SerializeField]
         private ButtonView _doneButton;
         [SerializeField]
-        private CookingRecepieUiView _cookingRecepieUiView;
-        [SerializeField]
         private RectTransform _ingridientsDispalyParentTransform;
+        [SerializeField]
+        private RectTransform _recepieParentTransform;
         [SerializeField]
         private RectTransform _ingridientsParentTransform;
 
-        public CookingRecepieUiView CookingRecepieUiView => _cookingRecepieUiView;
         public RectTransform IngridientsDispalyParentTransform => _ingridientsDispalyParentTransform;
+        public RectTransform RecepieParentTransform => _recepieParentTransform;
         public RectTransform IngridientsParentTransform => _ingridientsParentTransform;
 
         public ButtonView BackButtonView => _backButton;
@@ -31,6 +28,16 @@ namespace Sushi.Level.Cooking
         public void Toggle(bool isOn)
         {
             gameObject.SetActive(isOn);
+        }
+
+        public void ToggleIngridients(bool isOn)
+        {
+            _ingridientsParentTransform.gameObject.SetActive(isOn);
+        }
+
+        public void ToggleRecepies(bool isOn)
+        {
+            _recepieParentTransform.gameObject.SetActive(isOn);
         }
     }
 }

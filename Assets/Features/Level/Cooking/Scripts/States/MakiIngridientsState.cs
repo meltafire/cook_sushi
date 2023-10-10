@@ -1,4 +1,5 @@
-﻿using Assets.Features.Level.Cooking.Scripts.Data;
+﻿using Assets.Features.Level.Cooking.Scripts.Controllers;
+using Assets.Features.Level.Cooking.Scripts.Data;
 using Assets.Features.Level.Cooking.Scripts.Events.Infrastructure;
 using Assets.Features.Level.Cooking.Scripts.Handler.Infrastructure;
 using Cysharp.Threading.Tasks;
@@ -9,21 +10,26 @@ namespace Assets.Features.Level.Cooking.Scripts.States
 {
     public class MakiIngridientsState : ICookingControllerState
     {
-        private readonly ICookingControllerRecepieButtonsExternalEvents _buttonEvents;
+        private readonly ICookingControllerGeneralButtonsProvider _buttonEvents;
         private readonly IRecepieSchemeDrawer _drawer;
+        private readonly ICookingControllerIngridentsToggleProvider _toggleProvider;
 
         private UniTaskCompletionSource<ControllerStatesType> _completionSource;
 
         public MakiIngridientsState(
-            ICookingControllerRecepieButtonsExternalEvents buttonEvents,
-            IRecepieSchemeDrawer drawer)
+            ICookingControllerGeneralButtonsProvider buttonEvents,
+            IRecepieSchemeDrawer drawer,
+            ICookingControllerIngridentsToggleProvider toggleProvider)
         {
             _buttonEvents = buttonEvents;
             _drawer = drawer;
+            _toggleProvider = toggleProvider;
         }
 
         public async UniTask<ControllerStatesType> Run(Stack<CookingAction> actions, CancellationToken token)
         {
+            _toggleProvider.ToggleIngridientButtons(true);
+
             _completionSource = new UniTaskCompletionSource<ControllerStatesType>();
 
             _buttonEvents.ToggleRevert(true);
@@ -45,6 +51,8 @@ namespace Assets.Features.Level.Cooking.Scripts.States
 
             _buttonEvents.ToggleRevert(false);
             _buttonEvents.ToggleDone(false);
+
+            _toggleProvider.ToggleIngridientButtons(false);
 
             return result;
         }

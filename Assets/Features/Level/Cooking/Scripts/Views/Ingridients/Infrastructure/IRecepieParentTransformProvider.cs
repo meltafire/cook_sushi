@@ -2,7 +2,7 @@
 
 namespace Assets.Features.Level.Cooking.Scripts.Views.Ingridients.Infrastructure
 {
-    public interface IIngridientsParentTransformProvider
+    public interface IRecepieParentTransformProvider
     {
         public RectTransform Transform { get; }
     }

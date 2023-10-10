@@ -26,6 +26,7 @@ namespace Sushi.App.Installer
         private void RegisterGameData(ContainerDescriptor descriptor)
         {
             descriptor.AddSingleton(typeof(LevelDishesTypeProvider), typeof(ILevelDishesTypeProvider));
+            descriptor.AddSingleton(typeof(LevelIngridientTypeProvider), typeof(ILevelIngridientTypeProvider));
         }
     }
 }

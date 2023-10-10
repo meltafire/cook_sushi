@@ -1,7 +1,9 @@
-﻿public enum CookingIngridientType
+﻿namespace Assets.Features.GameData.Scripts.Data
 {
-    Rice = 0,
-    Nori = 1,
-    Cucumber = 2,
-    Salmon = 3,
+    public enum CookingIngridientType
+    {
+        Cucumber = 0,
+        Salmon = 1,
+        Tuna = 2,
+    }
 }

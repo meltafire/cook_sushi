@@ -1,68 +1,94 @@
 using Assets.Features.GameData.Scripts.Data;
 using Assets.Features.GameData.Scripts.Providers;
+using Assets.Features.Level.Cooking.Scripts.Controllers;
 using Assets.Features.Level.Cooking.Scripts.Controllers.Display;
 using Assets.Features.Level.Cooking.Scripts.Controllers.Ingridients;
 using Assets.Features.Level.Cooking.Scripts.Data;
 using Assets.Features.Level.Cooking.Scripts.Events;
+using Assets.Features.Level.Cooking.Scripts.Events.Infrastructure;
 using Assets.Features.Level.Cooking.Scripts.States;
-using Assets.Features.Level.Cooking.Scripts.Views.Infrastructure;
+using Assets.Features.Level.Cooking.Scripts.Views.Display.Infrastructure;
+using Assets.Features.Level.Cooking.Scripts.Views.Ingridients.Infrastructure;
 using Cysharp.Threading.Tasks;
+using Reflex.Core;
+using System;
 using System.Collections.Generic;
 using System.Threading;
+using UnityEngine;
 using Utils.Controllers;
+using Utils.Controllers.ReflexIntegration;
 
 namespace Sushi.Level.Cooking
 {
-    public class CookingController : ResourcefulController
+    public abstract class BaseCookingController : ResourcefulController
     {
+    }
+
+    public class CookingController : BaseCookingController,
+        IRecepieParentTransformProvider,
+        IIngridientsParentTransformProvider,
+        IIngridientsDispalyParentTransformProvider,
+        ICookingControllerGeneralButtonsProvider,
+        ICookingControllerRecepieToggleProvider,
+        ICookingControllerIngridentsToggleProvider
+    {
+        private static readonly string IngridientContainerName = "Ingridient";
+
+        private readonly Container _container;
         private readonly ICookingControllerEvents _events;
         private readonly CookingView _view;
-        private readonly ICookingUiView _uiView;
-        private readonly CookingRecepieUiView _recepieView;
+        private readonly CookingUiView _uiView;
 
         private readonly Dictionary<ControllerStatesType, ICookingControllerState> _statesDisctionary;
         private readonly ILevelDishesTypeProvider _levelDishesTypeProvider;
+        private readonly ILevelIngridientTypeProvider _levelIngridientTypeProvider;
         private readonly IFactory<CookingMakiRecepieController> _makiRecepieControllerFactory;
         private readonly IFactory<CookingNigiriRecepieController> _nigiriRecepieControllerFactory;
         private readonly IFactory<CookingDisplayMakiRecepieController> _displayMakiRecepieControllerFactory;
         private readonly List<ResourcefulController> _dynamicControllers = new List<ResourcefulController>();
 
+        private Stack<Container> _ingridientsContainers = new Stack<Container>();
         private CancellationToken _token;
 
+        public event Action RevertPressed;
+        public event Action DonePressed;
+
+        public RectTransform IngridientsDispalyParentTransform => _uiView.IngridientsDispalyParentTransform;
+
+        RectTransform IRecepieParentTransformProvider.Transform => _uiView.RecepieParentTransform;
+        RectTransform IIngridientsParentTransformProvider.Transform => _uiView.IngridientsParentTransform;
+
         public CookingController(
+            Container container,
             ICookingControllerEvents events,
             CookingView view,
-            ICookingUiView uiView,
-            CookingRecepieUiView recepieView,
+            CookingUiView uiView,
             ILevelDishesTypeProvider levelDishesTypeProvider,
+            ILevelIngridientTypeProvider levelIngridientTypeProvider,
             IFactory<CookingMakiRecepieController> makiRecepieControllerFactory,
             IFactory<CookingNigiriRecepieController> nigiriRecepieControllerFactory,
-            IFactory<CookingDisplayMakiRecepieController> displayMakiRecepieControllerFactory,
-            IngridientsState ingridientsState,
-            RecepieSelectionState recepieSelectionState,
-            MakiIngridientsState makiIngridientsState,
-            FinalizationState finalizationState)
+            IFactory<CookingDisplayMakiRecepieController> displayMakiRecepieControllerFactory)
         {
+            _container = container;
             _events = events;
             _view = view;
             _uiView = uiView;
-            _recepieView = recepieView;
             _levelDishesTypeProvider = levelDishesTypeProvider;
+            _levelIngridientTypeProvider = levelIngridientTypeProvider;
             _makiRecepieControllerFactory = makiRecepieControllerFactory;
             _nigiriRecepieControllerFactory = nigiriRecepieControllerFactory;
             _displayMakiRecepieControllerFactory = displayMakiRecepieControllerFactory;
 
-            _statesDisctionary = new Dictionary<ControllerStatesType, ICookingControllerState>()
-            {
-                { ControllerStatesType.RecepieSelectionState, recepieSelectionState},
-                { ControllerStatesType.IngridientsState, ingridientsState},
-                { ControllerStatesType.MakiIngridientsState, makiIngridientsState},
-                { ControllerStatesType.FinalizationState, finalizationState},
-            };
+            _statesDisctionary = new Dictionary<ControllerStatesType, ICookingControllerState>(4);
         }
 
         public override UniTask Initialzie(CancellationToken token)
         {
+            _statesDisctionary.Add(ControllerStatesType.RecepieSelectionState, _container.Resolve<RecepieSelectionState>());
+            _statesDisctionary.Add(ControllerStatesType.IngridientsState, _container.Resolve<IngridientsState>());
+            _statesDisctionary.Add(ControllerStatesType.MakiIngridientsState, _container.Resolve<MakiIngridientsState>());
+            _statesDisctionary.Add(ControllerStatesType.FinalizationState, _container.Resolve<FinalizationState>());
+
             _token = token;
 
             ShowWindow(false);
@@ -72,31 +98,50 @@ namespace Sushi.Level.Cooking
             Start().Forget();
 
             _events.ShowRequest += OnShowWindowRequest;
-            _events.ToggleDoneButton += OnToggleDoneButton;
-            _events.ToggleBackButton += OnToggleBackButton;
-            _events.ToggleRevertButton += OnToggleRevertButton;
 
             _uiView.BackButtonView.OnButtonPressed += OnBackButtonClickHappen;
             _uiView.RevertButtonView.OnButtonPressed += OnRevertButtonClickHappen;
             _uiView.DoneButtonView.OnButtonPressed += OnDoneButtonClickHappen;
 
-            return SpawnRecepieButtons(token);
+            return SpawnCookingButtons(token);
         }
 
         public override void Dispose()
         {
-            DisposeRecepieButtons();
+            DisposeCookingButtons();
 
             _events.ShowRequest -= OnShowWindowRequest;
-            _events.ToggleDoneButton -= OnToggleDoneButton;
-            _events.ToggleBackButton -= OnToggleBackButton;
-            _events.ToggleRevertButton -= OnToggleRevertButton;
 
             _uiView.BackButtonView.OnButtonPressed -= OnBackButtonClickHappen;
             _uiView.RevertButtonView.OnButtonPressed -= OnRevertButtonClickHappen;
             _uiView.DoneButtonView.OnButtonPressed -= OnDoneButtonClickHappen;
 
             base.Dispose();
+        }
+
+        public void ToggleRevert(bool isOn)
+        {
+            _uiView.RevertButtonView.Toggle(isOn);
+        }
+
+        public void ToggleDone(bool isOn)
+        {
+            _uiView.DoneButtonView.Toggle(isOn);
+        }
+
+        public void ToggleBackButton(bool isOn)
+        {
+            _uiView.BackButtonView.Toggle(isOn);
+        }
+
+        public void ToggleRecepieButtons(bool isOn)
+        {
+            _uiView.ToggleRecepies(isOn);
+        }
+
+        public void ToggleIngridientButtons(bool isOn)
+        {
+            _uiView.ToggleIngridients(isOn);
         }
 
         private async UniTask Start()
@@ -128,11 +173,11 @@ namespace Sushi.Level.Cooking
 
         private void ResetView()
         {
-            HideAllSubViews();
-            
-            _uiView.BackButtonView.Toggle(true);
-            _uiView.DoneButtonView.Toggle(false);
-            _uiView.RevertButtonView.Toggle(false);
+            ToggleRecepieButtons(false);
+            ToggleIngridientButtons(false);
+            ToggleRevert(false);
+            ToggleDone(false);
+            ToggleBackButton(true);
         }
 
         private void OnBackButtonClickHappen()
@@ -141,9 +186,35 @@ namespace Sushi.Level.Cooking
             _events.ReportPopupClosed();
         }
 
-        private void HideAllSubViews()
+        private UniTask SpawnCookingButtons(CancellationToken token)
         {
-            _recepieView.ShowButtons(false);
+            return UniTask.WhenAll(SpawnRecepieButtons(token), SpawnIngridients(token));
+        }
+
+        private UniTask SpawnIngridients(CancellationToken token)
+        {
+            var types = _levelIngridientTypeProvider.GetLevelIngridients();
+            var loadingTasks = new List<UniTask>();
+
+            foreach (var type in types)
+            {
+                var childContainer = _container.Scope(IngridientContainerName + type, descriptor =>
+                {
+                    var data = new CookingIngridientControllerData(type);
+
+                    descriptor.AddInstance(data, typeof(CookingIngridientControllerData));
+                    descriptor.RegisterController<CookingIngridientController>();
+                });
+
+                var controller = childContainer.Resolve<IFactory<CookingIngridientController>>().Create();
+                loadingTasks.Add(controller.Initialzie(token));
+
+                _dynamicControllers.Add(controller);
+
+                _ingridientsContainers.Push(childContainer);
+            }
+
+            return UniTask.WhenAll(loadingTasks);
         }
 
         private UniTask SpawnRecepieButtons(CancellationToken token)
@@ -171,37 +242,28 @@ namespace Sushi.Level.Cooking
             return UniTask.WhenAll(loadingTasks);
         }
 
-        private void DisposeRecepieButtons()
+        private void DisposeCookingButtons()
         {
             foreach(var controller in _dynamicControllers)
             {
                 controller.Dispose();
             }
+
+            while (_ingridientsContainers.Count != 0)
+            {
+                var container = _ingridientsContainers.Pop();
+                container.Dispose();
+            }
         }
 
         private void OnDoneButtonClickHappen()
         {
-            _events.ReportDonePressed();
+            DonePressed?.Invoke();
         }
 
         private void OnRevertButtonClickHappen()
         {
-            _events.ReportRevertPressed();
-        }
-
-        private void OnToggleRevertButton(bool isOn)
-        {
-            _uiView.RevertButtonView.Toggle(isOn);
-        }
-
-        private void OnToggleBackButton(bool isOn)
-        {
-            _uiView.BackButtonView.Toggle(isOn);
-        }
-
-        private void OnToggleDoneButton(bool isOn)
-        {
-            _uiView.DoneButtonView.Toggle(isOn);
+            RevertPressed?.Invoke();
         }
     }
 }
