@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -23,6 +24,13 @@ namespace Utils.Input
             {
                 return;
             }
+
+            context.action.canceled += OnPointerUp;
+        }
+
+        private void OnPointerUp(InputAction.CallbackContext context)
+        {
+            context.action.canceled -= OnPointerUp;
 
 #if UNITY_STANDALONE || UNITY_EDITOR
             var hits = Physics2D.GetRayIntersectionNonAlloc(_camera.ScreenPointToRay(Mouse.current.position.ReadValue()), _results);
