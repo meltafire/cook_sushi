@@ -11,14 +11,14 @@ namespace Assets.Features.Level.Cooking.Scripts.States
     public class MakiIngridientsState : ICookingControllerState
     {
         private readonly ICookingControllerGeneralButtonsProvider _buttonEvents;
-        private readonly IRecepieSchemeDrawer _drawer;
+        private readonly IRecepieAccounting _drawer;
         private readonly ICookingControllerIngridentsToggleProvider _toggleProvider;
 
         private UniTaskCompletionSource<ControllerStatesType> _completionSource;
 
         public MakiIngridientsState(
             ICookingControllerGeneralButtonsProvider buttonEvents,
-            IRecepieSchemeDrawer drawer,
+            IRecepieAccounting drawer,
             ICookingControllerIngridentsToggleProvider toggleProvider)
         {
             _buttonEvents = buttonEvents;

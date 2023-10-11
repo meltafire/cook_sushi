@@ -14,7 +14,7 @@ namespace Assets.Features.Level.Cooking.Scripts.States
     {
         private readonly ICookingControllerGeneralButtonsProvider _controllerServiceMethods;
         private readonly IRecipeSelectionExternalEvents _recipeSelectionButtonEvents;
-        private readonly IRecepieSchemeDrawer _drawer;
+        private readonly IRecepieAccounting _drawer;
         private readonly ICookingControllerRecepieToggleProvider _toggleProvider;
 
         private Stack<CookingAction> _actions;
@@ -23,7 +23,7 @@ namespace Assets.Features.Level.Cooking.Scripts.States
         public RecepieSelectionState(
             ICookingControllerGeneralButtonsProvider controllerServiceMethods,
             IRecipeSelectionExternalEvents recipeSelectionButtonEvents,
-            IRecepieSchemeDrawer drawer,
+            IRecepieAccounting drawer,
             ICookingControllerRecepieToggleProvider toggleProvider)
         {
             _controllerServiceMethods = controllerServiceMethods;

@@ -5,7 +5,7 @@ using Utils.AddressablesLoader;
 
 namespace Assets.Features.Level.Cooking.Scripts.Providers.Display
 {
-    public class CookingDisplayIngridientProvider : AssetInstantiator
+    public class CookingDisplayIngridientInstantiator : AssetInstantiator
     {
         public UniTask<CookingDisplayIngridientView> Load(Transform transform)
         {

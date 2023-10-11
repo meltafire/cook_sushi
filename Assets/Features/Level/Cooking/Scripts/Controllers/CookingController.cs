@@ -1,11 +1,11 @@
 using Assets.Features.GameData.Scripts.Data;
 using Assets.Features.GameData.Scripts.Providers;
 using Assets.Features.Level.Cooking.Scripts.Controllers;
-using Assets.Features.Level.Cooking.Scripts.Controllers.Display;
 using Assets.Features.Level.Cooking.Scripts.Controllers.Ingridients;
 using Assets.Features.Level.Cooking.Scripts.Data;
 using Assets.Features.Level.Cooking.Scripts.Events;
 using Assets.Features.Level.Cooking.Scripts.Events.Infrastructure;
+using Assets.Features.Level.Cooking.Scripts.Handler;
 using Assets.Features.Level.Cooking.Scripts.States;
 using Assets.Features.Level.Cooking.Scripts.Views.Display.Infrastructure;
 using Assets.Features.Level.Cooking.Scripts.Views.Ingridients.Infrastructure;
@@ -44,7 +44,7 @@ namespace Sushi.Level.Cooking
         private readonly ILevelIngridientTypeProvider _levelIngridientTypeProvider;
         private readonly IFactory<CookingMakiRecepieController> _makiRecepieControllerFactory;
         private readonly IFactory<CookingNigiriRecepieController> _nigiriRecepieControllerFactory;
-        private readonly IFactory<CookingDisplayMakiRecepieController> _displayMakiRecepieControllerFactory;
+        private readonly RecepieDisplayHandler _recepieDisplayHandler;
         private readonly List<ResourcefulController> _dynamicControllers = new List<ResourcefulController>();
 
         private Stack<Container> _ingridientsContainers = new Stack<Container>();
@@ -67,7 +67,7 @@ namespace Sushi.Level.Cooking
             ILevelIngridientTypeProvider levelIngridientTypeProvider,
             IFactory<CookingMakiRecepieController> makiRecepieControllerFactory,
             IFactory<CookingNigiriRecepieController> nigiriRecepieControllerFactory,
-            IFactory<CookingDisplayMakiRecepieController> displayMakiRecepieControllerFactory)
+            RecepieDisplayHandler recepieDisplayHandler)
         {
             _container = container;
             _events = events;
@@ -77,7 +77,7 @@ namespace Sushi.Level.Cooking
             _levelIngridientTypeProvider = levelIngridientTypeProvider;
             _makiRecepieControllerFactory = makiRecepieControllerFactory;
             _nigiriRecepieControllerFactory = nigiriRecepieControllerFactory;
-            _displayMakiRecepieControllerFactory = displayMakiRecepieControllerFactory;
+            _recepieDisplayHandler = recepieDisplayHandler;
 
             _statesDisctionary = new Dictionary<ControllerStatesType, ICookingControllerState>(4);
         }
@@ -103,7 +103,7 @@ namespace Sushi.Level.Cooking
             _uiView.RevertButtonView.OnButtonPressed += OnRevertButtonClickHappen;
             _uiView.DoneButtonView.OnButtonPressed += OnDoneButtonClickHappen;
 
-            return SpawnCookingButtons(token);
+            return UniTask.WhenAll(_recepieDisplayHandler.Initialize(token), SpawnCookingButtons(token));
         }
 
         public override void Dispose()
@@ -115,6 +115,8 @@ namespace Sushi.Level.Cooking
             _uiView.BackButtonView.OnButtonPressed -= OnBackButtonClickHappen;
             _uiView.RevertButtonView.OnButtonPressed -= OnRevertButtonClickHappen;
             _uiView.DoneButtonView.OnButtonPressed -= OnDoneButtonClickHappen;
+
+            _recepieDisplayHandler.Dispose();
 
             base.Dispose();
         }
@@ -200,7 +202,7 @@ namespace Sushi.Level.Cooking
             {
                 var childContainer = _container.Scope(IngridientContainerName + type, descriptor =>
                 {
-                    var data = new CookingIngridientControllerData(type);
+                    var data = new CookingIngridientControllerData(type, 0);
 
                     descriptor.AddInstance(data, typeof(CookingIngridientControllerData));
                     descriptor.RegisterController<CookingIngridientController>();
@@ -224,7 +226,6 @@ namespace Sushi.Level.Cooking
             if(types.Contains(DishType.Maki))
             {
                 _dynamicControllers.Add(_makiRecepieControllerFactory.Create());
-                _dynamicControllers.Add(_displayMakiRecepieControllerFactory.Create());
             }
 
             if(types.Contains(DishType.Nigiri))

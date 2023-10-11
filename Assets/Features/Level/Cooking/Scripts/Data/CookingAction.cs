@@ -13,8 +13,9 @@ namespace Assets.Features.Level.Cooking.Scripts.Data
         Rice = CookingStapleIngridientType.Rice + 200,
         Nori = CookingStapleIngridientType.Nori + 200,
 
-        Cucumber = CookingIngridientType.Cucumber + 300,
-        Salmon = CookingIngridientType.Salmon + 300,
+        Cucumber = CookingIngridientType.Cucumber,
+        Salmon = CookingIngridientType.Salmon,
+        Tuna = CookingIngridientType.Tuna,
 
     }
 }

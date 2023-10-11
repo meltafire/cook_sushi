@@ -2,8 +2,8 @@
 {
     public enum CookingIngridientType
     {
-        Cucumber = 0,
-        Salmon = 1,
-        Tuna = 2,
+        Cucumber = 301,
+        Salmon = 302,
+        Tuna = 303,
     }
 }

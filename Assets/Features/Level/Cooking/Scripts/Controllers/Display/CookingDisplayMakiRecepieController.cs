@@ -1,9 +1,9 @@
-﻿using Assets.Features.Level.Cooking.Scripts.Data;
-using Assets.Features.Level.Cooking.Scripts.Events.Display.Infrastructure;
+﻿using Assets.Features.Level.Cooking.Scripts.Handler.Infrastructure;
 using Assets.Features.Level.Cooking.Scripts.Providers.Display;
 using Assets.Features.Level.Cooking.Scripts.Views.Display.Infrastructure;
 using Cysharp.Threading.Tasks;
 using System.Threading;
+using UnityEngine;
 using Utils.Controllers;
 
 namespace Assets.Features.Level.Cooking.Scripts.Controllers.Display
@@ -12,14 +12,14 @@ namespace Assets.Features.Level.Cooking.Scripts.Controllers.Display
     {
         private readonly IIngridientsDispalyParentTransformProvider _parentTransformProvider;
         private readonly CookingDisplayMakiInstantiator _cookingDisplayMakiInstantiator;
-        private readonly IMakiDisplayEvents _events;
+        private readonly IRecepieAccountingDrawSignals _events;
 
         private CookingDisplayRecepieView _view;
 
         public CookingDisplayMakiRecepieController(
             IIngridientsDispalyParentTransformProvider parentTransformProvider,
             CookingDisplayMakiInstantiator cookingDisplayMakiInstantiator,
-            IMakiDisplayEvents events)
+            IRecepieAccountingDrawSignals events)
         {
             _parentTransformProvider = parentTransformProvider;
             _cookingDisplayMakiInstantiator = cookingDisplayMakiInstantiator;
@@ -30,24 +30,23 @@ namespace Assets.Features.Level.Cooking.Scripts.Controllers.Display
         {
             await LoadPrefab();
 
-            _events.ToggleRequest += OnShowRequest;
+            _events.DisplayMakiRecepie += OnShowRequest;
+            Debug.Log("register");
         }
 
         public override void Dispose()
         {
-            _events.ToggleRequest -= OnShowRequest;
+            _events.DisplayMakiRecepie -= OnShowRequest;
+
+            Debug.Log("unregister");
 
             base.Dispose();
         }
 
         private void OnShowRequest(bool isOn)
         {
+            Debug.Log("showwww");
             _view.Toggle(isOn);
-        }
-
-        private string GetTextForStep(CookingStep step)
-        {
-            return step.ToString();
         }
 
         private async UniTask LoadPrefab()

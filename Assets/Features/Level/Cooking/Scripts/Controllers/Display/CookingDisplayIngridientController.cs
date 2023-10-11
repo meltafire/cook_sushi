@@ -1,5 +1,4 @@
-using Assets.Features.Level.Cooking.Scripts.Data;
-using Assets.Features.Level.Cooking.Scripts.Events.Display.Infrastructure;
+using Assets.Features.GameData.Scripts.Data;
 using Assets.Features.Level.Cooking.Scripts.Providers.Display;
 using Assets.Features.Level.Cooking.Scripts.Views.Display.Infrastructure;
 using Cysharp.Threading.Tasks;
@@ -9,48 +8,36 @@ using Utils.Controllers;
 public class CookingDisplayIngridientController : ResourcefulController
 {
     private readonly IIngridientsDispalyParentTransformProvider _parentTransformProvider;
-    private readonly CookingDisplayIngridientProvider _displayIngridientProvider;
-    private readonly IIngridientDisplayEvents _events;
+    private readonly CookingDisplayIngridientInstantiator _displayIngridientProvider;
 
     private CookingDisplayIngridientView _view;
 
     public CookingDisplayIngridientController(
         IIngridientsDispalyParentTransformProvider parentTransformProvider,
-        CookingDisplayIngridientProvider displayIngridientProvider,
-        IIngridientDisplayEvents events)
+        CookingDisplayIngridientInstantiator displayIngridientProvider)
     {
         _parentTransformProvider = parentTransformProvider;
         _displayIngridientProvider = displayIngridientProvider;
-        _events = events;
     }
 
     public override async UniTask Initialzie(CancellationToken token)
     {
         await LoadPrefab();
-
-        _events.ShowRequest += OnShowRequest;
-        _events.HideRequest += OnHideRequest;
     }
 
-    public override void Dispose()
-    {
-        _events.ShowRequest -= OnShowRequest;
-        _events.HideRequest -= OnHideRequest;
-
-        base.Dispose();
-    }
-
-    private void OnHideRequest()
+    public void Hide()
     {
         _view.Toggle(false);
     }
 
-    private void OnShowRequest(CookingStep step, int count)
+    public void Show(CookingIngridientType step, int count)
     {
         _view.SetData(GetTextForStep(step), count);
+
+        _view.Toggle(true);
     }
 
-    private string GetTextForStep(CookingStep step)
+    private string GetTextForStep(CookingIngridientType step)
     {
         return step.ToString();
     }
@@ -61,6 +48,6 @@ public class CookingDisplayIngridientController : ResourcefulController
 
         _view = await _displayIngridientProvider.Load(_parentTransformProvider.IngridientsDispalyParentTransform);
 
-        _view.Toggle(false);
+        Hide();
     }
 }

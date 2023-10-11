@@ -1,4 +1,5 @@
 ﻿using Assets.Features.Level.Cooking.Scripts.Data;
+using Assets.Features.Level.Cooking.Scripts.Handler.Infrastructure;
 using Assets.Features.Level.Cooking.Scripts.Providers.Ingridients;
 using Assets.Features.Level.Cooking.Scripts.Views.Ingridients.Infrastructure;
 using Cysharp.Threading.Tasks;
@@ -13,17 +14,20 @@ namespace Assets.Features.Level.Cooking.Scripts.Controllers.Ingridients
         private readonly CookingIngridientControllerData _data;
         private readonly CookingIngridientAssetProvider _assetProvider;
         private readonly IIngridientsParentTransformProvider _transformProvider;
+        private readonly IRecepieAccounting _drawer;
 
         private IngridientButtonView _view;
 
         public CookingIngridientController(
             CookingIngridientControllerData data,
             CookingIngridientAssetProvider assetProvider,
-            IIngridientsParentTransformProvider transformProvider)
+            IIngridientsParentTransformProvider transformProvider,
+            IRecepieAccounting drawer)
         {
             _data = data;
             _assetProvider = assetProvider;
             _transformProvider = transformProvider;
+            _drawer = drawer;
         }
 
         public override async UniTask Initialzie(CancellationToken token)
@@ -51,7 +55,7 @@ namespace Assets.Features.Level.Cooking.Scripts.Controllers.Ingridients
 
         private void OnButtonPressed()
         {
-            throw new NotImplementedException();
+            _drawer.ShowIngridient(_data.CookingIngridientType, _data.Count);
         }
     }
 }
