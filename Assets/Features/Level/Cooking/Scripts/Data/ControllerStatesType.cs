@@ -4,7 +4,6 @@
     {
         RecepieSelectionState = 0,
         IngridientsState = 1,
-        MakiIngridientsState = 2,
-        FinalizationState = 3
+        FinalizationState = 2
     }
 }

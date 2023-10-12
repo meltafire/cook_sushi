@@ -14,6 +14,7 @@ namespace Assets.Features.Level.Cooking.Scripts.Handler
         public int IngridientsCount => _drawedElements.Count;
 
         public event Action<bool> DisplayMakiRecepie;
+        public event Action<bool> DisplayNigiriRecepie;
         public event Action<CookingIngridientType, int> DisplayIngridient;
         public event Action HideIngridient;
         public event Action<bool> DisplayWrapMaki;
@@ -22,7 +23,14 @@ namespace Assets.Features.Level.Cooking.Scripts.Handler
         {
             _drawedElements.Push(scheme);
 
-            DisplayMakiRecepie?.Invoke(true);
+            if (scheme == CookingAction.Maki)
+            {
+                DisplayMakiRecepie?.Invoke(true);
+            }
+            else if (scheme == CookingAction.Nigiri)
+            {
+                DisplayNigiriRecepie?.Invoke(true);
+            }
         }
 
         public void ShowIngridient(CookingIngridientType scheme, int count)
@@ -47,10 +55,13 @@ namespace Assets.Features.Level.Cooking.Scripts.Handler
         {
             var scheme = _drawedElements.Pop();
 
-
             if(scheme == CookingAction.Maki)
             {
                 DisplayMakiRecepie?.Invoke(false);
+            }
+            else if(scheme == CookingAction.Nigiri)
+            {
+                DisplayNigiriRecepie?.Invoke(false);
             }
             else if(scheme == CookingAction.WrapMaki)
             {

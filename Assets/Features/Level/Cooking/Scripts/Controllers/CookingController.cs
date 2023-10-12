@@ -85,7 +85,6 @@ namespace Sushi.Level.Cooking
         {
             _statesDisctionary.Add(ControllerStatesType.RecepieSelectionState, _container.Resolve<RecepieSelectionState>());
             _statesDisctionary.Add(ControllerStatesType.IngridientsState, _container.Resolve<IngridientsState>());
-            _statesDisctionary.Add(ControllerStatesType.MakiIngridientsState, _container.Resolve<MakiIngridientsState>());
             _statesDisctionary.Add(ControllerStatesType.FinalizationState, _container.Resolve<FinalizationState>());
 
             ShowWindow(false);

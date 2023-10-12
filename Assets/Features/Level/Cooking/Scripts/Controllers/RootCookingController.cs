@@ -62,7 +62,6 @@ namespace Assets.Features.Level.Cooking.Scripts.Controllers
                         );
 
                     descriptor.AddTransient(typeof(RecepieSelectionState));
-                    descriptor.AddTransient(typeof(MakiIngridientsState));
                     descriptor.AddTransient(typeof(IngridientsState));
                     descriptor.AddTransient(typeof(FinalizationState));
 
@@ -124,9 +123,11 @@ namespace Assets.Features.Level.Cooking.Scripts.Controllers
             descriptor.AddTransient(typeof(RecepieDisplayHandler));
             descriptor.RegisterController<CookingDisplayIngridientController>();
             descriptor.RegisterController<CookingDisplayMakiRecepieController>();
+            descriptor.RegisterController<CookingDisplayNigiriRecepieController>();
             descriptor.RegisterController<CookingDisplayMakiWrapController>();
             descriptor.AddTransient(typeof(CookingDisplayMakiStartInstantiator));
             descriptor.AddTransient(typeof(CookingDisplayMakiEndInstantiator));
+            descriptor.AddTransient(typeof(CookingDisplayNigiriInstantiator));
             descriptor.AddTransient(typeof(CookingDisplayIngridientInstantiator));
             descriptor.AddTransient(typeof(CookingDisplayMakiWrapInstantiator));
 

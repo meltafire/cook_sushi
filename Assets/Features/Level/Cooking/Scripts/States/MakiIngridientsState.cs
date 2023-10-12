@@ -3,12 +3,11 @@ using Assets.Features.Level.Cooking.Scripts.Data;
 using Assets.Features.Level.Cooking.Scripts.Events.Infrastructure;
 using Assets.Features.Level.Cooking.Scripts.Handler.Infrastructure;
 using Cysharp.Threading.Tasks;
-using System.Collections.Generic;
 using System.Threading;
 
 namespace Assets.Features.Level.Cooking.Scripts.States
 {
-    public class MakiIngridientsState : ICookingControllerState
+    public class IngridientsState : ICookingControllerState
     {
         private readonly ICookingControllerGeneralButtonsProvider _buttonEvents;
         private readonly IRecepieAccounting _recepieAccounting;
@@ -16,7 +15,7 @@ namespace Assets.Features.Level.Cooking.Scripts.States
 
         private UniTaskCompletionSource<ControllerStatesType> _completionSource;
 
-        public MakiIngridientsState(
+        public IngridientsState(
             ICookingControllerGeneralButtonsProvider buttonEvents,
             IRecepieAccounting recepieAccounting,
             ICookingControllerIngridentsToggleProvider toggleProvider)

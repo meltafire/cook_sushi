@@ -6,6 +6,7 @@ namespace Assets.Features.Level.Cooking.Scripts.Handler.Infrastructure
     public interface IRecepieAccountingDrawSignals
     {
         public event Action<bool> DisplayMakiRecepie;
+        public event Action<bool> DisplayNigiriRecepie;
         public event Action<CookingIngridientType, int> DisplayIngridient;
         public event Action<bool> DisplayWrapMaki;
         public event Action HideIngridient;

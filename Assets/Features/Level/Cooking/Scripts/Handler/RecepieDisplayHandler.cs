@@ -4,6 +4,7 @@ using Assets.Features.Level.Cooking.Scripts.Controllers.Display;
 using Assets.Features.Level.Cooking.Scripts.Handler.Infrastructure;
 using Assets.Features.Level.Cooking.Scripts.Pools;
 using Cysharp.Threading.Tasks;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using Utils.Controllers;
@@ -14,6 +15,7 @@ namespace Assets.Features.Level.Cooking.Scripts.Handler
     {
         private readonly ILevelDishesTypeProvider _levelDishesTypeProvider;
         private readonly IFactory<CookingDisplayMakiRecepieController> _displayMakiRecepieControllerFactory;
+        private readonly IFactory<CookingDisplayNigiriRecepieController> _displayNigiriRecepieControllerFactory;
         private readonly IFactory<CookingMakiWrapActionController> _cookingMakiWrapActionControllerFactory;
         private readonly IFactory<CookingDisplayMakiWrapController> _cookingDisplayMakiWrapControllerFactory;
         private readonly DisplayIngridientsControllerPool _ingridientsControllerPool;
@@ -21,6 +23,7 @@ namespace Assets.Features.Level.Cooking.Scripts.Handler
         private readonly Stack<CookingDisplayIngridientController> _ingridientDisplayControllers = new Stack<CookingDisplayIngridientController>();
 
         private CookingDisplayMakiRecepieController _displayMakiController;
+        private CookingDisplayNigiriRecepieController _displayNigiriRecepieController;
         private CookingMakiWrapActionController _wrapMakiController;
         private CookingDisplayMakiWrapController _displayWrapMakiController;
         private CancellationToken _token;
@@ -28,6 +31,7 @@ namespace Assets.Features.Level.Cooking.Scripts.Handler
         public RecepieDisplayHandler(
             ILevelDishesTypeProvider levelDishesTypeProvider,
             IFactory<CookingDisplayMakiRecepieController> displayMakiRecepieControllerFactory,
+            IFactory<CookingDisplayNigiriRecepieController> displayNigiriRecepieControllerFactory,
             IFactory<CookingMakiWrapActionController> cookingMakiWrapActionControllerFactory,
             IFactory<CookingDisplayMakiWrapController> cookingDisplayMakiWrapControllerFactory,
             DisplayIngridientsControllerPool ingridientsControllerPool,
@@ -35,6 +39,7 @@ namespace Assets.Features.Level.Cooking.Scripts.Handler
         {
             _levelDishesTypeProvider = levelDishesTypeProvider;
             _displayMakiRecepieControllerFactory = displayMakiRecepieControllerFactory;
+            _displayNigiriRecepieControllerFactory = displayNigiriRecepieControllerFactory;
             _cookingMakiWrapActionControllerFactory = cookingMakiWrapActionControllerFactory;
             _cookingDisplayMakiWrapControllerFactory = cookingDisplayMakiWrapControllerFactory;
             _ingridientsControllerPool = ingridientsControllerPool;
@@ -61,6 +66,14 @@ namespace Assets.Features.Level.Cooking.Scripts.Handler
 
                 _ingridientSelectionExternalEvent.DisplayMakiRecepie += OnDisplayMakiRecepie;
                 _ingridientSelectionExternalEvent.DisplayWrapMaki += OnDisplayWrapMaki;
+            }
+
+            if (types.Contains(DishType.Nigiri))
+            {
+                _displayNigiriRecepieController = _displayNigiriRecepieControllerFactory.Create();
+                tasks.Add(_displayNigiriRecepieController.Initialzie(token));
+
+                _ingridientSelectionExternalEvent.DisplayNigiriRecepie += OnDisplayNigiriRecepie;
             }
 
             tasks.Add(_ingridientsControllerPool.Initialize(token));
@@ -94,7 +107,19 @@ namespace Assets.Features.Level.Cooking.Scripts.Handler
                 _displayWrapMakiController.Dispose();
             }
 
+            if (types.Contains(DishType.Nigiri))
+            {
+                _ingridientSelectionExternalEvent.DisplayNigiriRecepie += OnDisplayNigiriRecepie;
+
+                _displayNigiriRecepieController.Dispose();
+            }
+
             _ingridientsControllerPool.Dispose();
+        }
+
+        private void OnDisplayNigiriRecepie(bool isOn)
+        {
+            _displayNigiriRecepieController.Show(isOn);
         }
 
         private void OnDisplayWrapMaki(bool isOn)

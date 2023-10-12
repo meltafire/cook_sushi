@@ -6,6 +6,7 @@
         public static readonly string CookingUiPrefabKey = "Level/Cooking/CookingUi";
 
         public static readonly string CookingDisplayIngredientPrefabKey = "Level/Cooking/Display/IngridientDisplay";
+        public static readonly string CookingDisplayNigiriPrefabKey = "Level/Cooking/Display/IngridientNigiri";
         public static readonly string CookingDisplayMakiStartPrefabKey = "Level/Cooking/Display/IngridientMakiStart";
         public static readonly string CookingDisplayMakiEndPrefabKey = "Level/Cooking/Display/IngridientMakiEnd";
         public static readonly string CookingDisplayMakiWrapPrefabKey = "Level/Cooking/Display/IngridientMakiWrap";
