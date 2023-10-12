@@ -17,7 +17,6 @@ namespace Assets.Features.Level.Cooking.Scripts.States
         private readonly IRecepieAccounting _drawer;
         private readonly ICookingControllerRecepieToggleProvider _toggleProvider;
 
-        private Stack<CookingAction> _actions;
         private UniTaskCompletionSource<DishType> _completionSource;
 
         public RecepieSelectionState(
@@ -32,13 +31,11 @@ namespace Assets.Features.Level.Cooking.Scripts.States
             _toggleProvider = toggleProvider;
         }
 
-        public async UniTask<ControllerStatesType> Run(Stack<CookingAction> actions, CancellationToken token)
+        public async UniTask<ControllerStatesType> Run(CancellationToken token)
         {
             _toggleProvider.ToggleRecepieButtons(true);
 
             _completionSource = new UniTaskCompletionSource<DishType>();
-
-            _actions = actions;
 
             _controllerServiceMethods.ToggleBackButton(true);
 
@@ -59,8 +56,6 @@ namespace Assets.Features.Level.Cooking.Scripts.States
         private void OnSchemeChosen(DishType scheme)
         {
             var cookingAction = (CookingAction)scheme;
-
-            _actions.Push(cookingAction);
 
             _drawer.ShowIngridient(cookingAction);
 

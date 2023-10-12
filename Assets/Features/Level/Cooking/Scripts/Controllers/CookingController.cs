@@ -48,7 +48,6 @@ namespace Sushi.Level.Cooking
         private readonly List<ResourcefulController> _dynamicControllers = new List<ResourcefulController>();
 
         private Stack<Container> _ingridientsContainers = new Stack<Container>();
-        private CancellationToken _token;
 
         public event Action RevertPressed;
         public event Action DonePressed;
@@ -89,13 +88,11 @@ namespace Sushi.Level.Cooking
             _statesDisctionary.Add(ControllerStatesType.MakiIngridientsState, _container.Resolve<MakiIngridientsState>());
             _statesDisctionary.Add(ControllerStatesType.FinalizationState, _container.Resolve<FinalizationState>());
 
-            _token = token;
-
             ShowWindow(false);
 
             ResetView();
 
-            Start().Forget();
+            Start(token).Forget();
 
             _events.ShowRequest += OnShowWindowRequest;
 
@@ -146,19 +143,13 @@ namespace Sushi.Level.Cooking
             _uiView.ToggleIngridients(isOn);
         }
 
-        private async UniTask Start()
+        private async UniTask Start(CancellationToken token)
         {
             var stateType = ControllerStatesType.RecepieSelectionState;
-            var ingridients = new Stack<CookingAction>();
 
-            while (!_token.IsCancellationRequested)
+            while (!token.IsCancellationRequested)
             {
-                if (stateType == ControllerStatesType.RecepieSelectionState)
-                {
-                    ingridients.Clear();
-                }
-
-                stateType = await _statesDisctionary[stateType].Run(ingridients, _token);
+                stateType = await _statesDisctionary[stateType].Run(token);
             }
         }
 

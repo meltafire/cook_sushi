@@ -10,6 +10,11 @@ public class CookingDisplayIngridientView : MonoBehaviour
 
     public void Toggle(bool isOn)
     {
+        if (isOn)
+        {
+            transform.SetAsLastSibling();
+        }
+
         gameObject.SetActive(isOn);
     }
 

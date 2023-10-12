@@ -115,7 +115,7 @@ namespace Assets.Features.Level.Cooking.Scripts.Controllers
             descriptor.RegisterController<CookingMakiRecepieController>();
             descriptor.RegisterController<CookingNigiriRecepieController>();
 
-            descriptor.AddTransient(typeof(CookingMakiRecepieAssetProvider));
+            descriptor.AddTransient(typeof(CookingMakiRecepieAssetInstantiator));
             descriptor.AddTransient(typeof(CookingNigiriRecepieAssetProvider));
 
             descriptor.AddTransient(typeof(CookingIngridientAssetProvider));
@@ -124,7 +124,8 @@ namespace Assets.Features.Level.Cooking.Scripts.Controllers
             descriptor.AddTransient(typeof(RecepieDisplayHandler));
             descriptor.RegisterController<CookingDisplayIngridientController>();
             descriptor.RegisterController<CookingDisplayMakiRecepieController>();
-            descriptor.AddTransient(typeof(CookingDisplayMakiInstantiator));
+            descriptor.AddTransient(typeof(CookingDisplayMakiStartInstantiator));
+            descriptor.AddTransient(typeof(CookingDisplayMakiEndInstantiator));
             descriptor.AddTransient(typeof(CookingDisplayIngridientInstantiator));
         }
     }

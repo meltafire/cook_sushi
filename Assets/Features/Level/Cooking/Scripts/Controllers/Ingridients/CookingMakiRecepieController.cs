@@ -9,7 +9,7 @@ namespace Assets.Features.Level.Cooking.Scripts.Controllers.Ingridients
     {
         public CookingMakiRecepieController(
             IRecepieParentTransformProvider parentTransformProvider,
-            CookingMakiRecepieAssetProvider ingridientProvider,
+            CookingMakiRecepieAssetInstantiator ingridientProvider,
             IRecipeSelectionEvents events)
              : base(parentTransformProvider, ingridientProvider, events)
         {

@@ -11,22 +11,22 @@ namespace Assets.Features.Level.Cooking.Scripts.States
     public class MakiIngridientsState : ICookingControllerState
     {
         private readonly ICookingControllerGeneralButtonsProvider _buttonEvents;
-        private readonly IRecepieAccounting _drawer;
+        private readonly IRecepieAccounting _recepieAccounting;
         private readonly ICookingControllerIngridentsToggleProvider _toggleProvider;
 
         private UniTaskCompletionSource<ControllerStatesType> _completionSource;
 
         public MakiIngridientsState(
             ICookingControllerGeneralButtonsProvider buttonEvents,
-            IRecepieAccounting drawer,
+            IRecepieAccounting recepieAccounting,
             ICookingControllerIngridentsToggleProvider toggleProvider)
         {
             _buttonEvents = buttonEvents;
-            _drawer = drawer;
+            _recepieAccounting = recepieAccounting;
             _toggleProvider = toggleProvider;
         }
 
-        public async UniTask<ControllerStatesType> Run(Stack<CookingAction> actions, CancellationToken token)
+        public async UniTask<ControllerStatesType> Run(CancellationToken token)
         {
             _toggleProvider.ToggleIngridientButtons(true);
 
@@ -38,13 +38,6 @@ namespace Assets.Features.Level.Cooking.Scripts.States
             _buttonEvents.DonePressed += OnDonePressed;
 
             var result = await _completionSource.Task;
-
-            if(result == ControllerStatesType.RecepieSelectionState)
-            {
-                actions.Pop();
-
-                _drawer.RevertIngridient();
-            }
 
             _buttonEvents.RevertPressed -= OnRevertPressed;
             _buttonEvents.DonePressed -= OnDonePressed;
@@ -64,7 +57,12 @@ namespace Assets.Features.Level.Cooking.Scripts.States
 
         private void OnRevertPressed()
         {
-            _completionSource.TrySetResult(ControllerStatesType.RecepieSelectionState);
+            _recepieAccounting.RevertIngridient();
+
+            if (_recepieAccounting.IngridientsCount == 0)
+            {
+                _completionSource.TrySetResult(ControllerStatesType.RecepieSelectionState);
+            }
         }
     }
 }

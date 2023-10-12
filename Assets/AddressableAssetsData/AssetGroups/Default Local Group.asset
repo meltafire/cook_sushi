@@ -82,11 +82,6 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: bf4dcf1978c449344aac0ee2780e00a9
-    m_Address: Level/Cooking/Display/IngridientMaki
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 0f7b1d837c6ddfd47833d26250310f51
     m_Address: Level/Cooking/Display/IngridientNigiri
     m_ReadOnly: 0
@@ -94,6 +89,16 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 01e98581a2c5b1c41ad39fca23707742
     m_Address: Level/Cooking/Prefabs/Ingridients/IngridientButton
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 936e46da0c3189043b5eb03a82e10831
+    m_Address: Level/Cooking/Display/IngridientMakiStart
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fd75d71d342bd7f4ebefcc5a672e293b
+    m_Address: Level/Cooking/Display/IngridientMakiEnd
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

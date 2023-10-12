@@ -7,7 +7,7 @@ namespace Assets.Features.Level.Cooking.Scripts.States
 {
     public class IngridientsState : ICookingControllerState
     {
-        public UniTask<ControllerStatesType> Run(Stack<CookingAction> actions, CancellationToken token)
+        public UniTask<ControllerStatesType> Run(CancellationToken token)
         {
             throw new System.NotImplementedException();
         }

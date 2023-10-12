@@ -1,9 +1,9 @@
 ﻿using Assets.Features.Level.Cooking.Scripts.Handler.Infrastructure;
 using Assets.Features.Level.Cooking.Scripts.Providers.Display;
 using Assets.Features.Level.Cooking.Scripts.Views.Display.Infrastructure;
+using Codice.Client.Common.GameUI;
 using Cysharp.Threading.Tasks;
 using System.Threading;
-using UnityEngine;
 using Utils.Controllers;
 
 namespace Assets.Features.Level.Cooking.Scripts.Controllers.Display
@@ -11,18 +11,22 @@ namespace Assets.Features.Level.Cooking.Scripts.Controllers.Display
     public class CookingDisplayMakiRecepieController : ResourcefulController
     {
         private readonly IIngridientsDispalyParentTransformProvider _parentTransformProvider;
-        private readonly CookingDisplayMakiInstantiator _cookingDisplayMakiInstantiator;
+        private readonly CookingDisplayMakiStartInstantiator _cookingDisplayMakiStartInstantiator;
+        private readonly CookingDisplayMakiEndInstantiator _cookingDisplayMakiEndInstantiator;
         private readonly IRecepieAccountingDrawSignals _events;
 
-        private CookingDisplayRecepieView _view;
+        private CookingDisplayRecepieView _startView;
+        private CookingDisplayRecepieView _endView;
 
         public CookingDisplayMakiRecepieController(
             IIngridientsDispalyParentTransformProvider parentTransformProvider,
-            CookingDisplayMakiInstantiator cookingDisplayMakiInstantiator,
+            CookingDisplayMakiStartInstantiator cookingDisplayMakiStartInstantiator,
+            CookingDisplayMakiEndInstantiator cookingDisplayMakiEndInstantiator,
             IRecepieAccountingDrawSignals events)
         {
             _parentTransformProvider = parentTransformProvider;
-            _cookingDisplayMakiInstantiator = cookingDisplayMakiInstantiator;
+            _cookingDisplayMakiStartInstantiator = cookingDisplayMakiStartInstantiator;
+            _cookingDisplayMakiEndInstantiator = cookingDisplayMakiEndInstantiator;
             _events = events;
         }
 
@@ -31,31 +35,33 @@ namespace Assets.Features.Level.Cooking.Scripts.Controllers.Display
             await LoadPrefab();
 
             _events.DisplayMakiRecepie += OnShowRequest;
-            Debug.Log("register");
         }
 
         public override void Dispose()
         {
             _events.DisplayMakiRecepie -= OnShowRequest;
 
-            Debug.Log("unregister");
-
             base.Dispose();
         }
 
         private void OnShowRequest(bool isOn)
         {
-            Debug.Log("showwww");
-            _view.Toggle(isOn);
+            _startView.Toggle(isOn);
+            _endView.Toggle(isOn);
         }
 
         private async UniTask LoadPrefab()
         {
-            AttachResource(_cookingDisplayMakiInstantiator);
+            AttachResource(_cookingDisplayMakiStartInstantiator);
+            AttachResource(_cookingDisplayMakiEndInstantiator);
 
-            _view = await _cookingDisplayMakiInstantiator.Load(_parentTransformProvider.IngridientsDispalyParentTransform);
+            (_startView, _endView) = await UniTask.WhenAll(
+                _cookingDisplayMakiStartInstantiator.Load(_parentTransformProvider.IngridientsDispalyParentTransform),
+                _cookingDisplayMakiEndInstantiator.Load(_parentTransformProvider.IngridientsDispalyParentTransform));
 
-            _view.Toggle(false);
+            _endView.transform.SetAsLastSibling();
+
+            OnShowRequest(false);
         }
     }
 }

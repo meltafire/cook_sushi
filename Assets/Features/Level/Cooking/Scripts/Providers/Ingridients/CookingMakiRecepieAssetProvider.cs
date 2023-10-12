@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Assets.Features.Level.Cooking.Scripts.Providers.Ingridients
 {
-    public class CookingMakiRecepieAssetProvider : CookingRecepieButtonAssetInstantiator
+    public class CookingMakiRecepieAssetInstantiator : CookingRecepieButtonAssetInstantiator
     {
         public override UniTask<ButtonView> Load(Transform transform)
         {

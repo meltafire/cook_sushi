@@ -5,6 +5,8 @@ namespace Assets.Features.Level.Cooking.Scripts.Handler.Infrastructure
 {
     public interface IRecepieAccounting
     {
+        public int IngridientsCount { get; }
+
         public void ShowIngridient(CookingAction scheme);
         public void ShowIngridient(CookingIngridientType scheme, int count);
         public void RevertIngridient();
