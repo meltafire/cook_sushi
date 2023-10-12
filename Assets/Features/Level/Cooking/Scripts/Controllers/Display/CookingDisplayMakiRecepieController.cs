@@ -1,7 +1,5 @@
-﻿using Assets.Features.Level.Cooking.Scripts.Handler.Infrastructure;
-using Assets.Features.Level.Cooking.Scripts.Providers.Display;
+﻿using Assets.Features.Level.Cooking.Scripts.Providers.Display;
 using Assets.Features.Level.Cooking.Scripts.Views.Display.Infrastructure;
-using Codice.Client.Common.GameUI;
 using Cysharp.Threading.Tasks;
 using System.Threading;
 using Utils.Controllers;
@@ -13,7 +11,6 @@ namespace Assets.Features.Level.Cooking.Scripts.Controllers.Display
         private readonly IIngridientsDispalyParentTransformProvider _parentTransformProvider;
         private readonly CookingDisplayMakiStartInstantiator _cookingDisplayMakiStartInstantiator;
         private readonly CookingDisplayMakiEndInstantiator _cookingDisplayMakiEndInstantiator;
-        private readonly IRecepieAccountingDrawSignals _events;
 
         private CookingDisplayRecepieView _startView;
         private CookingDisplayRecepieView _endView;
@@ -21,30 +18,19 @@ namespace Assets.Features.Level.Cooking.Scripts.Controllers.Display
         public CookingDisplayMakiRecepieController(
             IIngridientsDispalyParentTransformProvider parentTransformProvider,
             CookingDisplayMakiStartInstantiator cookingDisplayMakiStartInstantiator,
-            CookingDisplayMakiEndInstantiator cookingDisplayMakiEndInstantiator,
-            IRecepieAccountingDrawSignals events)
+            CookingDisplayMakiEndInstantiator cookingDisplayMakiEndInstantiator)
         {
             _parentTransformProvider = parentTransformProvider;
             _cookingDisplayMakiStartInstantiator = cookingDisplayMakiStartInstantiator;
             _cookingDisplayMakiEndInstantiator = cookingDisplayMakiEndInstantiator;
-            _events = events;
         }
 
         public override async UniTask Initialzie(CancellationToken token)
         {
             await LoadPrefab();
-
-            _events.DisplayMakiRecepie += OnShowRequest;
         }
 
-        public override void Dispose()
-        {
-            _events.DisplayMakiRecepie -= OnShowRequest;
-
-            base.Dispose();
-        }
-
-        private void OnShowRequest(bool isOn)
+        public void Show(bool isOn)
         {
             _startView.Toggle(isOn);
             _endView.Toggle(isOn);
@@ -61,7 +47,7 @@ namespace Assets.Features.Level.Cooking.Scripts.Controllers.Display
 
             _endView.transform.SetAsLastSibling();
 
-            OnShowRequest(false);
+            Show(false);
         }
     }
 }

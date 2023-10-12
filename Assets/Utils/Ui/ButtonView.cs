@@ -7,7 +7,7 @@ public class ButtonView : MonoBehaviour
     [SerializeField]
     private Button _button;
 
-    public event Action OnButtonPressed;
+    public event Action ButtonPressed;
 
     public void Toggle(bool isOn)
     {
@@ -26,6 +26,6 @@ public class ButtonView : MonoBehaviour
 
     private void OnClick()
     {
-        OnButtonPressed?.Invoke();
+        ButtonPressed?.Invoke();
     }
 }

@@ -8,10 +8,10 @@ namespace Assets.Features.Level.Cooking.Scripts.Data
         Maki = DishType.Maki,
         UraMaki = DishType.UraMaki,
 
-        WrapMaki = CookingManipulation.WrapMaki + 100,
+        WrapMaki = CookingManipulation.WrapMaki,
 
-        Rice = CookingStapleIngridientType.Rice + 200,
-        Nori = CookingStapleIngridientType.Nori + 200,
+        Rice = CookingStapleIngridientType.Rice,
+        Nori = CookingStapleIngridientType.Nori,
 
         Cucumber = CookingIngridientType.Cucumber,
         Salmon = CookingIngridientType.Salmon,

@@ -4,12 +4,13 @@ namespace Assets.Features.Level.Cooking.Scripts.Data
 {
     public enum CookingStep
     {
-        WrapMaki = CookingManipulation.WrapMaki + 100,
+        WrapMaki = CookingManipulation.WrapMaki,
 
-        Rice = CookingStapleIngridientType.Rice + 200,
-        Nori = CookingStapleIngridientType.Nori + 200,
+        Rice = CookingStapleIngridientType.Rice,
+        Nori = CookingStapleIngridientType.Nori,
 
-        Cucumber = CookingIngridientType.Cucumber + 300,
-        Salmon = CookingIngridientType.Salmon + 300,
+        Cucumber = CookingIngridientType.Cucumber,
+        Salmon = CookingIngridientType.Salmon,
+        Tuna = CookingIngridientType.Tuna,
     }
 }

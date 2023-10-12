@@ -2,6 +2,6 @@
 {
     public enum CookingManipulation
     {
-        WrapMaki = 0,
+        WrapMaki = 100,
     }
 }

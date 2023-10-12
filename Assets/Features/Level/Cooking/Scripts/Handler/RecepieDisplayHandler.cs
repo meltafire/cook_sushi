@@ -4,10 +4,8 @@ using Assets.Features.Level.Cooking.Scripts.Controllers.Display;
 using Assets.Features.Level.Cooking.Scripts.Handler.Infrastructure;
 using Assets.Features.Level.Cooking.Scripts.Pools;
 using Cysharp.Threading.Tasks;
-using System;
 using System.Collections.Generic;
 using System.Threading;
-using UnityEngine;
 using Utils.Controllers;
 
 namespace Assets.Features.Level.Cooking.Scripts.Handler
@@ -16,21 +14,29 @@ namespace Assets.Features.Level.Cooking.Scripts.Handler
     {
         private readonly ILevelDishesTypeProvider _levelDishesTypeProvider;
         private readonly IFactory<CookingDisplayMakiRecepieController> _displayMakiRecepieControllerFactory;
+        private readonly IFactory<CookingMakiWrapActionController> _cookingMakiWrapActionControllerFactory;
+        private readonly IFactory<CookingDisplayMakiWrapController> _cookingDisplayMakiWrapControllerFactory;
         private readonly DisplayIngridientsControllerPool _ingridientsControllerPool;
         private readonly IRecepieAccountingDrawSignals _ingridientSelectionExternalEvent;
         private readonly Stack<CookingDisplayIngridientController> _ingridientDisplayControllers = new Stack<CookingDisplayIngridientController>();
-        private readonly List<ResourcefulController> _recepieDisplayControllers = new List<ResourcefulController>();
 
+        private CookingDisplayMakiRecepieController _displayMakiController;
+        private CookingMakiWrapActionController _wrapMakiController;
+        private CookingDisplayMakiWrapController _displayWrapMakiController;
         private CancellationToken _token;
 
         public RecepieDisplayHandler(
             ILevelDishesTypeProvider levelDishesTypeProvider,
             IFactory<CookingDisplayMakiRecepieController> displayMakiRecepieControllerFactory,
+            IFactory<CookingMakiWrapActionController> cookingMakiWrapActionControllerFactory,
+            IFactory<CookingDisplayMakiWrapController> cookingDisplayMakiWrapControllerFactory,
             DisplayIngridientsControllerPool ingridientsControllerPool,
             IRecepieAccountingDrawSignals ingridientSelectionExternalEvent)
         {
             _levelDishesTypeProvider = levelDishesTypeProvider;
             _displayMakiRecepieControllerFactory = displayMakiRecepieControllerFactory;
+            _cookingMakiWrapActionControllerFactory = cookingMakiWrapActionControllerFactory;
+            _cookingDisplayMakiWrapControllerFactory = cookingDisplayMakiWrapControllerFactory;
             _ingridientsControllerPool = ingridientsControllerPool;
             _ingridientSelectionExternalEvent = ingridientSelectionExternalEvent;
         }
@@ -44,11 +50,17 @@ namespace Assets.Features.Level.Cooking.Scripts.Handler
             var types = _levelDishesTypeProvider.GetLevelDishTypes();
             if (types.Contains(DishType.Maki))
             {
-                var displayMakiRecepieController = _displayMakiRecepieControllerFactory.Create();
+                _displayMakiController = _displayMakiRecepieControllerFactory.Create();
+                tasks.Add(_displayMakiController.Initialzie(token));
 
-                _recepieDisplayControllers.Add(displayMakiRecepieController);
+                _wrapMakiController = _cookingMakiWrapActionControllerFactory.Create();
+                tasks.Add(_wrapMakiController.Initialzie(token));
 
-                tasks.Add(displayMakiRecepieController.Initialzie(token));
+                _displayWrapMakiController = _cookingDisplayMakiWrapControllerFactory.Create();
+                tasks.Add(_displayWrapMakiController.Initialzie(token));
+
+                _ingridientSelectionExternalEvent.DisplayMakiRecepie += OnDisplayMakiRecepie;
+                _ingridientSelectionExternalEvent.DisplayWrapMaki += OnDisplayWrapMaki;
             }
 
             tasks.Add(_ingridientsControllerPool.Initialize(token));
@@ -71,7 +83,30 @@ namespace Assets.Features.Level.Cooking.Scripts.Handler
                 _ingridientsControllerPool.Release(controller);
             }
 
+            var types = _levelDishesTypeProvider.GetLevelDishTypes();
+            if (types.Contains(DishType.Maki))
+            {
+                _ingridientSelectionExternalEvent.DisplayMakiRecepie -= OnDisplayMakiRecepie;
+                _ingridientSelectionExternalEvent.DisplayWrapMaki -= OnDisplayWrapMaki;
+
+                _displayMakiController.Dispose();
+                _wrapMakiController.Dispose();
+                _displayWrapMakiController.Dispose();
+            }
+
             _ingridientsControllerPool.Dispose();
+        }
+
+        private void OnDisplayWrapMaki(bool isOn)
+        {
+            _displayWrapMakiController.Show(isOn);
+            _wrapMakiController.Show(!isOn);
+        }
+
+        private void OnDisplayMakiRecepie(bool isOn)
+        {
+            _displayMakiController.Show(isOn);
+            _wrapMakiController.Show(isOn);
         }
 
         private async void OnIngridientSelected(CookingIngridientType type, int count)
@@ -81,6 +116,8 @@ namespace Assets.Features.Level.Cooking.Scripts.Handler
             controller.Show(type, count);
 
             _ingridientDisplayControllers.Push(controller);
+
+            _wrapMakiController.MoveLast();
         }
 
         private void OnHideIngridient()

@@ -34,12 +34,12 @@ namespace Assets.Features.Level.Cooking.Scripts.Controllers.Ingridients
         {
             await LoadPrefab();
 
-            _view.OnButtonPressed += OnButtonPressed;
+            _view.ButtonPressed += OnButtonPressed;
         }
 
         public override void Dispose()
         {
-            _view.OnButtonPressed -= OnButtonPressed;
+            _view.ButtonPressed -= OnButtonPressed;
 
             base.Dispose();
         }

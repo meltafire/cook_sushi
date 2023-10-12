@@ -3,6 +3,7 @@ using Assets.Features.Level.Cooking.Scripts.Data;
 using Assets.Features.Level.Cooking.Scripts.Handler.Infrastructure;
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Assets.Features.Level.Cooking.Scripts.Handler
 {
@@ -15,12 +16,13 @@ namespace Assets.Features.Level.Cooking.Scripts.Handler
         public event Action<bool> DisplayMakiRecepie;
         public event Action<CookingIngridientType, int> DisplayIngridient;
         public event Action HideIngridient;
+        public event Action<bool> DisplayWrapMaki;
 
         public void ShowIngridient(CookingAction scheme)
         {
             _drawedElements.Push(scheme);
 
-            Toggle(scheme, true);
+            DisplayMakiRecepie?.Invoke(true);
         }
 
         public void ShowIngridient(CookingIngridientType scheme, int count)
@@ -32,20 +34,29 @@ namespace Assets.Features.Level.Cooking.Scripts.Handler
             DisplayIngridient?.Invoke(scheme, count);
         }
 
+        public void ShowWrapMaki()
+        {
+            var element = CookingAction.WrapMaki;
+
+            _drawedElements.Push(element);
+
+            DisplayWrapMaki?.Invoke(true);
+        }
+
         public void RevertIngridient()
         {
             var scheme = _drawedElements.Pop();
 
-            Toggle(scheme, false);
-        }
 
-        private void Toggle(CookingAction scheme, bool isOn)
-        {
             if(scheme == CookingAction.Maki)
             {
-                DisplayMakiRecepie?.Invoke(isOn);
+                DisplayMakiRecepie?.Invoke(false);
             }
-            else if (!isOn)
+            else if(scheme == CookingAction.WrapMaki)
+            {
+                DisplayWrapMaki?.Invoke(false);
+            }
+            else
             {
                 HideIngridient?.Invoke();
             }

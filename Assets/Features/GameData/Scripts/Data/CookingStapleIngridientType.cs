@@ -1,5 +1,5 @@
 ﻿public enum CookingStapleIngridientType
 {
-    Rice = 0,
-    Nori = 1,
+    Rice = 200,
+    Nori = 201,
 }

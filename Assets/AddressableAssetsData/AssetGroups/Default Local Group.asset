@@ -102,6 +102,16 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fb39738a35ed9734eb8b64034b220c04
+    m_Address: Level/Cooking/Prefabs/Actions/MakiWrapAction
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3e2d80b2ab251964e9500b24b2acbf04
+    m_Address: Level/Cooking/Display/IngridientMakiWrap
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: e7d21dd6c69b4404aac84b4fa228f6a3, type: 2}
   m_SchemaSet:

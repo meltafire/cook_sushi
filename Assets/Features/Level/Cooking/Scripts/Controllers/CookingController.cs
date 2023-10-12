@@ -96,9 +96,9 @@ namespace Sushi.Level.Cooking
 
             _events.ShowRequest += OnShowWindowRequest;
 
-            _uiView.BackButtonView.OnButtonPressed += OnBackButtonClickHappen;
-            _uiView.RevertButtonView.OnButtonPressed += OnRevertButtonClickHappen;
-            _uiView.DoneButtonView.OnButtonPressed += OnDoneButtonClickHappen;
+            _uiView.BackButtonView.ButtonPressed += OnBackButtonClickHappen;
+            _uiView.RevertButtonView.ButtonPressed += OnRevertButtonClickHappen;
+            _uiView.DoneButtonView.ButtonPressed += OnDoneButtonClickHappen;
 
             return UniTask.WhenAll(_recepieDisplayHandler.Initialize(token), SpawnCookingButtons(token));
         }
@@ -109,9 +109,9 @@ namespace Sushi.Level.Cooking
 
             _events.ShowRequest -= OnShowWindowRequest;
 
-            _uiView.BackButtonView.OnButtonPressed -= OnBackButtonClickHappen;
-            _uiView.RevertButtonView.OnButtonPressed -= OnRevertButtonClickHappen;
-            _uiView.DoneButtonView.OnButtonPressed -= OnDoneButtonClickHappen;
+            _uiView.BackButtonView.ButtonPressed -= OnBackButtonClickHappen;
+            _uiView.RevertButtonView.ButtonPressed -= OnRevertButtonClickHappen;
+            _uiView.DoneButtonView.ButtonPressed -= OnDoneButtonClickHappen;
 
             _recepieDisplayHandler.Dispose();
 
