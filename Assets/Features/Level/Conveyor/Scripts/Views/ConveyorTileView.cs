@@ -1,9 +1,10 @@
+using Assets.Features.Level.Conveyor.Scripts.Views;
 using System;
 using UnityEngine;
 
 namespace Sushi.Level.Conveyor.Views
 {
-    public class ConveyorTileView : MonoBehaviour
+    public class ConveyorTileView : MonoBehaviour, IConveyorTileView
     {
         [SerializeField]
         private SpriteRenderer _spriteRenderer;

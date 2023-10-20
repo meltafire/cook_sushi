@@ -1,7 +1,7 @@
-using Assets.Features.GameData.Scripts.Data;
 using Assets.Features.GameData.Scripts.Providers;
 using Assets.Features.Level.Cooking.Scripts.Controllers;
 using Assets.Features.Level.Cooking.Scripts.Controllers.Ingridients;
+using Assets.Features.Level.Cooking.Scripts.Controllers.Recepies;
 using Assets.Features.Level.Cooking.Scripts.Data;
 using Assets.Features.Level.Cooking.Scripts.Events;
 using Assets.Features.Level.Cooking.Scripts.Events.Infrastructure;
@@ -16,12 +16,13 @@ using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
 using Utils.Controllers;
-using Utils.Controllers.ReflexIntegration;
 
 namespace Sushi.Level.Cooking
 {
-    public abstract class BaseCookingController : ResourcefulController
+    public abstract class BaseCookingController : IController
     {
+        public abstract void Dispose();
+        public abstract UniTask Initialize(CancellationToken token);
     }
 
     public class CookingController : BaseCookingController,
@@ -38,14 +39,11 @@ namespace Sushi.Level.Cooking
         private readonly ICookingControllerEvents _events;
         private readonly CookingView _view;
         private readonly CookingUiView _uiView;
-
+        private readonly BaseCookingRecepiesFacade _cookingRecepiesFacade;
         private readonly Dictionary<ControllerStatesType, ICookingControllerState> _statesDisctionary;
-        private readonly ILevelDishesTypeProvider _levelDishesTypeProvider;
         private readonly ILevelIngridientTypeProvider _levelIngridientTypeProvider;
-        private readonly IFactory<CookingMakiRecepieController> _makiRecepieControllerFactory;
-        private readonly IFactory<CookingNigiriRecepieController> _nigiriRecepieControllerFactory;
-        private readonly RecepieDisplayHandler _recepieDisplayHandler;
-        private readonly List<ResourcefulController> _dynamicControllers = new List<ResourcefulController>();
+        private readonly RecepieDisplayFacade _recepieDisplayHandler;
+        private readonly List<IController> _dynamicControllers = new List<IController>();
 
         private Stack<Container> _ingridientsContainers = new Stack<Container>();
 
@@ -62,26 +60,22 @@ namespace Sushi.Level.Cooking
             ICookingControllerEvents events,
             CookingView view,
             CookingUiView uiView,
-            ILevelDishesTypeProvider levelDishesTypeProvider,
+            BaseCookingRecepiesFacade cookingRecepiesFacade,
             ILevelIngridientTypeProvider levelIngridientTypeProvider,
-            IFactory<CookingMakiRecepieController> makiRecepieControllerFactory,
-            IFactory<CookingNigiriRecepieController> nigiriRecepieControllerFactory,
-            RecepieDisplayHandler recepieDisplayHandler)
+            RecepieDisplayFacade recepieDisplayHandler)
         {
             _container = container;
             _events = events;
             _view = view;
             _uiView = uiView;
-            _levelDishesTypeProvider = levelDishesTypeProvider;
+            _cookingRecepiesFacade = cookingRecepiesFacade;
             _levelIngridientTypeProvider = levelIngridientTypeProvider;
-            _makiRecepieControllerFactory = makiRecepieControllerFactory;
-            _nigiriRecepieControllerFactory = nigiriRecepieControllerFactory;
             _recepieDisplayHandler = recepieDisplayHandler;
 
             _statesDisctionary = new Dictionary<ControllerStatesType, ICookingControllerState>(4);
         }
 
-        public override UniTask Initialzie(CancellationToken token)
+        public override UniTask Initialize(CancellationToken token)
         {
             _statesDisctionary.Add(ControllerStatesType.RecepieSelectionState, _container.Resolve<RecepieSelectionState>());
             _statesDisctionary.Add(ControllerStatesType.IngridientsState, _container.Resolve<IngridientsState>());
@@ -113,8 +107,6 @@ namespace Sushi.Level.Cooking
             _uiView.DoneButtonView.ButtonPressed -= OnDoneButtonClickHappen;
 
             _recepieDisplayHandler.Dispose();
-
-            base.Dispose();
         }
 
         public void ToggleRevert(bool isOn)
@@ -183,6 +175,11 @@ namespace Sushi.Level.Cooking
             return UniTask.WhenAll(SpawnRecepieButtons(token), SpawnIngridients(token));
         }
 
+        private UniTask SpawnRecepieButtons(CancellationToken token)
+        {
+            return _cookingRecepiesFacade.Initialize(token);
+        }
+
         private UniTask SpawnIngridients(CancellationToken token)
         {
             var types = _levelIngridientTypeProvider.GetLevelIngridients();
@@ -195,11 +192,11 @@ namespace Sushi.Level.Cooking
                     var data = new CookingIngridientControllerData(type, 0);
 
                     descriptor.AddInstance(data, typeof(CookingIngridientControllerData));
-                    descriptor.RegisterController<CookingIngridientController>();
+                    descriptor.AddTransient(typeof(CookingIngridientsFacade), typeof(BaseCookingIngridientsFacade));
                 });
 
-                var controller = childContainer.Resolve<IFactory<CookingIngridientController>>().Create();
-                loadingTasks.Add(controller.Initialzie(token));
+                var controller = childContainer.Resolve<BaseCookingIngridientsFacade>();
+                loadingTasks.Add(controller.Initialize(token));
 
                 _dynamicControllers.Add(controller);
 
@@ -209,36 +206,9 @@ namespace Sushi.Level.Cooking
             return UniTask.WhenAll(loadingTasks);
         }
 
-        private UniTask SpawnRecepieButtons(CancellationToken token)
-        {
-            var types = _levelDishesTypeProvider.GetLevelDishTypes();
-
-            if(types.Contains(DishType.Maki))
-            {
-                _dynamicControllers.Add(_makiRecepieControllerFactory.Create());
-            }
-
-            if(types.Contains(DishType.Nigiri))
-            {
-                _dynamicControllers.Add(_nigiriRecepieControllerFactory.Create());
-            }
-
-            var loadingTasks = new List<UniTask>();
-
-            foreach(var controller in _dynamicControllers)
-            {
-                loadingTasks.Add(controller.Initialzie(token));
-            }
-
-            return UniTask.WhenAll(loadingTasks);
-        }
-
         private void DisposeCookingButtons()
         {
-            foreach(var controller in _dynamicControllers)
-            {
-                controller.Dispose();
-            }
+            _cookingRecepiesFacade.Dispose();
 
             while (_ingridientsContainers.Count != 0)
             {

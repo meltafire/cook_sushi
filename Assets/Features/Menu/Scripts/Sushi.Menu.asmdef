@@ -2,6 +2,8 @@
     "name": "Sushi.Menu",
     "rootNamespace": "",
     "references": [
+        "Reflex",
+        "Utils.ReflexIntegration",
         "Sushi.App.Data",
         "Sushi.App.LoadingScreen.Events",
         "Sushi.Menu.Data",

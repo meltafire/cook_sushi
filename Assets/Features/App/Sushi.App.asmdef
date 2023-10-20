@@ -14,7 +14,8 @@
         "Sushi.Menu.Installer",
         "UniTask",
         "Utils.Controllers",
-        "Utils.Controllers.ReflexIntegration"
+        "Utils.Controllers.ReflexIntegration",
+        "Utils.ReflexIntegration"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

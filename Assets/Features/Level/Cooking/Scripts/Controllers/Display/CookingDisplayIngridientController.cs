@@ -1,28 +1,27 @@
 using Assets.Features.GameData.Scripts.Data;
-using Assets.Features.Level.Cooking.Scripts.Providers.Display;
-using Assets.Features.Level.Cooking.Scripts.Views.Display.Infrastructure;
 using Cysharp.Threading.Tasks;
 using System.Threading;
 using Utils.Controllers;
 
-public class CookingDisplayIngridientController : ResourcefulController
+public class CookingDisplayIngridientController : IController
 {
-    private readonly IIngridientsDispalyParentTransformProvider _parentTransformProvider;
-    private readonly CookingDisplayIngridientInstantiator _displayIngridientProvider;
-
-    private CookingDisplayIngridientView _view;
+    private readonly CookingDisplayIngridientView _view;
 
     public CookingDisplayIngridientController(
-        IIngridientsDispalyParentTransformProvider parentTransformProvider,
-        CookingDisplayIngridientInstantiator displayIngridientProvider)
+        CookingDisplayIngridientView view)
     {
-        _parentTransformProvider = parentTransformProvider;
-        _displayIngridientProvider = displayIngridientProvider;
+        _view = view;
     }
 
-    public override async UniTask Initialzie(CancellationToken token)
+    public UniTask Initialize(CancellationToken token)
     {
-        await LoadPrefab();
+        Hide();
+
+        return UniTask.CompletedTask;
+    }
+
+    public void Dispose()
+    {
     }
 
     public void Hide()
@@ -40,14 +39,5 @@ public class CookingDisplayIngridientController : ResourcefulController
     private string GetTextForStep(CookingIngridientType step)
     {
         return step.ToString();
-    }
-
-    private async UniTask LoadPrefab()
-    {
-        AttachResource(_displayIngridientProvider);
-
-        _view = await _displayIngridientProvider.Load(_parentTransformProvider.IngridientsDispalyParentTransform);
-
-        Hide();
     }
 }

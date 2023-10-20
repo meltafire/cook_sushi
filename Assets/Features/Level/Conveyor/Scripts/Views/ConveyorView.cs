@@ -1,8 +1,9 @@
-﻿using UnityEngine;
+﻿using Assets.Features.Level.Conveyor.Scripts.Views;
+using UnityEngine;
 
 namespace Sushi.Level.Conveyor.Views
 {
-    public class ConveyorView : MonoBehaviour
+    public class ConveyorView : MonoBehaviour, IConveyorView
     {
         [SerializeField]
         private int _tileCountTotal;

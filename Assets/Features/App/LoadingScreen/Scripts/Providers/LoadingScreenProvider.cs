@@ -1,14 +1,20 @@
 ﻿using Cysharp.Threading.Tasks;
-using UnityEngine;
 using Utils.AddressablesLoader;
 
 namespace Sushi.App.LoadingScreen
 {
-    public class LoadingScreenProvider : AssetInstantiator
+    public class LoadingScreenProvider : AssetInstantiator<LoadingScreenView>
     {
-        public UniTask<LoadingScreenView> Instantiate(Transform parent)
+        private readonly ILoadingScreenParentTransformProvider _transform;
+
+        public LoadingScreenProvider(ILoadingScreenParentTransformProvider transform)
         {
-            return InstantiateInternal<LoadingScreenView>(LoadingScreenConstants.PrefabKey, parent);
+            _transform = transform;
+        }
+
+        public override UniTask<LoadingScreenView> Load()
+        {
+            return Instantiate(LoadingScreenConstants.PrefabKey, _transform.ParentTransform);
         }
     }
 }

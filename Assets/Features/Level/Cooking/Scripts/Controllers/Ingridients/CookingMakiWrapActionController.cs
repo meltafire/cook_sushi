@@ -1,44 +1,46 @@
 using Assets.Features.Level.Cooking.Scripts.Handler.Infrastructure;
-using Assets.Features.Level.Cooking.Scripts.Providers.Ingridients;
-using Assets.Features.Level.Cooking.Scripts.Views.Display.Infrastructure;
+using Assets.Features.Level.Cooking.Scripts.Views.Actions;
 using Cysharp.Threading.Tasks;
 using System.Threading;
-using UnityEngine;
 using Utils.Controllers;
 
-public class CookingMakiWrapActionController : ResourcefulController
+public abstract class BaseCookingMakiWrapActionController : IController
 {
-    private readonly CookingMakiWrapActionInstantiator _instantiator;
-    private readonly IIngridientsDispalyParentTransformProvider _parentTransformProvider;
+    public abstract void Dispose();
+    public abstract UniTask Initialize(CancellationToken token);
+    public abstract void Show(bool isOn);
+    public abstract void MoveLast();
+}
+
+public class CookingMakiWrapActionController : BaseCookingMakiWrapActionController
+{
     private readonly IRecepieAccounting _recepieAccounting;
 
-    private ButtonView _view;
+    private readonly ICookingMakiWrapActionView _view;
 
     public CookingMakiWrapActionController(
-        CookingMakiWrapActionInstantiator instantiator,
-        IIngridientsDispalyParentTransformProvider parentTransformProvider,
+        ICookingMakiWrapActionView view,
         IRecepieAccounting recepieAccounting)
     {
-        _instantiator = instantiator;
-        _parentTransformProvider = parentTransformProvider;
+        _view = view;
         _recepieAccounting = recepieAccounting;
     }
 
-    public override async UniTask Initialzie(CancellationToken token)
+    public override UniTask Initialize(CancellationToken token)
     {
-        await LoadPrefab();
+        Show(false);
 
         _view.ButtonPressed += OnButtonPressed;
+
+        return UniTask.CompletedTask;
     }
 
     public override void Dispose()
     {
         _view.ButtonPressed -= OnButtonPressed;
-
-        base.Dispose();
     }
 
-    public void Show(bool isOn)
+    public override void Show(bool isOn)
     {
         if(isOn)
         {
@@ -48,18 +50,9 @@ public class CookingMakiWrapActionController : ResourcefulController
         _view.Toggle(isOn);
     }
 
-    public void MoveLast()
+    public override void MoveLast()
     {
-        _view.transform.SetAsLastSibling();
-    }
-
-    private async UniTask LoadPrefab()
-    {
-        AttachResource(_instantiator);
-
-        _view = await _instantiator.Load(_parentTransformProvider.IngridientsDispalyParentTransform);
-
-        Show(false);
+        _view.SetAsLastSibling();
     }
 
     private void OnButtonPressed()

@@ -19,7 +19,7 @@ namespace Sushi.App
         {
             var ctrl = _appControllerFactory.Create();
 
-            await ctrl.Initialzie(_cancellationToken);
+            await ctrl.Initialize(_cancellationToken);
             await ctrl.Launch(_cancellationToken);
 
             ctrl.Dispose();

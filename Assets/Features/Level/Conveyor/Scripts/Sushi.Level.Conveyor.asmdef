@@ -2,9 +2,11 @@
     "name": "Sushi.Level.Conveyor",
     "rootNamespace": "",
     "references": [
+        "Reflex",
         "Sushi.Level.Conveyor.Events",
         "Utils.AddressablesLoader",
         "Utils.Controllers",
+        "Utils.ReflexIntegration",
         "UniTask"
     ],
     "includePlatforms": [],

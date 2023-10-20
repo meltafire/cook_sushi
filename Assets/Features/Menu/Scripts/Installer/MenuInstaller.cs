@@ -1,6 +1,5 @@
 ﻿using Reflex.Core;
 using Sushi.Menu.Controllers;
-using Utils.Controllers.ReflexIntegration;
 
 namespace Sushi.Menu.Installer
 {
@@ -8,8 +7,7 @@ namespace Sushi.Menu.Installer
     {
         public void InstallBindings(ContainerDescriptor descriptor)
         {
-            descriptor.RegisterController<MenuEntryPointController>();
-            descriptor.RegisterController<MenuViewController>();
+            descriptor.AddTransient(typeof(MenuFacade), typeof(BaseMenuFacade));
 
             descriptor.AddTransient(typeof(MenuViewProvider));
         }

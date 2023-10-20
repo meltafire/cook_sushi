@@ -10,10 +10,16 @@ using Sushi.Menu.Installer;
 using Reflex.Core;
 using Sushi.App.LoadingScreen;
 using Assets.Features.Menu.Scripts.Data;
+using Assets.Features.App.LoadingScreen.Scripts;
 
 namespace Sushi.App
 {
-    public class AppController : ILaunchableController
+    public interface IAppController : IController
+    {
+        UniTask Launch(CancellationToken token);
+    }
+
+    public class AppController : IAppController
     {
         private static readonly string MenuContainerName = "MenuContainer";
         private static readonly string LevelContainerName = "LevelContainer";
@@ -22,33 +28,31 @@ namespace Sushi.App
         private readonly MenuInstaller _menuInstaller;
         private readonly LevelInstaller _levelInstaller;
         private readonly AppControllerData _data;
-        private readonly IFactory<LoadingScreenController> _loadingScreenControllerFactory;
+        private readonly LoadingScreenFacade _loadingScreenFacade;
         private readonly ILoadingScreenExternalEvents _loadingScreenExternalEvents;
 
         private Container _childContainer;
-        private LoadingScreenController _loadingScreenController;
+        private UniTaskCompletionSource _stageCompletionSource;
 
         public AppController(
             Container container,
             MenuInstaller menuInstaller,
             LevelInstaller levelInstaller,
             AppControllerData data,
-            IFactory<LoadingScreenController> loadingScreenControllerFactory,
+            LoadingScreenFacade loadingScreenFacade,
             ILoadingScreenExternalEvents loadingScreenExternalEvents)
         {
             _container = container;
             _menuInstaller = menuInstaller;
             _levelInstaller = levelInstaller;
             _data = data;
-            _loadingScreenControllerFactory = loadingScreenControllerFactory;
+            _loadingScreenFacade = loadingScreenFacade;
             _loadingScreenExternalEvents = loadingScreenExternalEvents;
         }
 
-        public UniTask Initialzie(CancellationToken token)
+        public UniTask Initialize(CancellationToken token)
         {
-            var _loadingScreenController = _loadingScreenControllerFactory.Create();
-
-            return _loadingScreenController.Initialzie(token);
+            return _loadingScreenFacade.Initialize(token);
         }
 
         public async UniTask Launch(CancellationToken token)
@@ -69,7 +73,7 @@ namespace Sushi.App
 
         public void Dispose()
         {
-            _loadingScreenController.Dispose();
+            _loadingScreenFacade.Dispose();
         }
 
         private async UniTask RunNextFeature(CancellationToken token)
@@ -98,19 +102,27 @@ namespace Sushi.App
                     _menuInstaller.InstallBindings(descriptor);
                 });
 
-            var controller = _childContainer.Resolve<IFactory<MenuEntryPointController>>().Create();
+            var facade = _childContainer.Resolve<BaseMenuFacade>();
 
             _loadingScreenExternalEvents.Show(true);
-            await controller.Initialzie(token);
+            _stageCompletionSource = new UniTaskCompletionSource();
+
+            await facade.Initialize(token);
             _loadingScreenExternalEvents.Show(false);
 
-
-            var result = await controller.Launch(token);
+            facade.StageCompleted += OnMenuStageCompleted;
+            await _stageCompletionSource.Task;
+            facade.StageCompleted += OnMenuStageCompleted;
 
             _loadingScreenExternalEvents.Show(true);
-            controller.Dispose();
+            facade.Dispose();
 
-            HandleMenuResult(result);
+            HandleMenuResult(MenuResults.Level);
+        }
+
+        private void OnMenuStageCompleted()
+        {
+            _stageCompletionSource.TrySetResult();
         }
 
         private async UniTask RunLevel(CancellationToken token)
@@ -120,10 +132,10 @@ namespace Sushi.App
                     _levelInstaller.InstallBindings(descriptor);
                 });
 
-            var controller = _childContainer.Resolve<IFactory<LevelEntryPointController>>().Create();
+            var controller = _childContainer.Resolve<LevelEntryPointController>();
 
             _loadingScreenExternalEvents.Show(true);
-            await controller.Initialzie(token);
+            await controller.Initialize(token);
             _loadingScreenExternalEvents.Show(false);
 
             await controller.Launch(token);

@@ -1,10 +1,11 @@
+using Assets.Features.Menu.Scripts.Views;
 using System;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace Sushi.Menu.Views
 {
-    public class MenuView : MonoBehaviour
+    public class MenuView : MonoBehaviour, IMenuView
     {
         [SerializeField]
         private Button _button;

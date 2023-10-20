@@ -2,10 +2,12 @@
     "name": "Sushi.App.LoadingScreen",
     "rootNamespace": "",
     "references": [
+        "Reflex",
         "Sushi.App.LoadingScreen.Events",
         "UniTask",
         "Utils.AddressablesLoader",
-        "Utils.Controllers"
+        "Utils.Controllers",
+        "Utils.ReflexIntegration"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

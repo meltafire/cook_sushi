@@ -1,8 +1,10 @@
+using Assets.Features.Level.Cooking.Scripts.Views.Actions;
+using Assets.Utils.Ui;
 using System;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ButtonView : MonoBehaviour
+public class ButtonView : MonoBehaviour, IButtonView, ICookingMakiWrapActionView
 {
     [SerializeField]
     private Button _button;
@@ -27,5 +29,10 @@ public class ButtonView : MonoBehaviour
     private void OnClick()
     {
         ButtonPressed?.Invoke();
+    }
+
+    public void SetAsLastSibling()
+    {
+        transform.SetAsLastSibling();
     }
 }

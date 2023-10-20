@@ -17,11 +17,6 @@ MonoBehaviour:
     m_SerializedData: []
   m_GUID: cd746e9ee371d1c419ee943f5b228f59
   m_SerializeEntries:
-  - m_GUID: 059920fd51e6e3c40b34525e2be3ced7
-    m_Address: Menu/MainMenu
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 66f43aa87e21f2c48b27655ed407600f
     m_Address: Level/Conveyor/ConveyorTile
     m_ReadOnly: 0

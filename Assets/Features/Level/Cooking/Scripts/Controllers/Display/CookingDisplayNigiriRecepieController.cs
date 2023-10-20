@@ -1,43 +1,41 @@
-﻿using Assets.Features.Level.Cooking.Scripts.Providers.Display;
-using Assets.Features.Level.Cooking.Scripts.Views.Display.Infrastructure;
+﻿using Assets.Features.Level.Cooking.Scripts.Views.Display.Infrastructure;
 using Cysharp.Threading.Tasks;
 using System.Threading;
 using Utils.Controllers;
 
 namespace Assets.Features.Level.Cooking.Scripts.Controllers.Display
 {
-    public class CookingDisplayNigiriRecepieController : ResourcefulController
+    public abstract class BaseCookingDisplayNigiriRecepieController : IController
     {
-        private readonly IIngridientsDispalyParentTransformProvider _parentTransformProvider;
-        private readonly CookingDisplayNigiriInstantiator _cookingDisplayNigiriInstantiator;
+        public abstract void Dispose();
+        public abstract UniTask Initialize(CancellationToken token);
+        public abstract void Show(bool isOn);
+    }
 
-        private CookingDisplayRecepieView _view;
+    public class CookingDisplayNigiriRecepieController : BaseCookingDisplayNigiriRecepieController
+    {
+        private readonly ICookingDisplayNigiriRecepieView _view;
 
         public CookingDisplayNigiriRecepieController(
-            IIngridientsDispalyParentTransformProvider parentTransformProvider,
-            CookingDisplayNigiriInstantiator cookingDisplayNigiriInstantiator)
+            ICookingDisplayNigiriRecepieView view)
         {
-            _parentTransformProvider = parentTransformProvider;
-            _cookingDisplayNigiriInstantiator = cookingDisplayNigiriInstantiator;
+            _view = view;
         }
 
-        public override async UniTask Initialzie(CancellationToken token)
+        public override void Dispose()
         {
-            await LoadPrefab();
         }
 
-        public void Show(bool isOn)
+        public override UniTask Initialize(CancellationToken token)
+        {
+            Show(false);
+
+            return UniTask.CompletedTask;
+        }
+
+        public override void Show(bool isOn)
         {
             _view.Toggle(isOn);
-        }
-
-        private async UniTask LoadPrefab()
-        {
-            AttachResource(_cookingDisplayNigiriInstantiator);
-
-            _view = await _cookingDisplayNigiriInstantiator.Load(_parentTransformProvider.IngridientsDispalyParentTransform);
-
-            Show(false);
         }
     }
 }

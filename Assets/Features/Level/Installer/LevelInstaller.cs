@@ -15,10 +15,10 @@ using Assets.Features.Level.Stages.Tools;
 using Assets.Features.Level.Conveyor.Scripts.Events;
 using Assets.Features.Level.Cooking.Scripts.Events;
 using Assets.Features.Level.Cooking.Scripts.Controllers;
-using Assets.Features.Level.Cooking.Scripts.Events.Ingridients;
-using Assets.Features.Level.Cooking.Scripts.Views.Infrastructure;
-using Assets.Features.Level.Cooking.Scripts.Providers.Ingridients;
-using Assets.Features.Level.Cooking.Scripts.Events.Infrastructure;
+using Assets.Features.Level.WorkplaceIcon.Scripts;
+using Assets.Features.Level.Conveyor.Scripts;
+using Assets.Features.Level.Conveyor.Scripts.Providers;
+using Assets.Features.Level.Menu.Scripts;
 
 namespace Sushi.Level.Installer
 {
@@ -26,7 +26,7 @@ namespace Sushi.Level.Installer
     {
         public void InstallBindings(ContainerDescriptor descriptor)
         {
-            descriptor.RegisterController<LevelEntryPointController>();
+            descriptor.AddTransient(typeof(LevelEntryPointController));
 
             InstallConveyor(descriptor);
             InstallKitchenBoard(descriptor);
@@ -38,12 +38,13 @@ namespace Sushi.Level.Installer
         private void InstallConveyor(ContainerDescriptor descriptor)
         {
             descriptor.AddTransient(typeof(ConveyorProvider));
+            descriptor.AddTransient(typeof(ConveyorTileProvider));
 
-            descriptor.RegisterController<ConveyorController>();
+            descriptor.AddTransient(typeof(ConveyorFacade), typeof(BaseConveyorFacade));
 
             descriptor.AddSingleton(typeof(ConveyorGameObjectData),
                 typeof(IConveyorGameObjectData),
-                typeof(IConveyorPointProvider));
+                typeof(IConveyorPointsProvider));
 
             descriptor.AddSingleton(typeof(TileGameObjectData),
                 typeof(ITileGameObjectData),
@@ -63,9 +64,7 @@ namespace Sushi.Level.Installer
         private void InstallMenu(ContainerDescriptor descriptor)
         {
             descriptor.AddTransient(typeof(LevelMenuProvider));
-
-            descriptor.RegisterController<LevelMenuController>();
-
+            descriptor.AddTransient(typeof(LevelMenuFacade), typeof(BaseLevelMenuFacade));
             descriptor.AddSingleton(typeof(LevelMenuEvents), typeof(ILevelMenuEvents), typeof(ILevelMenuExternalEvents));
         }
 
@@ -73,15 +72,15 @@ namespace Sushi.Level.Installer
         {
             descriptor.AddTransient(typeof(KitchenBoardProvider));
 
-            descriptor.RegisterController<KitchenBoardController>();
+            descriptor.AddTransient(typeof(KitchenBoardFacade),typeof(BaseKitchenBoardFacade));
 
             descriptor.AddSingleton(typeof(KitchenBoardIconEvents), typeof(IKitchenBoardIconEvents), typeof(IKitchenBoardIconExternalEvents));
         }
 
         private void InstallCooking(ContainerDescriptor descriptor)
         {
-            descriptor.AddTransient(typeof(CookingViewProvider));
-            descriptor.AddTransient(typeof(CookingUiProvider));
+            descriptor.AddTransient(typeof(CookingViewInstantiator));
+            descriptor.AddTransient(typeof(CookingUiInstantiator));
 
             descriptor.RegisterController<RootCookingController>();
 

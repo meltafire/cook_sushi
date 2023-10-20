@@ -12,6 +12,7 @@
         "Sushi.Level.Stages",
         "Sushi.Level.Menu",
         "Utils.Controllers",
+        "Utils.ReflexIntegration",
         "UniTask"
     ],
     "includePlatforms": [],

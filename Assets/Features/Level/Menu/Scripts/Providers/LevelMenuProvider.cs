@@ -5,7 +5,7 @@ using Utils.AddressablesLoader;
 
 namespace Sushi.Level.Menu
 {
-    public class LevelMenuProvider : AssetInstantiator
+    public class LevelMenuProvider : AssetInstantiator<LevelMenuView>
     {
         private readonly ISceneReference _sceneReference;
 
@@ -14,9 +14,9 @@ namespace Sushi.Level.Menu
             _sceneReference = sceneReference;
         }
 
-        public UniTask<LevelMenuView> Load()
+        public override UniTask<LevelMenuView> Load()
         {
-            return InstantiateInternal<LevelMenuView>(LevelMenuConstants.LevelMenuPrefabName, _sceneReference.OverlayCanvasTransform);
+            return Instantiate(LevelMenuConstants.LevelMenuPrefabName, _sceneReference.OverlayCanvasTransform);
         }
     }
 }

@@ -1,98 +1,165 @@
-﻿using Cysharp.Threading.Tasks;
-using Sushi.Level.Conveyor.Data;
-using Sushi.Level.Conveyor.Factory.Data;
-using Sushi.Level.Conveyor.Services;
-using Sushi.Level.Conveyor.Views;
+﻿using Assets.Features.Level.Conveyor.Scripts.Controllers;
+using Assets.Features.Level.Conveyor.Scripts.Views;
+using Cysharp.Threading.Tasks;
+using Reflex.Core;
+using System.Collections;
+using System.Collections.Generic;
 using System.Threading;
-using Utils.AddressablesLoader;
 using Utils.Controllers;
 
 namespace Sushi.Level.Conveyor.Controllers
 {
-    public class ConveyorController : ResourcefulController
+    public abstract class BaseConveyorController : BaseConveyorTileHolder
     {
-        private readonly ConveyorProvider _conveyorProvider;
-        private readonly ITileGameObjectData _tileGameObjectData;
-        private readonly IFactoryWithData<ConveyorTileController, ConveyorTileControllerFactoryData> _tileTileControllerFactory;
-        private readonly ConveyorPositionService _conveyorPositionService;
-
-        private ConveyorView _view;
-        private ConveyorTileController[] _conveyorTiles;
-
-        public ConveyorController(
-            ConveyorProvider conveyorProvider,
-            ITileGameObjectData tileGameObjectData,
-            IFactoryWithData<ConveyorTileController, ConveyorTileControllerFactoryData> tileTileControllerFactory,
-            ConveyorPositionService conveyorPositionService)
+        protected BaseConveyorController(Container container) : base(container)
         {
-            _conveyorProvider = conveyorProvider;
-            _tileGameObjectData = tileGameObjectData;
-            _tileTileControllerFactory = tileTileControllerFactory;
-            _conveyorPositionService = conveyorPositionService;
+        }
+    }
+
+    public class ConveyorController : BaseConveyorController
+    {
+        private static readonly string ContainerName = "ConveyorController";
+
+        private readonly IConveyorView _view;
+        private readonly Queue<IController> _tileHolders = new Queue<IController>();
+
+        public ConveyorController(IConveyorView view, Container container) : base(container)
+        {
+            _view = view;
         }
 
-        public override UniTask Initialzie(CancellationToken token)
+        protected override UniTask ActAfterContainerInitialized(CancellationToken token)
         {
-            return Load(token);
+            return SpawnConveyor(token);
         }
 
-        public override void Dispose()
+        protected override void ActAfterContainerDisposed()
         {
-            foreach(var tile in _conveyorTiles)
+        }
+
+        protected override void ActBeforeContainerDisposed()
+        {
+            while (_tileHolders.Count != 0)
             {
-                tile.Dispose();
+                var controller = _tileHolders.Dequeue();
+
+                controller.Dispose();
             }
-
-            base.Dispose();
         }
 
-        private async UniTask Load(CancellationToken token)
+        protected override UniTask<Container> GenerateContainer(CancellationToken token)
         {
-            await UniTask.WhenAll(PreloadTilePrefab(), LoadConveyorPrefab());
-
-            _conveyorPositionService.SetupConveyorData(_view.TopStart.position, _view.BottomStart.position, _view.TileCountTotal, _view.TopTileSize);
-
-            await SpawnConveyor(token);
-        }
-
-        private async UniTask PreloadTilePrefab()
-        {
-            var assetLoader = new AssetLoader();
-
-            var gameObject = await assetLoader.Load(ConveyorConstants.ConveyorTilePrefabName);
-
-            var artLength = gameObject.GetComponent<ConveyorTileView>().SpriteLength;
-
-            _tileGameObjectData.SetIileGameObject(gameObject, artLength);
-
-            AttachResource(assetLoader);
-        }
-
-        private async UniTask LoadConveyorPrefab()
-        {
-            AttachResource(_conveyorProvider);
-
-            _view = await _conveyorProvider.Instantiate();
-
-            _tileGameObjectData.TilesParentTransform = _view.TilesTransform;
+            return UniTask.FromResult(
+                Container.Scope(ContainerName, descriptor =>
+            {
+                descriptor.AddTransient(typeof(ConveyorTileHolder), typeof(BaseConveyorTileHolder));
+            }
+            ));
         }
 
         private UniTask SpawnConveyor(CancellationToken token)
         {
             var count = _view.TileCountTotal;
-            _conveyorTiles = new ConveyorTileController[count];
             var initiAlizationTasks = new UniTask[count];
 
             for (var i = 0; i < count; i++)
             {
-                var tile = _tileTileControllerFactory.Create(new ConveyorTileControllerFactoryData(i));
+                var tileHolder = ResolveFromChildContainer<BaseConveyorTileHolder>();
 
-                _conveyorTiles[i] = tile;
+                initiAlizationTasks[i] = tileHolder.Initialize(token);
 
-                initiAlizationTasks[i] = tile.Initialzie(token);
+                _tileHolders.Enqueue(tileHolder);
             }
 
             return UniTask.WhenAll(initiAlizationTasks);
         }
+
+
+
+        //_______________________________
+
+        //private readonly ConveyorProvider _conveyorProvider;
+        //private readonly ITileGameObjectData _tileGameObjectData;
+        //private readonly IFactoryWithData<ConveyorTileController, ConveyorTileControllerFactoryData> _tileTileControllerFactory;
+        //private readonly ConveyorPositionService _conveyorPositionService;
+
+        //private ConveyorView _view;
+        //private ConveyorTileController[] _conveyorTiles;
+
+        //public ConveyorController(
+        //    ConveyorProvider conveyorProvider,
+        //    ITileGameObjectData tileGameObjectData,
+        //    IFactoryWithData<ConveyorTileController, ConveyorTileControllerFactoryData> tileTileControllerFactory,
+        //    ConveyorPositionService conveyorPositionService)
+        //{
+        //    _conveyorProvider = conveyorProvider;
+        //    _tileGameObjectData = tileGameObjectData;
+        //    _tileTileControllerFactory = tileTileControllerFactory;
+        //    _conveyorPositionService = conveyorPositionService;
+        //}
+
+        //public override UniTask Initialzie(CancellationToken token)
+        //{
+        //    return Load(token);
+        //}
+
+        //public override void Dispose()
+        //{
+        //    foreach(var tile in _conveyorTiles)
+        //    {
+        //        tile.Dispose();
+        //    }
+
+        //    base.Dispose();
+        //}
+
+        //private async UniTask Load(CancellationToken token)
+        //{
+        //    await UniTask.WhenAll(PreloadTilePrefab(), LoadConveyorPrefab());
+
+        //    _conveyorPositionService.SetupConveyorData(_view.TopStart.position, _view.BottomStart.position, _view.TileCountTotal, _view.TopTileSize);
+
+        //    await SpawnConveyor(token);
+        //}
+
+        //private async UniTask PreloadTilePrefab()
+        //{
+        //    var assetLoader = new AssetLoader();
+
+        //    var gameObject = await assetLoader.Load(ConveyorConstants.ConveyorTilePrefabName);
+
+        //    var artLength = gameObject.GetComponent<ConveyorTileView>().SpriteLength;
+
+        //    _tileGameObjectData.SetIileGameObject(gameObject, artLength);
+
+        //    AttachResource(assetLoader);
+        //}
+
+        //private async UniTask LoadConveyorPrefab()
+        //{
+        //    AttachResource(_conveyorProvider);
+
+        //    _view = await _conveyorProvider.Instantiate();
+
+        //    _tileGameObjectData.TilesParentTransform = _view.TilesTransform;
+        //}
+
+        //private UniTask SpawnConveyor(CancellationToken token)
+        //{
+        //    var count = _view.TileCountTotal;
+        //    _conveyorTiles = new ConveyorTileController[count];
+        //    var initiAlizationTasks = new UniTask[count];
+
+        //    for (var i = 0; i < count; i++)
+        //    {
+        //        var tile = _tileTileControllerFactory.Create(new ConveyorTileControllerFactoryData(i));
+
+        //        _conveyorTiles[i] = tile;
+
+        //        initiAlizationTasks[i] = tile.Initialzie(token);
+        //    }
+
+        //    return UniTask.WhenAll(initiAlizationTasks);
+        //}
     }
 }

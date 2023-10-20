@@ -13,13 +13,13 @@ namespace Sushi.Level.Conveyor.Factory
     {
         private readonly ConveyorTilePositionService _positionService;
         private readonly ITileGameObjectDataProvider _tileGameObjectDataProvider;
-        private readonly IConveyorPointProvider _conveyorPointProvider;
+        private readonly IConveyorPointsProvider _conveyorPointProvider;
         private readonly IConveyorTileEvents _events;
 
         public ConveyorTileControllerFactory(
             ConveyorTilePositionService positionService,
             ITileGameObjectDataProvider tileGameObjectDataProvider,
-            IConveyorPointProvider conveyorPointProvider,
+            IConveyorPointsProvider conveyorPointProvider,
             IConveyorTileEvents events)
         {
             _positionService = positionService;

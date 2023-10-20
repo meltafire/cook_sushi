@@ -15,7 +15,7 @@ namespace Sushi.AppScope
         private SceneHandler _sceneHandler;
 
         [SerializeField]
-        private LoadingScreenViewProvider _viewProvider;
+        private LoadingScreenParentTransformProvider _loadingScreenTransform;
 
         private CancellationTokenSource _cancellationTokenSource;
 
@@ -49,7 +49,7 @@ namespace Sushi.AppScope
         {
             var appInstaller = new AppInstaller();
 
-            descriptor.AddInstance(_viewProvider, typeof(ILoadingScreenViewProvider));
+            descriptor.AddInstance(_loadingScreenTransform, typeof(ILoadingScreenParentTransformProvider));
 
             appInstaller.InstallBindings(descriptor);
         }

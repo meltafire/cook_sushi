@@ -1,53 +1,45 @@
-﻿using Assets.Features.Level.Cooking.Scripts.Providers.Display;
-using Assets.Features.Level.Cooking.Scripts.Views.Display.Infrastructure;
+﻿using Assets.Features.Level.Cooking.Scripts.Views.Display.Infrastructure;
 using Cysharp.Threading.Tasks;
 using System.Threading;
 using Utils.Controllers;
 
 namespace Assets.Features.Level.Cooking.Scripts.Controllers.Display
 {
-    public class CookingDisplayMakiRecepieController : ResourcefulController
+    public abstract class BaseCookingDisplayMakiRecepieController : IController
     {
-        private readonly IIngridientsDispalyParentTransformProvider _parentTransformProvider;
-        private readonly CookingDisplayMakiStartInstantiator _cookingDisplayMakiStartInstantiator;
-        private readonly CookingDisplayMakiEndInstantiator _cookingDisplayMakiEndInstantiator;
+        public abstract void Dispose();
+        public abstract UniTask Initialize(CancellationToken token);
+        public abstract void Show(bool isOn);
+    }
 
-        private CookingDisplayRecepieView _startView;
-        private CookingDisplayRecepieView _endView;
+    public class CookingDisplayMakiRecepieController : BaseCookingDisplayMakiRecepieController
+    {
+        private readonly ICookingDisplayMakiStartRecepieView _startView;
+        private readonly ICookingDisplayMakiEndRecepieView _endView;
 
         public CookingDisplayMakiRecepieController(
-            IIngridientsDispalyParentTransformProvider parentTransformProvider,
-            CookingDisplayMakiStartInstantiator cookingDisplayMakiStartInstantiator,
-            CookingDisplayMakiEndInstantiator cookingDisplayMakiEndInstantiator)
+            ICookingDisplayMakiStartRecepieView startView,
+            ICookingDisplayMakiEndRecepieView endView)
         {
-            _parentTransformProvider = parentTransformProvider;
-            _cookingDisplayMakiStartInstantiator = cookingDisplayMakiStartInstantiator;
-            _cookingDisplayMakiEndInstantiator = cookingDisplayMakiEndInstantiator;
+            _startView = startView;
+            _endView = endView;
         }
 
-        public override async UniTask Initialzie(CancellationToken token)
+        public override void Dispose()
         {
-            await LoadPrefab();
         }
 
-        public void Show(bool isOn)
+        public override UniTask Initialize(CancellationToken token)
+        {
+            Show(false);
+
+            return UniTask.CompletedTask;
+        }
+
+        public override void Show(bool isOn)
         {
             _startView.Toggle(isOn);
             _endView.Toggle(isOn);
-        }
-
-        private async UniTask LoadPrefab()
-        {
-            AttachResource(_cookingDisplayMakiStartInstantiator);
-            AttachResource(_cookingDisplayMakiEndInstantiator);
-
-            (_startView, _endView) = await UniTask.WhenAll(
-                _cookingDisplayMakiStartInstantiator.Load(_parentTransformProvider.IngridientsDispalyParentTransform),
-                _cookingDisplayMakiEndInstantiator.Load(_parentTransformProvider.IngridientsDispalyParentTransform));
-
-            _endView.transform.SetAsLastSibling();
-
-            Show(false);
         }
     }
 }

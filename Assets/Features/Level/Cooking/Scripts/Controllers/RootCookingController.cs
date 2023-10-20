@@ -1,5 +1,4 @@
-﻿using Assets.Features.Level.Cooking.Scripts.Controllers.Display;
-using Assets.Features.Level.Cooking.Scripts.Controllers.Ingridients;
+﻿using Assets.Features.Level.Cooking.Scripts.Controllers.Recepies;
 using Assets.Features.Level.Cooking.Scripts.Events.Infrastructure;
 using Assets.Features.Level.Cooking.Scripts.Events.Ingridients;
 using Assets.Features.Level.Cooking.Scripts.Handler;
@@ -16,38 +15,35 @@ using Reflex.Core;
 using Sushi.Level.Cooking;
 using System.Threading;
 using Utils.Controllers;
-using Utils.Controllers.ReflexIntegration;
 
 namespace Assets.Features.Level.Cooking.Scripts.Controllers
 {
-    public class RootCookingController : ResourcefulController
+    public class RootCookingController : IController
     {
         private static readonly string RootCookingControllerName = "RootCookingControllerContainer";
 
-        private readonly CookingViewProvider _cookingViewProvider;
-        private readonly CookingUiProvider _cookingUiProvider;
+        private readonly CookingViewInstantiator _cookingViewProvider;
+        private readonly CookingUiInstantiator _cookingUiProvider;
         private readonly Container _container;
 
         private Container _childContainer;
-        private CookingView _view;
-        private CookingUiView _uiView;
         private BaseCookingController _controller;
 
-        public RootCookingController(CookingViewProvider cookingViewProvider, CookingUiProvider cookingUiProvider, Container container)
+        public RootCookingController(CookingViewInstantiator cookingViewProvider, CookingUiInstantiator cookingUiProvider, Container container)
         {
             _cookingViewProvider = cookingViewProvider;
             _cookingUiProvider = cookingUiProvider;
             _container = container;
         }
 
-        public override async UniTask Initialzie(CancellationToken token)
+        public async UniTask Initialize(CancellationToken token)
         {
-            await LoadPrefabs();
+            var (view, uiView) = await UniTask.WhenAll(LoadPrefab(), LoadUiPrefab());
 
             _childContainer = _container.Scope(RootCookingControllerName, descriptor =>
                 {
-                    descriptor.AddInstance(_view, typeof(CookingView));
-                    descriptor.AddInstance(_uiView,
+                    descriptor.AddInstance(view, typeof(CookingView));
+                    descriptor.AddInstance(uiView,
                         typeof(CookingUiView)
                         );
 
@@ -70,36 +66,25 @@ namespace Assets.Features.Level.Cooking.Scripts.Controllers
 
             _controller = _childContainer.Resolve<BaseCookingController>();
 
-            await _controller.Initialzie(token);
+            await _controller.Initialize(token);
         }
 
-        public override void Dispose()
+        public void Dispose()
         {
             _controller.Dispose();
 
             _childContainer.Dispose();
             _childContainer = null;
-
-            base.Dispose();
         }
 
-        private async UniTask LoadPrefabs()
+        private UniTask<CookingView> LoadPrefab()
         {
-            await UniTask.WhenAll(LoadPrefab(), LoadUiPrefab());
+            return _cookingViewProvider.Load();
         }
 
-        private async UniTask LoadPrefab()
+        private UniTask<CookingUiView> LoadUiPrefab()
         {
-            AttachResource(_cookingViewProvider);
-
-            _view = await _cookingViewProvider.Load();
-        }
-
-        private async UniTask LoadUiPrefab()
-        {
-            AttachResource(_cookingUiProvider);
-
-            _uiView = await _cookingUiProvider.Instantiate();
+            return _cookingUiProvider.Load();
         }
 
         private void IsntallCookingIngredients(ContainerDescriptor descriptor)
@@ -111,27 +96,20 @@ namespace Assets.Features.Level.Cooking.Scripts.Controllers
             typeof(IRecipeSelectionExternalEvents)
             );
 
-            descriptor.RegisterController<CookingMakiRecepieController>();
-            descriptor.RegisterController<CookingNigiriRecepieController>();
+            descriptor.AddTransient(typeof(CookingRecepiesFacade), typeof(BaseCookingRecepiesFacade));
+            descriptor.AddTransient(typeof(CookingMakiRecepieInstantiator));
+            descriptor.AddTransient(typeof(CookingNigiriRecepieInstantiator));
 
-            descriptor.AddTransient(typeof(CookingMakiRecepieAssetInstantiator));
-            descriptor.AddTransient(typeof(CookingNigiriRecepieAssetProvider));
-
-            descriptor.AddTransient(typeof(CookingIngridientAssetProvider));
-
+            descriptor.AddTransient(typeof(CookingIngridientAssetInstantiator));
             descriptor.AddTransient(typeof(DisplayIngridientsControllerPool));
-            descriptor.AddTransient(typeof(RecepieDisplayHandler));
-            descriptor.RegisterController<CookingDisplayIngridientController>();
-            descriptor.RegisterController<CookingDisplayMakiRecepieController>();
-            descriptor.RegisterController<CookingDisplayNigiriRecepieController>();
-            descriptor.RegisterController<CookingDisplayMakiWrapController>();
+
+            descriptor.AddTransient(typeof(RecepieDisplayFacade));
             descriptor.AddTransient(typeof(CookingDisplayMakiStartInstantiator));
             descriptor.AddTransient(typeof(CookingDisplayMakiEndInstantiator));
             descriptor.AddTransient(typeof(CookingDisplayNigiriInstantiator));
             descriptor.AddTransient(typeof(CookingDisplayIngridientInstantiator));
             descriptor.AddTransient(typeof(CookingDisplayMakiWrapInstantiator));
 
-            descriptor.RegisterController<CookingMakiWrapActionController>();
             descriptor.AddTransient(typeof(CookingMakiWrapActionInstantiator));
         }
     }

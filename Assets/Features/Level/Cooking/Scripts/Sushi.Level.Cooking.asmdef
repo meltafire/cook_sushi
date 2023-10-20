@@ -12,7 +12,8 @@
         "Utils.AddressablesLoader",
         "Utils.Controllers",
         "Utils.Controllers.ReflexIntegration",
-        "Utils.Ui"
+        "Utils.Ui",
+        "Utils.ReflexIntegration"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

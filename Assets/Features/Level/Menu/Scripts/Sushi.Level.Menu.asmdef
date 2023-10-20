@@ -2,12 +2,14 @@
     "name": "Sushi.Level.Menu",
     "rootNamespace": "",
     "references": [
+        "Reflex",
         "Sushi.Level.Menu.Events",
         "Sushi.Level.Stages.LoadingStageEvents",
         "Sushi.SceneReference",
         "UniTask",
         "Utils.AddressablesLoader",
-        "Utils.Controllers"
+        "Utils.Controllers",
+        "Utils.ReflexIntegration"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

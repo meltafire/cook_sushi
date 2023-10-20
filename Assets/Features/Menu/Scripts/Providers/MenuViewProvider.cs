@@ -6,7 +6,7 @@ using Utils.AddressablesLoader;
 
 namespace Sushi.Menu
 {
-    public class MenuViewProvider : AssetInstantiator
+    public class MenuViewProvider : AssetInstantiator<MenuView>
     {
         private readonly ISceneReference _sceneReference;
 
@@ -15,9 +15,9 @@ namespace Sushi.Menu
             _sceneReference = sceneReference;
         }
 
-        public UniTask<MenuView> Load()
+        public override UniTask<MenuView> Load()
         {
-            return InstantiateInternal<MenuView>(MenuConstants.MainMenuPrefabName, _sceneReference.OverlayCanvasTransform);
+            return Instantiate(MenuConstants.MainMenuPrefabName, _sceneReference.OverlayCanvasTransform);
         }
     }
 }

@@ -1,0 +1,19 @@
+{
+    "name": "Utils.ReflexIntegration",
+    "rootNamespace": "",
+    "references": [
+        "Reflex",
+        "UniTask",
+        "Utils.AddressablesLoader",
+        "Utils.Controllers"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

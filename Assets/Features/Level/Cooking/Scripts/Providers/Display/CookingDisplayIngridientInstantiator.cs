@@ -1,15 +1,24 @@
-﻿using Cysharp.Threading.Tasks;
+﻿using Assets.Features.Level.Cooking.Scripts.Views.Display.Infrastructure;
+using Cysharp.Threading.Tasks;
 using Sushi.Level.Cooking;
-using UnityEngine;
 using Utils.AddressablesLoader;
 
 namespace Assets.Features.Level.Cooking.Scripts.Providers.Display
 {
-    public class CookingDisplayIngridientInstantiator : AssetInstantiator
+    public class CookingDisplayIngridientInstantiator : AssetInstantiator<CookingDisplayIngridientView>
     {
-        public UniTask<CookingDisplayIngridientView> Load(Transform transform)
+        private readonly IIngridientsDispalyParentTransformProvider _parentTransformProvider;
+
+        public CookingDisplayIngridientInstantiator(IIngridientsDispalyParentTransformProvider parentTransformProvider)
         {
-            return InstantiateInternal<CookingDisplayIngridientView>(CookingConstantData.CookingDisplayIngredientPrefabKey, transform);
+            _parentTransformProvider = parentTransformProvider;
+        }
+
+        public override UniTask<CookingDisplayIngridientView> Load()
+        {
+            return Instantiate(
+                CookingConstantData.CookingDisplayIngredientPrefabKey,
+                _parentTransformProvider.IngridientsDispalyParentTransform);
         }
     }
 }

@@ -2,11 +2,14 @@
     "name": "Sushi.Level.WorkplaceIcon",
     "rootNamespace": "",
     "references": [
+        "Reflex",
+        "Utils.ReflexIntegration",
         "Sushi.Level.WorkplaceIcon.Events",
         "UniTask",
         "Utils.AddressablesLoader",
         "Utils.Controllers",
-        "Utils.Input"
+        "Utils.Input",
+        "Utils.Ui"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

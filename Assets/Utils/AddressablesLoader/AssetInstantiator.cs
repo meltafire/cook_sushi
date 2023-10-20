@@ -4,9 +4,11 @@ using UnityEngine.AddressableAssets;
 
 namespace Utils.AddressablesLoader
 {
-    public class AssetInstantiator : IAssetUnloader
+    public abstract class AssetInstantiator<T>
     {
         private GameObject _cachedObject;
+
+        public abstract UniTask<T> Load();
 
         public void Unload()
         {
@@ -20,22 +22,9 @@ namespace Utils.AddressablesLoader
             _cachedObject = null;
         }
 
-        protected async UniTask<T> InstantiateInternal<T>(string assetId, Transform parentTransform)
+        protected async UniTask<T> Instantiate(string assetId, Transform parentTransform)
         {
             var handle = Addressables.InstantiateAsync(assetId, parentTransform);
-            _cachedObject = await handle.Task;
-
-            if (_cachedObject.TryGetComponent(out T componentInstance) == false)
-            {
-                throw new System.NullReferenceException();
-            }
-
-            return componentInstance;
-        }
-
-        protected async UniTask<T> InstantiateInternal<T>(string assetId)
-        {
-            var handle = Addressables.InstantiateAsync(assetId);
             _cachedObject = await handle.Task;
 
             if (_cachedObject.TryGetComponent(out T componentInstance) == false)

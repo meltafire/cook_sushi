@@ -5,7 +5,7 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 
 namespace Utils.AddressablesLoader
 {
-    public class AssetLoader : IAssetUnloader
+    public class AssetLoader
     {
         private AsyncOperationHandle<GameObject> _handle;
 

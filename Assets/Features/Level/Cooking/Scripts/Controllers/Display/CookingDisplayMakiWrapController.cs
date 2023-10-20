@@ -1,41 +1,38 @@
-using Assets.Features.Level.Cooking.Scripts.Providers.Display;
 using Assets.Features.Level.Cooking.Scripts.Views.Display.Infrastructure;
 using Cysharp.Threading.Tasks;
 using System.Threading;
 using Utils.Controllers;
 
-public class CookingDisplayMakiWrapController : ResourcefulController
+public abstract class BaseCookingDisplayMakiWrapController : IController
 {
-    private readonly IIngridientsDispalyParentTransformProvider _parentTransformProvider;
-    private readonly CookingDisplayMakiWrapInstantiator _displayMakiWrapInstantiator;
+    public abstract void Show(bool isOn);
+    public abstract void Dispose();
+    public abstract UniTask Initialize(CancellationToken token);
+}
 
-    private CookingDisplayRecepieView _view;
+public class CookingDisplayMakiWrapController : BaseCookingDisplayMakiWrapController
+{
+    private readonly ICookingDisplayMakiWrapView _view;
 
     public CookingDisplayMakiWrapController(
-        IIngridientsDispalyParentTransformProvider parentTransformProvider,
-        CookingDisplayMakiWrapInstantiator displayMakiWrapInstantiator)
+        ICookingDisplayMakiWrapView view)
     {
-        _parentTransformProvider = parentTransformProvider;
-        _displayMakiWrapInstantiator = displayMakiWrapInstantiator;
+        _view = view;
     }
 
-    public override async UniTask Initialzie(CancellationToken token)
+    public override void Dispose()
     {
-        await LoadPrefab();
     }
 
-    public void Show(bool isOn)
+    public override UniTask Initialize(CancellationToken token)
+    {
+        return UniTask.CompletedTask;
+    }
+
+    public override void Show(bool isOn)
     {
         _view.Toggle(isOn);
-        _view.transform.SetAsLastSibling();
-    }
 
-    private async UniTask LoadPrefab()
-    {
-        AttachResource(_displayMakiWrapInstantiator);
-
-        _view = await _displayMakiWrapInstantiator.Load(_parentTransformProvider.IngridientsDispalyParentTransform);
-
-        Show(false);
+        _view.SetAsLastSibling();
     }
 }

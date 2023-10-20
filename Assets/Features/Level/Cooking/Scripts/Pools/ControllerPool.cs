@@ -59,7 +59,7 @@ namespace Sushi.Level.Cooking
             var controller = _factory.Create();
             _stack.Push(controller);
 
-            return controller.Initialzie(token);
+            return controller.Initialize(token);
         }
     }
 }
