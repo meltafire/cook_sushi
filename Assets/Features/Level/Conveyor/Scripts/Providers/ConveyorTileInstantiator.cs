@@ -5,11 +5,11 @@ using Utils.AddressablesLoader;
 
 namespace Assets.Features.Level.Conveyor.Scripts.Providers
 {
-    public class ConveyorTileProvider : AssetInstantiator<ConveyorTileView>
+    public class ConveyorTileInstantiator : AssetInstantiator<ConveyorTileView>
     {
-        private readonly IConveyorTileParentTransformProvider _transformProvider;
+        private readonly IStageRootParentTransformProvider _transformProvider;
 
-        public ConveyorTileProvider(IConveyorTileParentTransformProvider transformProvider)
+        public ConveyorTileInstantiator(IStageRootParentTransformProvider transformProvider)
         {
             _transformProvider = transformProvider;
         }

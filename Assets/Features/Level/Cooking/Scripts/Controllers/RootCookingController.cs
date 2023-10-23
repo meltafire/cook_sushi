@@ -1,4 +1,5 @@
-﻿using Assets.Features.Level.Cooking.Scripts.Controllers.Recepies;
+﻿using Assets.Features.Level.Cooking.Scripts.Controllers.Ingridients;
+using Assets.Features.Level.Cooking.Scripts.Controllers.Recepies;
 using Assets.Features.Level.Cooking.Scripts.Events.Infrastructure;
 using Assets.Features.Level.Cooking.Scripts.Events.Ingridients;
 using Assets.Features.Level.Cooking.Scripts.Handler;
@@ -14,6 +15,7 @@ using Cysharp.Threading.Tasks;
 using Reflex.Core;
 using Sushi.Level.Cooking;
 using System.Threading;
+using Utils.AddressablesLoader;
 using Utils.Controllers;
 
 namespace Assets.Features.Level.Cooking.Scripts.Controllers
@@ -100,14 +102,13 @@ namespace Assets.Features.Level.Cooking.Scripts.Controllers
             descriptor.AddTransient(typeof(CookingMakiRecepieInstantiator));
             descriptor.AddTransient(typeof(CookingNigiriRecepieInstantiator));
 
-            descriptor.AddTransient(typeof(CookingIngridientAssetInstantiator));
+            descriptor.AddTransient(typeof(CookingIngridientAssetInstantiator), typeof(AssetInstantiator<IngridientButtonView>));
             descriptor.AddTransient(typeof(DisplayIngridientsControllerPool));
 
             descriptor.AddTransient(typeof(RecepieDisplayFacade));
             descriptor.AddTransient(typeof(CookingDisplayMakiStartInstantiator));
             descriptor.AddTransient(typeof(CookingDisplayMakiEndInstantiator));
             descriptor.AddTransient(typeof(CookingDisplayNigiriInstantiator));
-            descriptor.AddTransient(typeof(CookingDisplayIngridientInstantiator));
             descriptor.AddTransient(typeof(CookingDisplayMakiWrapInstantiator));
 
             descriptor.AddTransient(typeof(CookingMakiWrapActionInstantiator));

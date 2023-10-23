@@ -2,6 +2,7 @@
 using Cysharp.Threading.Tasks;
 using Reflex.Core;
 using System.Threading;
+using Utils.AddressablesLoader;
 using Utils.Controllers;
 
 namespace Assets.Features.Level.Cooking.Scripts.Controllers.Ingridients
@@ -17,12 +18,12 @@ namespace Assets.Features.Level.Cooking.Scripts.Controllers.Ingridients
     {
         private static readonly string ContainerName = "CookingIngridientsFacade";
 
-        private readonly CookingIngridientAssetInstantiator _ingridientAssetInstantiator;
+        private readonly AssetInstantiator<IngridientButtonView> _ingridientAssetInstantiator;
 
         private IController _ingridientController;
 
         public CookingIngridientsFacade(
-            CookingIngridientAssetInstantiator ingridientAssetInstantiator,
+            AssetInstantiator<IngridientButtonView> ingridientAssetInstantiator,
             Container container)
             : base(container)
         {

@@ -4,7 +4,7 @@ using Utils.AddressablesLoader;
 
 namespace Assets.Features.Level.Cooking.Scripts.Controllers.Recepies
 {
-    public class CookingNigiriRecepieFacade : MvcFacade<CookingNigiriRecepieController, IngridientButtonView>
+    public class CookingNigiriRecepieFacade : UniqueVcFacade<CookingNigiriRecepieController, IngridientButtonView>
     {
         private static readonly string ContainerNameInner = "CookingNigiriRecepieFacade";
 

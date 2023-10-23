@@ -35,7 +35,7 @@ namespace Sushi.AppScope
 
         private void RegisterSceneReferences(ContainerDescriptor descriptor)
         {
-            descriptor.AddInstance(_sceneHandler, typeof(ISceneReference));
+            descriptor.AddInstance(_sceneHandler, typeof(ISceneReference), typeof(IStageRootParentTransformProvider));
         }
 
         private void RegisterCommonCancellationToken(ContainerDescriptor descriptor)

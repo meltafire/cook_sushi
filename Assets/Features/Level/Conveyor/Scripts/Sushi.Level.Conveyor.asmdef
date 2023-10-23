@@ -3,6 +3,7 @@
     "rootNamespace": "",
     "references": [
         "Reflex",
+        "Sushi.App.StageRootProvider",
         "Sushi.Level.Conveyor.Events",
         "Utils.AddressablesLoader",
         "Utils.Controllers",

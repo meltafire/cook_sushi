@@ -1,5 +1,6 @@
 ﻿using Assets.Features.Level.Conveyor.Scripts;
 using Assets.Features.Level.Cooking.Scripts.Controllers;
+using Assets.Features.Level.Menu.Scripts;
 using Assets.Features.Level.WorkplaceIcon.Scripts;
 using Cysharp.Threading.Tasks;
 using Sushi.Level.Menu;
@@ -17,23 +18,22 @@ namespace Sushi.Level.Common.Controllers
     {
         private readonly BaseKitchenBoardFacade _kitchenBoardFacade;
         private readonly BaseConveyorFacade _baseConveyorFacade;
-        private readonly IFactory<LevelMenuController> _levelMenuControllerFactory;
+        private readonly BaseLevelMenuFacade _baseLevelMenuFacade;
         private readonly IFactory<RootCookingController> _rootCookingControllerFactory;
         private readonly LevelStagesFacade _levelStagesFacade;
 
-        private LevelMenuController _levelMenuController;
         private RootCookingController _rootCookingController;
 
         public LevelEntryPointController(
             BaseKitchenBoardFacade kitchenBoardFacade,
             BaseConveyorFacade baseConveyorFacade,
-            IFactory<LevelMenuController> levelMenuControllerFactory,
+            BaseLevelMenuFacade baseLevelMenuFacade,
             IFactory<RootCookingController> rootCookingControllerFactory,
             LevelStagesFacade levelStagesFacade)
         {
             _kitchenBoardFacade = kitchenBoardFacade;
             _baseConveyorFacade = baseConveyorFacade;
-            _levelMenuControllerFactory = levelMenuControllerFactory;
+            _baseLevelMenuFacade = baseLevelMenuFacade;
             _rootCookingControllerFactory = rootCookingControllerFactory;
             _levelStagesFacade = levelStagesFacade;
         }
@@ -44,8 +44,7 @@ namespace Sushi.Level.Common.Controllers
 
             await _baseConveyorFacade.Initialize(token);
 
-            _levelMenuController = _levelMenuControllerFactory.Create();
-            await _levelMenuController.Initialize(token);
+            await _baseLevelMenuFacade.Initialize(token);
 
             _rootCookingController = _rootCookingControllerFactory.Create();
             await _rootCookingController.Initialize(token);
@@ -55,7 +54,7 @@ namespace Sushi.Level.Common.Controllers
         {
             _kitchenBoardFacade.Dispose();
             _baseConveyorFacade.Dispose();
-            _levelMenuController.Dispose();
+            _baseLevelMenuFacade.Dispose();
             _rootCookingController.Dispose();
         }
 

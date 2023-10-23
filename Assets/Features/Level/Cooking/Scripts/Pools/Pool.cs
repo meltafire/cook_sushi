@@ -1,20 +1,21 @@
 using Cysharp.Threading.Tasks;
+using Reflex.Core;
 using System.Collections.Generic;
 using System.Threading;
 using Utils.Controllers;
 
 namespace Sushi.Level.Cooking
 {
-    public abstract class ControllerPool<T> where T : IController
+    public abstract class Pool<T> where T : IController
     {
         private const int DefaultSize = 15;
 
-        private readonly IFactory<T> _factory;
+        private readonly Container _container;
         private readonly Stack<T> _stack = new Stack<T>(DefaultSize);
 
-        public ControllerPool(IFactory<T> factory)
+        public Pool(Container container)
         {
-            _factory = factory;
+            _container = container;
         }
 
         public async UniTask Initialize(CancellationToken token)
@@ -46,7 +47,9 @@ namespace Sushi.Level.Cooking
                 await GenerateItem(token);
             }
 
-            return _stack.Pop();
+            var controller = _stack.Pop();
+
+            return controller;
         }
 
         public void Release(T controller)
@@ -56,7 +59,7 @@ namespace Sushi.Level.Cooking
 
         private UniTask GenerateItem(CancellationToken token)
         {
-            var controller = _factory.Create();
+            var controller = _container.Resolve<T>();
             _stack.Push(controller);
 
             return controller.Initialize(token);

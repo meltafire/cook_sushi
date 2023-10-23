@@ -5,6 +5,7 @@
         "Reflex",
         "Sushi.App.LoadingScreen",
         "Sushi.App.Installer",
+        "Sushi.App.StageRootProvider",
         "Sushi.Menu.Installer",
         "Sushi.Level.Installer",
         "Sushi.SceneReference",

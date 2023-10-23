@@ -1,15 +1,13 @@
 ﻿using Assets.Features.Level.Conveyor.Scripts.Controllers;
 using Assets.Features.Level.Conveyor.Scripts.Views;
+using Assets.Utils.Controllers;
 using Cysharp.Threading.Tasks;
 using Reflex.Core;
-using System.Collections;
-using System.Collections.Generic;
 using System.Threading;
-using Utils.Controllers;
 
 namespace Sushi.Level.Conveyor.Controllers
 {
-    public abstract class BaseConveyorController : BaseConveyorTileHolder
+    public abstract class BaseConveyorController : ContainerFacade
     {
         protected BaseConveyorController(Container container) : base(container)
         {
@@ -21,7 +19,8 @@ namespace Sushi.Level.Conveyor.Controllers
         private static readonly string ContainerName = "ConveyorController";
 
         private readonly IConveyorView _view;
-        private readonly Queue<IController> _tileHolders = new Queue<IController>();
+
+        private IControllerWithData<int> _controller;
 
         public ConveyorController(IConveyorView view, Container container) : base(container)
         {
@@ -30,7 +29,9 @@ namespace Sushi.Level.Conveyor.Controllers
 
         protected override UniTask ActAfterContainerInitialized(CancellationToken token)
         {
-            return SpawnConveyor(token);
+            _controller = ResolveFromChildContainer<BaseConveyorsTileHolder>();
+
+            return _controller.Initialize(_view.TileCountTotal, token);
         }
 
         protected override void ActAfterContainerDisposed()
@@ -39,12 +40,7 @@ namespace Sushi.Level.Conveyor.Controllers
 
         protected override void ActBeforeContainerDisposed()
         {
-            while (_tileHolders.Count != 0)
-            {
-                var controller = _tileHolders.Dequeue();
-
-                controller.Dispose();
-            }
+            _controller.Dispose();
         }
 
         protected override UniTask<Container> GenerateContainer(CancellationToken token)
@@ -52,26 +48,9 @@ namespace Sushi.Level.Conveyor.Controllers
             return UniTask.FromResult(
                 Container.Scope(ContainerName, descriptor =>
             {
-                descriptor.AddTransient(typeof(ConveyorTileHolder), typeof(BaseConveyorTileHolder));
+                descriptor.AddTransient(typeof(ConveyorTilesHolder), typeof(BaseConveyorsTileHolder));
             }
             ));
-        }
-
-        private UniTask SpawnConveyor(CancellationToken token)
-        {
-            var count = _view.TileCountTotal;
-            var initiAlizationTasks = new UniTask[count];
-
-            for (var i = 0; i < count; i++)
-            {
-                var tileHolder = ResolveFromChildContainer<BaseConveyorTileHolder>();
-
-                initiAlizationTasks[i] = tileHolder.Initialize(token);
-
-                _tileHolders.Enqueue(tileHolder);
-            }
-
-            return UniTask.WhenAll(initiAlizationTasks);
         }
 
 

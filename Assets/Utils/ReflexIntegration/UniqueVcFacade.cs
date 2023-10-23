@@ -6,7 +6,7 @@ using Utils.Controllers;
 
 namespace Assets.Features.Level.Cooking.Scripts.Controllers.Recepies
 {
-    public abstract class MvcFacade<T, U> : ContainerFacade where T : IController
+    public abstract class UniqueVcFacade<T, U> : ContainerFacade where T : IController
     {
         protected abstract string ContainerName { get; }
 
@@ -14,7 +14,7 @@ namespace Assets.Features.Level.Cooking.Scripts.Controllers.Recepies
 
         private IController _controller;
 
-        protected MvcFacade(
+        protected UniqueVcFacade(
             AssetInstantiator<U> assetInstantiator,
             Container container) 
             : base(container)

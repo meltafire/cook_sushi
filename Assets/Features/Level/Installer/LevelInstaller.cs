@@ -38,7 +38,6 @@ namespace Sushi.Level.Installer
         private void InstallConveyor(ContainerDescriptor descriptor)
         {
             descriptor.AddTransient(typeof(ConveyorProvider));
-            descriptor.AddTransient(typeof(ConveyorTileProvider));
 
             descriptor.AddTransient(typeof(ConveyorFacade), typeof(BaseConveyorFacade));
 
@@ -50,8 +49,6 @@ namespace Sushi.Level.Installer
                 typeof(ITileGameObjectData),
                 typeof(ITileGameObjectDataProvider),
                 typeof(ITileGameObjectDimensionProvider));
-
-            descriptor.AddTransient(typeof(ConveyorTileControllerFactory), typeof(IFactoryWithData<ConveyorTileController, ConveyorTileControllerFactoryData>));
 
             descriptor.AddTransient(typeof(ConveyorTilePositionService));
             descriptor.AddTransient(typeof(ConveyorPositionService));

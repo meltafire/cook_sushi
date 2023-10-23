@@ -1,4 +1,5 @@
-﻿using Reflex.Core;
+﻿using Assets.Features.Menu.Scripts.Events;
+using Reflex.Core;
 using Sushi.Menu.Controllers;
 
 namespace Sushi.Menu.Installer
@@ -7,6 +8,8 @@ namespace Sushi.Menu.Installer
     {
         public void InstallBindings(ContainerDescriptor descriptor)
         {
+            descriptor.AddSingleton(typeof(MenuControllerEvents), typeof(IMenuControllerEvents), typeof(IMenuControllerExternalEvents));
+
             descriptor.AddTransient(typeof(MenuFacade), typeof(BaseMenuFacade));
 
             descriptor.AddTransient(typeof(MenuViewProvider));

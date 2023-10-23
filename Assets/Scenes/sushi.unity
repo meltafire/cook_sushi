@@ -5353,7 +5353,7 @@ GameObject:
   m_Component:
   - component: {fileID: 680470900}
   m_Layer: 0
-  m_Name: SpriteRoot
+  m_Name: Stage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -15292,6 +15292,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a707799aae8b304eb9f4bdcc90e257f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _stageParentTransform: {fileID: 680470900}
   _overlayCanvasTransform: {fileID: 1044821171}
 --- !u!114 &2007300271
 MonoBehaviour:

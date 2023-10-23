@@ -8,9 +8,9 @@ namespace Sushi.Level.Conveyor
 {
     public class ConveyorProvider : AssetInstantiator<ConveyorView>
     {
-        private readonly IConveyorParentTransformProvider _transformProvider;
+        private readonly IStageRootParentTransformProvider _transformProvider;
 
-        public ConveyorProvider(IConveyorParentTransformProvider transformProvider)
+        public ConveyorProvider(IStageRootParentTransformProvider transformProvider)
         {
             _transformProvider = transformProvider;
         }

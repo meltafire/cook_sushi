@@ -4,6 +4,7 @@
     "references": [
         "Reflex",
         "Utils.ReflexIntegration",
+        "Sushi.App.StageRootProvider",
         "Sushi.Level.WorkplaceIcon.Events",
         "UniTask",
         "Utils.AddressablesLoader",

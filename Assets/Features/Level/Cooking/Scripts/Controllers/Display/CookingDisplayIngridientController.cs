@@ -3,6 +3,15 @@ using Cysharp.Threading.Tasks;
 using System.Threading;
 using Utils.Controllers;
 
+public abstract class BaseCookingDisplayIngridientController : IController
+{
+    public abstract void Hide();
+    public abstract void Show(CookingIngridientType step, int count);
+    public abstract void Dispose();
+    public abstract UniTask Initialize(CancellationToken token);
+}
+
+
 public class CookingDisplayIngridientController : IController
 {
     private readonly CookingDisplayIngridientView _view;
@@ -15,13 +24,12 @@ public class CookingDisplayIngridientController : IController
 
     public UniTask Initialize(CancellationToken token)
     {
-        Hide();
-
         return UniTask.CompletedTask;
     }
 
     public void Dispose()
     {
+
     }
 
     public void Hide()

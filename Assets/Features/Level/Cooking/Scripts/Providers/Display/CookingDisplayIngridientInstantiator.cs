@@ -14,11 +14,15 @@ namespace Assets.Features.Level.Cooking.Scripts.Providers.Display
             _parentTransformProvider = parentTransformProvider;
         }
 
-        public override UniTask<CookingDisplayIngridientView> Load()
+        public async override UniTask<CookingDisplayIngridientView> Load()
         {
-            return Instantiate(
+            var view = await Instantiate(
                 CookingConstantData.CookingDisplayIngredientPrefabKey,
                 _parentTransformProvider.IngridientsDispalyParentTransform);
+
+            view.gameObject.SetActive(false);
+
+            return view;
         }
     }
 }

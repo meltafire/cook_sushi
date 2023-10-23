@@ -1,11 +1,12 @@
-﻿using Sushi.Level.Cooking;
-using Utils.Controllers;
+﻿using Assets.Features.Level.Cooking.Scripts.Controllers.Display;
+using Reflex.Core;
+using Sushi.Level.Cooking;
 
 namespace Assets.Features.Level.Cooking.Scripts.Pools
 {
-    public class DisplayIngridientsControllerPool : ControllerPool<CookingDisplayIngridientController>
+    public class DisplayIngridientsControllerPool : Pool<BaseCookingDisplayIngridientFacade>
     {
-        public DisplayIngridientsControllerPool(IFactory<CookingDisplayIngridientController> factory) : base(factory)
+        public DisplayIngridientsControllerPool(Container container) : base(container)
         {
         }
     }

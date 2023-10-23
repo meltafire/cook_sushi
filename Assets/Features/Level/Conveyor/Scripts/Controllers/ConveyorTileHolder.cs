@@ -1,59 +1,66 @@
 ﻿using Assets.Features.Level.Conveyor.Scripts.Providers;
 using Assets.Features.Level.Conveyor.Scripts.Views;
+using Assets.Utils.ReflexIntegration;
 using Cysharp.Threading.Tasks;
 using Reflex.Core;
 using Sushi.Level.Conveyor.Controllers;
+using Sushi.Level.Conveyor.Data;
+using Sushi.Level.Conveyor.Services;
+using Sushi.Level.Conveyor.Views;
 using System.Threading;
+using Utils.AddressablesLoader;
 using Utils.Controllers;
 
 namespace Assets.Features.Level.Conveyor.Scripts.Controllers
 {
-    public abstract class BaseConveyorTileHolder : ContainerFacade
-    {
-        protected BaseConveyorTileHolder(Container container) : base(container)
-        {
-        }
-    }
-
-    public class ConveyorTileHolder : BaseConveyorTileHolder
+    public class ConveyorTileHolder : ContainerWithDataFacade<int>
     {
         private static readonly string ContainerName = "ConveyorTileHolder";
 
-        private readonly ConveyorTileProvider _tileProvider;
+        private readonly ConveyorTilePositionService _positionService;
+        private readonly AssetInstantiator<ConveyorTileView> _viewInstantiator;
 
-        private IController _conveyorTileController;
+        private IController _controller;
 
-        public ConveyorTileHolder(Container container, ConveyorTileProvider tileProvider) : base(container)
+        public ConveyorTileHolder(
+            Container container,
+            ConveyorTilePositionService positionService,
+            AssetInstantiator<ConveyorTileView> viewInstantiator) : base(container)
         {
-            _tileProvider = tileProvider;
-        }
-
-        protected override UniTask ActAfterContainerInitialized(CancellationToken token)
-        {
-            _conveyorTileController = ResolveFromChildContainer<BaseConveyorTileController>();
-
-            return _conveyorTileController.Initialize(token);
+            _positionService = positionService;
+            _viewInstantiator = viewInstantiator;
         }
 
         protected override void ActAfterContainerDisposed()
         {
-            _tileProvider.Unload();
+            _viewInstantiator.Unload();
+        }
+
+        protected override UniTask ActAfterContainerInitialized(int data, CancellationToken token)
+        {
+            _controller = ResolveFromChildContainer<BaseConveyorTileController>();
+
+            return _controller.Initialize(token);
         }
 
         protected override void ActBeforeContainerDisposed()
         {
-            _conveyorTileController.Dispose();
+            _controller.Dispose();
         }
 
-        protected async override UniTask<Container> GenerateContainer(CancellationToken token)
+        protected async override UniTask<Container> GenerateContainer(int data, CancellationToken token)
         {
-            var view = await _tileProvider.Load();
+            var view = await _viewInstantiator.Load();
+
+            var isOnTop = _positionService.IsTileOnTopRow(data);
+            var mvcData = new ConveyorTileData(isOnTop);
 
             return Container.Scope(ContainerName, descriptor =>
-            {
-                descriptor.AddInstance(view, typeof(IConveyorTileView));
-                descriptor.AddTransient(typeof(ConveyorTileController), typeof(BaseConveyorTileController));
-            });
+                {
+                    descriptor.AddInstance(view, typeof(IConveyorTileView));
+                    descriptor.AddSingleton(typeof(ConveyorTileController), typeof(BaseConveyorTileController));
+                    descriptor.AddInstance(mvcData, typeof(ConveyorTileData));
+                });
         }
     }
 }
