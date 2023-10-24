@@ -1,8 +1,7 @@
-﻿using Assets.Features.Level.Cooking.Scripts.Providers.Ingridients;
-using Cysharp.Threading.Tasks;
+﻿using Cysharp.Threading.Tasks;
 using Reflex.Core;
 using System.Threading;
-using Utils.AddressablesLoader;
+using Utils.AssetProvider;
 using Utils.Controllers;
 
 namespace Assets.Features.Level.Cooking.Scripts.Controllers.Ingridients
@@ -50,6 +49,7 @@ namespace Assets.Features.Level.Cooking.Scripts.Controllers.Ingridients
         protected async override UniTask<Container> GenerateContainer(CancellationToken token)
         {
             var ingridientView = await _ingridientAssetInstantiator.Load();
+            ingridientView.gameObject.SetActive(true);
 
             return Container.Scope(ContainerName, descriptor =>
             {

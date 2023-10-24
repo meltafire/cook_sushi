@@ -3,9 +3,9 @@
     "rootNamespace": "",
     "references": [
         "Reflex",
-        "Sushi.App.StageRootProvider",
+        "Sushi.SceneReference",
         "Sushi.Level.Conveyor.Events",
-        "Utils.AddressablesLoader",
+        "Utils.AssetProvider",
         "Utils.Controllers",
         "Utils.ReflexIntegration",
         "UniTask"

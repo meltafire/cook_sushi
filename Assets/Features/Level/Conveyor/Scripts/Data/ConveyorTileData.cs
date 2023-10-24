@@ -5,9 +5,8 @@
         public bool IsTopRow;
         public int Index;
 
-        public ConveyorTileData(bool isTopRow, int index)
+        public ConveyorTileData(int index)
         {
-            IsTopRow = isTopRow;
             Index = index;
         }
     }

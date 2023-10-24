@@ -8,6 +8,7 @@ namespace Assets.Features.Level.Cooking.Scripts.Handler.Infrastructure
         public event Action<bool> DisplayMakiRecepie;
         public event Action<bool> DisplayNigiriRecepie;
         public event Action<CookingIngridientType, int> DisplayIngridient;
+        event Action AfterDisplayIngridient;
         public event Action<bool> DisplayWrapMaki;
         public event Action HideIngridient;
     }

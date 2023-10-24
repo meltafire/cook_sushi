@@ -1,9 +1,9 @@
-﻿using UnityEngine;
+﻿using Utils.AssetProvider;
 
 namespace Assets.Features.Level.Cooking.Scripts.Views.Ingridients.Infrastructure
 {
-    public interface IRecepieParentTransformProvider
+    public interface IRecepieParentTransformProvider : IParentTransformProvider
     {
-        public RectTransform Transform { get; }
+        public void Toggle(bool isOn);
     }
 }

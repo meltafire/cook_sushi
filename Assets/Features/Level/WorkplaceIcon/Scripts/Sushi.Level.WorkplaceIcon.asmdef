@@ -4,10 +4,10 @@
     "references": [
         "Reflex",
         "Utils.ReflexIntegration",
-        "Sushi.App.StageRootProvider",
+        "Sushi.SceneReference",
         "Sushi.Level.WorkplaceIcon.Events",
         "UniTask",
-        "Utils.AddressablesLoader",
+        "Utils.AssetProvider",
         "Utils.Controllers",
         "Utils.Input",
         "Utils.Ui"

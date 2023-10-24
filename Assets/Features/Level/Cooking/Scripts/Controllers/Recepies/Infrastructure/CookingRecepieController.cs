@@ -21,6 +21,8 @@ namespace Assets.Features.Level.Cooking.Scripts.Controllers.Ingridients
 
         public UniTask Initialize(CancellationToken token)
         {
+            _view.gameObject.SetActive(true);
+
             _view.ButtonPressed += OnButtonPressed;
 
             return UniTask.CompletedTask;

@@ -7,6 +7,6 @@ namespace Sushi.App.LoadingScreen
         [SerializeField]
         private Transform _transform;
 
-        public Transform ParentTransform => _transform;
+        public Transform Transform => _transform;
     }
 }

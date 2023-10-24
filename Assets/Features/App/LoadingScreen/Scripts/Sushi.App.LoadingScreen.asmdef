@@ -5,7 +5,7 @@
         "Reflex",
         "Sushi.App.LoadingScreen.Events",
         "UniTask",
-        "Utils.AddressablesLoader",
+        "Utils.AssetProvider",
         "Utils.Controllers",
         "Utils.ReflexIntegration"
     ],

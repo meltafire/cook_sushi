@@ -21,6 +21,8 @@ namespace Sushi.Menu.Controllers
         {
             _view.OnButtonPressed += OnButtonPressedHappened;
 
+            _view.SetActive(true);
+
             return UniTask.CompletedTask;
         }
 

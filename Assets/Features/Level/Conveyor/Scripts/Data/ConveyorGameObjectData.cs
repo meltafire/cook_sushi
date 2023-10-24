@@ -2,7 +2,7 @@
 
 namespace Sushi.Level.Conveyor.Data
 {
-    public class ConveyorGameObjectData : IConveyorPointsProvider, IConveyorGameObjectData
+    public class ConveyorGameObjectData : IConveyorPointsProvider
     {
         private Vector3 _topStart;
         private Vector3 _topEnd;
@@ -14,7 +14,7 @@ namespace Sushi.Level.Conveyor.Data
         public Vector3 BottomStart => _bottomStart;
         public Vector3 BottomEnd => _bottomEnd;
 
-        public void SetData(
+        public ConveyorGameObjectData(
             Vector3 topStart,
             Vector3 topEnd,
             Vector3 bottomStart,

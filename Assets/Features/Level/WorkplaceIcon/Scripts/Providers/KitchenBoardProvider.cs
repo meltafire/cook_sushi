@@ -1,20 +1,13 @@
-﻿using Cysharp.Threading.Tasks;
-using Utils.AddressablesLoader;
+﻿using Utils.AssetProvider;
 
 namespace Sushi.Level.WorkplaceIcon
 {
     public class KitchenBoardProvider : AssetInstantiator<KitchenBoardView>
     {
-        private readonly IStageRootParentTransformProvider _transformProvider;
-
-        public KitchenBoardProvider(IStageRootParentTransformProvider transformProvider)
+        public KitchenBoardProvider(ISceneRenderReference transformProvider) : base(transformProvider)
         {
-            _transformProvider = transformProvider;
         }
 
-        public override UniTask<KitchenBoardView> Load()
-        {
-            return Instantiate(KitchenBoardData.KitchenBoardPrefabKey, _transformProvider.ParentTransform);
-        }
+        protected override string AssetId => KitchenBoardData.KitchenBoardPrefabKey;
     }
 }

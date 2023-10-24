@@ -1,3 +1,4 @@
+using Assets.Features.SceneReference;
 using Reflex.Core;
 using Sushi.App.Installer;
 using Sushi.App.LoadingScreen;
@@ -6,13 +7,17 @@ using Sushi.Menu.Installer;
 using Sushi.SceneReference;
 using System.Threading;
 using UnityEngine;
+using Utils.AddressablesLoader;
 
 namespace Sushi.AppScope
 {
     public class AppLifeTimeScope: MonoBehaviour, IInstaller
     {
         [SerializeField]
-        private SceneHandler _sceneHandler;
+        private SceneRenderReference _sceneRenderReference;
+
+        [SerializeField]
+        private SceneOverlayCanvasReference _sceneOverlayCanvasReference;
 
         [SerializeField]
         private LoadingScreenParentTransformProvider _loadingScreenTransform;
@@ -31,11 +36,14 @@ namespace Sushi.AppScope
             RegisterAppFeature(descriptor);
             RegisterMenuFeature(descriptor);
             RegisterLevelFeature(descriptor);
+
+            descriptor.AddTransient(typeof(AssetLoader));
         }
 
         private void RegisterSceneReferences(ContainerDescriptor descriptor)
         {
-            descriptor.AddInstance(_sceneHandler, typeof(ISceneReference), typeof(IStageRootParentTransformProvider));
+            descriptor.AddInstance(_sceneOverlayCanvasReference, typeof(ISceneOverlayCanvasReference));
+            descriptor.AddInstance(_sceneRenderReference, typeof(ISceneRenderReference));
         }
 
         private void RegisterCommonCancellationToken(ContainerDescriptor descriptor)

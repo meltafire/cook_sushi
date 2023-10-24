@@ -12,11 +12,11 @@ namespace Assets.Features.Level.Conveyor.Scripts
     {
         private static readonly string ContainerName = "ConveyorFacade";
 
-        private readonly ConveyorProvider _conveyorProvider;
+        private readonly ConveyorInstantiator _conveyorProvider;
 
         private IController _coveyorController;
 
-        public ConveyorFacade(Container container, ConveyorProvider conveyorProvider) : base(container)
+        public ConveyorFacade(Container container, ConveyorInstantiator conveyorProvider) : base(container)
         {
             _conveyorProvider = conveyorProvider;
         }
@@ -41,6 +41,8 @@ namespace Assets.Features.Level.Conveyor.Scripts
         protected async override UniTask<Container> GenerateContainer(CancellationToken token)
         {
             var view = await _conveyorProvider.Load();
+
+            view.gameObject.SetActive(true);
 
             return Container.Scope(ContainerName, descriptor =>
             {

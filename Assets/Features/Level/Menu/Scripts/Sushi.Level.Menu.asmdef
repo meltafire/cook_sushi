@@ -7,7 +7,7 @@
         "Sushi.Level.Stages.LoadingStageEvents",
         "Sushi.SceneReference",
         "UniTask",
-        "Utils.AddressablesLoader",
+        "Utils.AssetProvider",
         "Utils.Controllers",
         "Utils.ReflexIntegration"
     ],

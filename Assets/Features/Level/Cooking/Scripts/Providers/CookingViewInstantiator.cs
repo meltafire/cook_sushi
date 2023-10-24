@@ -1,20 +1,13 @@
-﻿using Cysharp.Threading.Tasks;
-using Utils.AddressablesLoader;
+﻿using Utils.AssetProvider;
 
 namespace Sushi.Level.Cooking
 {
     public class CookingViewInstantiator : AssetInstantiator<CookingView>
     {
-        private readonly IStageRootParentTransformProvider _parentTransformProvider;
-
-        public CookingViewInstantiator(IStageRootParentTransformProvider parentTransformProvider)
+        public CookingViewInstantiator(ISceneRenderReference parentTransformProvider) : base(parentTransformProvider)
         {
-            _parentTransformProvider = parentTransformProvider;
         }
 
-        public override UniTask<CookingView> Load()
-        {
-            return Instantiate(CookingConstantData.CookingPrefabKey, _parentTransformProvider.ParentTransform);
-        }
+        protected override string AssetId => CookingConstantData.CookingPrefabKey;
     }
 }

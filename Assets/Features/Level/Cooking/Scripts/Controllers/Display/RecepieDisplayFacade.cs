@@ -88,12 +88,12 @@ namespace Assets.Features.Level.Cooking.Scripts.Handler
                 _ingridientSelectionExternalEvent.DisplayNigiriRecepie += OnDisplayNigiriRecepie;
             }
 
-            _ingridientSelectionExternalEvent.DisplayIngridient += OnIngridientSelected;
+            _ingridientSelectionExternalEvent.AfterDisplayIngridient += OnAfterDisplayIngridient;
         }
 
         protected override void ActBeforeContainerDisposed()
         {
-            _ingridientSelectionExternalEvent.DisplayIngridient -= OnIngridientSelected;
+            _ingridientSelectionExternalEvent.AfterDisplayIngridient -= OnAfterDisplayIngridient;
 
             var types = _levelDishesTypeProvider.GetLevelDishTypes();
             if (types.Contains(DishType.Maki))
@@ -158,7 +158,7 @@ namespace Assets.Features.Level.Cooking.Scripts.Handler
             _displayNigiriRecepieController.Show(isOn);
         }
 
-        private void OnIngridientSelected(CookingIngridientType type, int count)
+        private void OnAfterDisplayIngridient()
         {
             _makiWrapActionController.MoveLast();
         }

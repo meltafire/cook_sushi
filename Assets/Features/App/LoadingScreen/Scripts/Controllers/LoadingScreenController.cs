@@ -18,6 +18,8 @@ namespace Sushi.App.LoadingScreen
 
         public UniTask Initialize(CancellationToken token)
         {
+            OnShowRequested(true);
+
             _events.ShowRequested += OnShowRequested;
 
             return UniTask.CompletedTask;

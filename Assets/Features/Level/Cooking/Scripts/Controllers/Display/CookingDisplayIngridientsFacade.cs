@@ -7,7 +7,7 @@ using Reflex.Core;
 using Sushi.Level.Cooking;
 using System.Collections.Generic;
 using System.Threading;
-using Utils.AddressablesLoader;
+using Utils.AssetProvider;
 
 namespace Assets.Features.Level.Cooking.Scripts.Controllers.Display
 {
@@ -49,7 +49,7 @@ namespace Assets.Features.Level.Cooking.Scripts.Controllers.Display
             _ingridientSelectionExternalEvent.DisplayIngridient -= OnIngridientSelected;
             _ingridientSelectionExternalEvent.HideIngridient -= OnHideIngridient;
 
-            while (_ingridientDisplayFacades.Count == 0)
+            while (_ingridientDisplayFacades.Count > 0)
             {
                 var facade = _ingridientDisplayFacades.Pop();
 

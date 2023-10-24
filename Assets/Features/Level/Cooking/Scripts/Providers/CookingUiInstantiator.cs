@@ -1,21 +1,14 @@
-﻿using Cysharp.Threading.Tasks;
-using Sushi.SceneReference;
-using Utils.AddressablesLoader;
+﻿using Sushi.SceneReference;
+using Utils.AssetProvider;
 
 namespace Sushi.Level.Cooking
 {
     public class CookingUiInstantiator : AssetInstantiator<CookingUiView>
     {
-        private readonly ISceneReference _sceneReference;
-
-        public CookingUiInstantiator(ISceneReference sceneReference)
+        public CookingUiInstantiator(ISceneOverlayCanvasReference sceneReference) : base(sceneReference)
         {
-            _sceneReference = sceneReference;
         }
 
-        public override UniTask<CookingUiView> Load()
-        {
-            return Instantiate(CookingConstantData.CookingUiPrefabKey, _sceneReference.OverlayCanvasTransform);
-        }
+        protected override string AssetId => CookingConstantData.CookingUiPrefabKey;
     }
 }

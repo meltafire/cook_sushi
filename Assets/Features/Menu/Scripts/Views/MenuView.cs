@@ -26,5 +26,10 @@ namespace Sushi.Menu.Views
         {
             OnButtonPressed?.Invoke();
         }
+
+        public void SetActive(bool isOn)
+        {
+            gameObject.SetActive(isOn);
+        }
     }
 }

@@ -7,14 +7,13 @@ using Assets.Features.Level.Cooking.Scripts.Events;
 using Assets.Features.Level.Cooking.Scripts.Events.Infrastructure;
 using Assets.Features.Level.Cooking.Scripts.Handler;
 using Assets.Features.Level.Cooking.Scripts.States;
-using Assets.Features.Level.Cooking.Scripts.Views.Display.Infrastructure;
+using Assets.Features.Level.Cooking.Scripts.Views;
 using Assets.Features.Level.Cooking.Scripts.Views.Ingridients.Infrastructure;
 using Cysharp.Threading.Tasks;
 using Reflex.Core;
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using UnityEngine;
 using Utils.Controllers;
 
 namespace Sushi.Level.Cooking
@@ -26,8 +25,6 @@ namespace Sushi.Level.Cooking
     }
 
     public class CookingController : BaseCookingController,
-        IRecepieParentTransformProvider,
-        IIngridientsParentTransformProvider,
         ICookingControllerGeneralButtonsProvider,
         ICookingControllerRecepieToggleProvider,
         ICookingControllerIngridentsToggleProvider
@@ -42,17 +39,14 @@ namespace Sushi.Level.Cooking
         private readonly Dictionary<ControllerStatesType, ICookingControllerState> _statesDisctionary;
         private readonly ILevelIngridientTypeProvider _levelIngridientTypeProvider;
         private readonly RecepieDisplayFacade _recepieDisplayHandler;
+        private readonly IIngridientsParentTransformProvider _ingridientsParentTransformProvider;
+        private readonly IRecepieParentTransformProvider _recepieParentTransformProvider;
         private readonly List<IController> _dynamicControllers = new List<IController>();
 
         private Stack<Container> _ingridientsContainers = new Stack<Container>();
 
         public event Action RevertPressed;
         public event Action DonePressed;
-
-        public RectTransform IngridientsDispalyParentTransform => _uiView.IngridientsDispalyParentTransform;
-
-        RectTransform IRecepieParentTransformProvider.Transform => _uiView.RecepieParentTransform;
-        RectTransform IIngridientsParentTransformProvider.Transform => _uiView.IngridientsParentTransform;
 
         public CookingController(
             Container container,
@@ -61,7 +55,9 @@ namespace Sushi.Level.Cooking
             CookingUiView uiView,
             BaseCookingRecepiesFacade cookingRecepiesFacade,
             ILevelIngridientTypeProvider levelIngridientTypeProvider,
-            RecepieDisplayFacade recepieDisplayHandler)
+            RecepieDisplayFacade recepieDisplayHandler,
+            IIngridientsParentTransformProvider ingridientsParentTransformProvider,
+            IRecepieParentTransformProvider recepieParentTransformProvider)
         {
             _container = container;
             _events = events;
@@ -70,6 +66,8 @@ namespace Sushi.Level.Cooking
             _cookingRecepiesFacade = cookingRecepiesFacade;
             _levelIngridientTypeProvider = levelIngridientTypeProvider;
             _recepieDisplayHandler = recepieDisplayHandler;
+            _ingridientsParentTransformProvider = ingridientsParentTransformProvider;
+            _recepieParentTransformProvider = recepieParentTransformProvider;
 
             _statesDisctionary = new Dictionary<ControllerStatesType, ICookingControllerState>(4);
         }
@@ -125,12 +123,12 @@ namespace Sushi.Level.Cooking
 
         public void ToggleRecepieButtons(bool isOn)
         {
-            _uiView.ToggleRecepies(isOn);
+            _recepieParentTransformProvider.Toggle(isOn);
         }
 
         public void ToggleIngridientButtons(bool isOn)
         {
-            _uiView.ToggleIngridients(isOn);
+            _ingridientsParentTransformProvider.Toggle(isOn);
         }
 
         private async UniTask Start(CancellationToken token)

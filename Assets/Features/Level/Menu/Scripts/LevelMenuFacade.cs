@@ -47,6 +47,8 @@ namespace Assets.Features.Level.Menu.Scripts
         {
             var view = await _levelMenuProvider.Load();
 
+            view.gameObject.SetActive(true);
+
             return Container.Scope(ContainerName, descriptor =>
             {
                 descriptor.AddInstance(view, typeof(LevelMenuView));

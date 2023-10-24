@@ -1,9 +1,8 @@
 ﻿using Assets.Features.GameData.Scripts.Data;
-using Assets.Features.Level.Cooking.Scripts.Providers.Display;
 using Cysharp.Threading.Tasks;
 using Reflex.Core;
 using System.Threading;
-using Utils.AddressablesLoader;
+using Utils.AssetProvider;
 
 namespace Assets.Features.Level.Cooking.Scripts.Controllers.Display
 {

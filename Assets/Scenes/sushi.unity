@@ -5352,6 +5352,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 680470900}
+  - component: {fileID: 680470901}
   m_Layer: 0
   m_Name: Stage
   m_TagString: Untagged
@@ -5374,6 +5375,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &680470901
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 680470899}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a707799aae8b304eb9f4bdcc90e257f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _stageParentTransform: {fileID: 680470900}
 --- !u!1 &682406650
 GameObject:
   m_ObjectHideFlags: 0
@@ -8072,6 +8086,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1044821171}
+  - component: {fileID: 1044821172}
   m_Layer: 5
   m_Name: Generated
   m_TagString: Untagged
@@ -8100,6 +8115,19 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1044821172
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1044821170}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55bbe6fd2e4c1f34ab7b13451f3747ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _overlayCanvasTransform: {fileID: 1044821171}
 --- !u!1 &1058567674
 GameObject:
   m_ObjectHideFlags: 0
@@ -15293,7 +15321,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _stageParentTransform: {fileID: 680470900}
-  _overlayCanvasTransform: {fileID: 1044821171}
 --- !u!114 &2007300271
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15318,7 +15345,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3bdc1343e6c31fa4f87b4f2a2f6ae09f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _sceneHandler: {fileID: 2007300270}
+  _sceneRenderReference: {fileID: 680470901}
+  _sceneOverlayCanvasReference: {fileID: 1044821172}
   _loadingScreenTransform: {fileID: 2007300273}
 --- !u!114 &2007300273
 MonoBehaviour:
@@ -15332,7 +15360,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7ab9f46f98cc3447a1ae15e0d1bf68a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _transform: {fileID: 1044821171}
+  _transform: {fileID: 1973763819}
 --- !u!1 &2011071478
 GameObject:
   m_ObjectHideFlags: 0

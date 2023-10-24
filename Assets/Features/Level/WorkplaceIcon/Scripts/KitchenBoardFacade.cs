@@ -40,6 +40,8 @@ namespace Assets.Features.Level.WorkplaceIcon.Scripts
         {
             var view = await _kitchenBoardProvider.Load();
 
+            view.gameObject.SetActive(true);
+
             return Container.Scope(ContainerName, descriptor =>
             {
                 descriptor.AddInstance(view, typeof(IButtonView));

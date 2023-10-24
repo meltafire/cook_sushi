@@ -16,6 +16,7 @@ namespace Assets.Features.Level.Cooking.Scripts.Handler
         public event Action<bool> DisplayMakiRecepie;
         public event Action<bool> DisplayNigiriRecepie;
         public event Action<CookingIngridientType, int> DisplayIngridient;
+        public event Action AfterDisplayIngridient;
         public event Action HideIngridient;
         public event Action<bool> DisplayWrapMaki;
 
@@ -40,6 +41,7 @@ namespace Assets.Features.Level.Cooking.Scripts.Handler
             _drawedElements.Push((CookingAction)scheme);
 
             DisplayIngridient?.Invoke(scheme, count);
+            AfterDisplayIngridient?.Invoke();
         }
 
         public void ShowWrapMaki()

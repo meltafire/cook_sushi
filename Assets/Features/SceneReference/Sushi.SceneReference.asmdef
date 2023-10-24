@@ -2,7 +2,7 @@
     "name": "Sushi.SceneReference",
     "rootNamespace": "",
     "references": [
-        "Sushi.App.StageRootProvider"
+        "Utils.AssetProvider"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

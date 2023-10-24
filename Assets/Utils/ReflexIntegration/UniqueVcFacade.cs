@@ -1,7 +1,7 @@
 ﻿using Cysharp.Threading.Tasks;
 using Reflex.Core;
 using System.Threading;
-using Utils.AddressablesLoader;
+using Utils.AssetProvider;
 using Utils.Controllers;
 
 namespace Assets.Features.Level.Cooking.Scripts.Controllers.Recepies

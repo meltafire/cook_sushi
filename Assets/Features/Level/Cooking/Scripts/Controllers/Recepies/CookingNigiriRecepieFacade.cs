@@ -1,6 +1,6 @@
 ﻿using Assets.Features.Level.Cooking.Scripts.Controllers.Ingridients;
 using Reflex.Core;
-using Utils.AddressablesLoader;
+using Utils.AssetProvider;
 
 namespace Assets.Features.Level.Cooking.Scripts.Controllers.Recepies
 {

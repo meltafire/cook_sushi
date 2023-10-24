@@ -1,22 +1,15 @@
 ﻿using Assets.Features.Level.Cooking.Scripts.Views.Display.Infrastructure;
-using Cysharp.Threading.Tasks;
 using Sushi.Level.Cooking;
-using Utils.AddressablesLoader;
+using Utils.AssetProvider;
 
 namespace Assets.Features.Level.Cooking.Scripts.Providers.Ingridients
 {
     public class CookingMakiWrapActionInstantiator : AssetInstantiator<ButtonView>
     {
-        private readonly IIngridientsDispalyParentTransformProvider _parentTransformProvider;
-
-        public CookingMakiWrapActionInstantiator(IIngridientsDispalyParentTransformProvider parentTransformProvider)
+        public CookingMakiWrapActionInstantiator(IIngridientsDisplayParentTransformProvider parentTransformProvider) : base(parentTransformProvider)
         {
-            _parentTransformProvider = parentTransformProvider;
         }
 
-        public override UniTask<ButtonView> Load()
-        {
-            return Instantiate(CookingConstantData.CookingMakiWrapPrefabKey, _parentTransformProvider.IngridientsDispalyParentTransform);
-        }
+        protected override string AssetId => CookingConstantData.CookingMakiWrapPrefabKey;
     }
 }

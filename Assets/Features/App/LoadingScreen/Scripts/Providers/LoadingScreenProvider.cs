@@ -1,20 +1,13 @@
-﻿using Cysharp.Threading.Tasks;
-using Utils.AddressablesLoader;
+﻿using Utils.AssetProvider;
 
 namespace Sushi.App.LoadingScreen
 {
     public class LoadingScreenProvider : AssetInstantiator<LoadingScreenView>
     {
-        private readonly ILoadingScreenParentTransformProvider _transform;
-
-        public LoadingScreenProvider(ILoadingScreenParentTransformProvider transform)
+        public LoadingScreenProvider(ILoadingScreenParentTransformProvider transformProvider) : base(transformProvider)
         {
-            _transform = transform;
         }
 
-        public override UniTask<LoadingScreenView> Load()
-        {
-            return Instantiate(LoadingScreenConstants.PrefabKey, _transform.ParentTransform);
-        }
+        protected override string AssetId => LoadingScreenConstants.PrefabKey;
     }
 }

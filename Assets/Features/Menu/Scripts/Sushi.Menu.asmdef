@@ -9,7 +9,7 @@
         "Sushi.Menu.Data",
         "Sushi.SceneReference",
         "UniTask",
-        "Utils.AddressablesLoader",
+        "Utils.AssetProvider",
         "Utils.Controllers"
     ],
     "includePlatforms": [],

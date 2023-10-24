@@ -1,5 +1,4 @@
-﻿using Assets.Features.Level.Cooking.Scripts.Controllers.Ingridients;
-using Assets.Features.Level.Cooking.Scripts.Controllers.Recepies;
+﻿using Assets.Features.Level.Cooking.Scripts.Controllers.Recepies;
 using Assets.Features.Level.Cooking.Scripts.Events.Infrastructure;
 using Assets.Features.Level.Cooking.Scripts.Events.Ingridients;
 using Assets.Features.Level.Cooking.Scripts.Handler;
@@ -8,6 +7,7 @@ using Assets.Features.Level.Cooking.Scripts.Pools;
 using Assets.Features.Level.Cooking.Scripts.Providers.Display;
 using Assets.Features.Level.Cooking.Scripts.Providers.Ingridients;
 using Assets.Features.Level.Cooking.Scripts.States;
+using Assets.Features.Level.Cooking.Scripts.Views;
 using Assets.Features.Level.Cooking.Scripts.Views.Display.Infrastructure;
 using Assets.Features.Level.Cooking.Scripts.Views.Infrastructure;
 using Assets.Features.Level.Cooking.Scripts.Views.Ingridients.Infrastructure;
@@ -15,7 +15,7 @@ using Cysharp.Threading.Tasks;
 using Reflex.Core;
 using Sushi.Level.Cooking;
 using System.Threading;
-using Utils.AddressablesLoader;
+using Utils.AssetProvider;
 using Utils.Controllers;
 
 namespace Assets.Features.Level.Cooking.Scripts.Controllers
@@ -42,18 +42,22 @@ namespace Assets.Features.Level.Cooking.Scripts.Controllers
         {
             var (view, uiView) = await UniTask.WhenAll(LoadPrefab(), LoadUiPrefab());
 
+            var uiGo = uiView.gameObject;
+            var ingridientsDisplayParentTransformProvider = uiGo.GetComponent<IngridientsDisplayParentTransformProvider>();
+            var ingridientsParentTransformProvider = uiGo.GetComponent<IngridientsParentTransformProvider>();
+            var recepieParentTransformProvider = uiGo.GetComponent<RecepieParentTransformProvider>();
+
             _childContainer = _container.Scope(RootCookingControllerName, descriptor =>
                 {
                     descriptor.AddInstance(view, typeof(CookingView));
-                    descriptor.AddInstance(uiView,
-                        typeof(CookingUiView),
-                        typeof(IIngridientsDispalyParentTransformProvider)
-                        );
+                    descriptor.AddInstance(uiView, typeof(CookingUiView));
+
+                    descriptor.AddInstance(ingridientsDisplayParentTransformProvider, typeof(IIngridientsDisplayParentTransformProvider));
+                    descriptor.AddInstance(ingridientsParentTransformProvider, typeof(IIngridientsParentTransformProvider));
+                    descriptor.AddInstance(recepieParentTransformProvider, typeof(IRecepieParentTransformProvider));
 
                     descriptor.AddSingleton(typeof(CookingController),
                         typeof(BaseCookingController),
-                        typeof(IRecepieParentTransformProvider),
-                        typeof(IIngridientsParentTransformProvider),
                         typeof(ICookingControllerGeneralButtonsProvider),
                         typeof(ICookingControllerRecepieToggleProvider),
                         typeof(ICookingControllerIngridentsToggleProvider)
@@ -73,6 +77,9 @@ namespace Assets.Features.Level.Cooking.Scripts.Controllers
 
         public void Dispose()
         {
+            _cookingViewProvider.Unload();
+            _cookingUiProvider.Unload();
+
             _controller.Dispose();
 
             _childContainer.Dispose();

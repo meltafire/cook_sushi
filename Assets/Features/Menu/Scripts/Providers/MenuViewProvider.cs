@@ -1,23 +1,16 @@
-﻿using Cysharp.Threading.Tasks;
-using Sushi.Menu.Data;
+﻿using Sushi.Menu.Data;
 using Sushi.Menu.Views;
 using Sushi.SceneReference;
-using Utils.AddressablesLoader;
+using Utils.AssetProvider;
 
 namespace Sushi.Menu
 {
     public class MenuViewProvider : AssetInstantiator<MenuView>
     {
-        private readonly ISceneReference _sceneReference;
-
-        public MenuViewProvider(ISceneReference sceneReference)
+        public MenuViewProvider(ISceneOverlayCanvasReference sceneReference) : base(sceneReference)
         {
-            _sceneReference = sceneReference;
         }
 
-        public override UniTask<MenuView> Load()
-        {
-            return Instantiate(MenuConstants.MainMenuPrefabName, _sceneReference.OverlayCanvasTransform);
-        }
+        protected override string AssetId => MenuConstants.MainMenuPrefabName;
     }
 }

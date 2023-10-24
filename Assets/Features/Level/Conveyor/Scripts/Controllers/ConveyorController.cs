@@ -1,10 +1,10 @@
 ﻿using Assets.Features.Level.Conveyor.Scripts.Controllers;
-using Assets.Features.Level.Conveyor.Scripts.Views;
-using Assets.Utils.Controllers;
 using Cysharp.Threading.Tasks;
 using Reflex.Core;
-using Sushi.Level.Conveyor.Services;
+using Sushi.Level.Conveyor.Data;
 using System.Threading;
+using UnityEngine;
+using Utils.Controllers;
 
 namespace Sushi.Level.Conveyor.Controllers
 {
@@ -19,27 +19,18 @@ namespace Sushi.Level.Conveyor.Controllers
     {
         private static readonly string ContainerName = "ConveyorController";
 
-        private readonly IConveyorView _view;
-        private readonly ConveyorPositionService _conveyorPositionService;
-
-        private IControllerWithData<int> _controller;
+        private IController _controller;
 
         public ConveyorController(
-            ConveyorPositionService conveyorPositionService,
-            IConveyorView view,
             Container container) : base(container)
         {
-            _conveyorPositionService = conveyorPositionService;
-            _view = view;
         }
 
         protected override UniTask ActAfterContainerInitialized(CancellationToken token)
         {
-            _conveyorPositionService.SetupConveyorData(_view.TopStart.position, _view.BottomStart.position, _view.TileCountTotal, _view.TopTileSize);
+            _controller = ResolveFromChildContainer<BaseConveyorTilesPreloadHolder>();
 
-            _controller = ResolveFromChildContainer<BaseConveyorsTileHolder>();
-
-            return _controller.Initialize(_view.TileCountTotal, token);
+            return _controller.Initialize(token);
         }
 
         protected override void ActAfterContainerDisposed()
@@ -56,11 +47,10 @@ namespace Sushi.Level.Conveyor.Controllers
             return UniTask.FromResult(
                 Container.Scope(ContainerName, descriptor =>
             {
-                descriptor.AddTransient(typeof(ConveyorTilesHolder), typeof(BaseConveyorsTileHolder));
+                descriptor.AddTransient(typeof(ConveyorTilesPreloadHolder), typeof(BaseConveyorTilesPreloadHolder));
             }
             ));
         }
-
 
 
         //_______________________________

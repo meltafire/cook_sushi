@@ -9,7 +9,7 @@
         "Sushi.Menu.Installer",
         "Sushi.Level.Installer",
         "Sushi.SceneReference",
-        "Utils.AddressablesLoader",
+        "Utils.AssetProvider",
         "Utils.Controllers"
     ],
     "includePlatforms": [],

@@ -12,7 +12,6 @@ namespace Sushi.Level.Conveyor.Controllers
     {
         public abstract void Dispose();
         public abstract UniTask Initialize(CancellationToken token);
-        public abstract void SetPosition(Vector3 position);
     }
 
     public class ConveyorTileController : BaseConveyorTileController
@@ -37,6 +36,9 @@ namespace Sushi.Level.Conveyor.Controllers
 
         public override UniTask Initialize(CancellationToken token)
         {
+            _data.IsTopRow = IsTileOnTopRow(_data.Index);
+            _view.SetPosition(GetStartPosition());
+
             _events.ToggleMovementRequest += OnToggleMovementRequest;
 
             return UniTask.CompletedTask;
@@ -48,19 +50,9 @@ namespace Sushi.Level.Conveyor.Controllers
             _events.ToggleMovementRequest -= OnToggleMovementRequest;
         }
 
-        public override void SetPosition(Vector3 position)
-        {
-            _view.SetPosition(position);
-        }
-
         private void OnUpdateHappened()
         {
             var newPosition = _view.Position + Vector3.right * Time.deltaTime;
-
-            if (_data.Index == 0)
-            {
-                Debug.Log($"_data.IsTopRow {_data.IsTopRow} newPosition {newPosition} te {_conveyorPointsProvider.TopEnd.x} be {_conveyorPointsProvider.BottomEnd.x}");
-            }
 
             if (_data.IsTopRow && newPosition.x > _conveyorPointsProvider.TopEnd.x)
             {
@@ -82,7 +74,7 @@ namespace Sushi.Level.Conveyor.Controllers
             _view.SetPosition(newPosition);
         }
 
-         private void OnToggleMovementRequest(bool isOn)
+        private void OnToggleMovementRequest(bool isOn)
         {
             if(isOn)
             {
@@ -92,6 +84,46 @@ namespace Sushi.Level.Conveyor.Controllers
             {
                 _view.OnUpdate -= OnUpdateHappened;
             }
+        }
+
+        private bool IsTileOnTopRow(int positionNumber)
+        {
+            var tilePositionForTopRow = GenerateTilePositionForTopRow(positionNumber);
+
+            return ShouldTileBeInTopRow(tilePositionForTopRow);
+        }
+
+        private Vector3 GetStartPosition()
+        {
+            var tilePositionForTopRow = GenerateTilePositionForTopRow(_data.Index);
+
+            if (_data.IsTopRow)
+            {
+                return new Vector3(tilePositionForTopRow, _conveyorPointsProvider.TopStart.y, _conveyorPointsProvider.TopStart.z);
+            }
+            else
+            {
+                var tilesLengthOutOfRangeOfTopRow = tilePositionForTopRow - _conveyorPointsProvider.TopEnd.x;
+                var tilesOutOfRangeOfTopRow = tilesLengthOutOfRangeOfTopRow / _view.SpriteLength;
+
+                var localTilePosition = _view.SpriteLength * tilesOutOfRangeOfTopRow;
+                var tilePositionForBottomRow = _conveyorPointsProvider.BottomStart.x + localTilePosition;
+
+                return new Vector3(tilePositionForBottomRow, _conveyorPointsProvider.BottomStart.y, _conveyorPointsProvider.BottomStart.z);
+            }
+        }
+
+        private bool ShouldTileBeInTopRow(float tilePositionForTopRow)
+        {
+            return tilePositionForTopRow < _conveyorPointsProvider.TopEnd.x;
+        }
+
+        private float GenerateTilePositionForTopRow(int positionNumber)
+        {
+            var localTilePosition = _view.SpriteLength * positionNumber;
+            var tilePositionForTopRow = _conveyorPointsProvider.TopStart.x + localTilePosition;
+
+            return tilePositionForTopRow;
         }
     }
 }
