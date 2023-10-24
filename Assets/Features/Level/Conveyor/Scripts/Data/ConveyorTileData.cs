@@ -3,10 +3,12 @@
     public class ConveyorTileData
     {
         public bool IsTopRow;
+        public int Index;
 
-        public ConveyorTileData(bool isTopRow)
+        public ConveyorTileData(bool isTopRow, int index)
         {
             IsTopRow = isTopRow;
+            Index = index;
         }
     }
 }

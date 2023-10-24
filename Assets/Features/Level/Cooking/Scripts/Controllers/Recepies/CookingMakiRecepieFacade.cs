@@ -4,14 +4,14 @@ using Utils.AddressablesLoader;
 
 namespace Assets.Features.Level.Cooking.Scripts.Controllers.Recepies
 {
-    public class CookingMakiRecepieFacade : UniqueVcFacade<CookingMakiRecepieController, IngridientButtonView>
+    public class CookingMakiRecepieFacade : UniqueVcFacade<CookingMakiRecepieController, ButtonView>
     {
         protected override string ContainerName => ContainerNameInner;
 
         private static readonly string ContainerNameInner = "CookingMakiRecepieFacade";
 
         public CookingMakiRecepieFacade(
-            AssetInstantiator<IngridientButtonView> assetInstantiator,
+            AssetInstantiator<ButtonView> assetInstantiator,
             Container container)
             : base(assetInstantiator, container)
         {

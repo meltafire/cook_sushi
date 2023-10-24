@@ -46,14 +46,14 @@ namespace Assets.Features.Level.Cooking.Scripts.Controllers
                 {
                     descriptor.AddInstance(view, typeof(CookingView));
                     descriptor.AddInstance(uiView,
-                        typeof(CookingUiView)
+                        typeof(CookingUiView),
+                        typeof(IIngridientsDispalyParentTransformProvider)
                         );
 
                     descriptor.AddSingleton(typeof(CookingController),
                         typeof(BaseCookingController),
                         typeof(IRecepieParentTransformProvider),
                         typeof(IIngridientsParentTransformProvider),
-                        typeof(IIngridientsDispalyParentTransformProvider),
                         typeof(ICookingControllerGeneralButtonsProvider),
                         typeof(ICookingControllerRecepieToggleProvider),
                         typeof(ICookingControllerIngridentsToggleProvider)
@@ -94,8 +94,8 @@ namespace Assets.Features.Level.Cooking.Scripts.Controllers
             descriptor.AddSingleton(typeof(RecepieAccounting), typeof(IRecepieAccountingDrawSignals), typeof(IRecepieAccounting));
 
             descriptor.AddSingleton(typeof(RecipeSelectionEvents),
-            typeof(IRecipeSelectionEvents),
-            typeof(IRecipeSelectionExternalEvents)
+                typeof(IRecipeSelectionEvents),
+                typeof(IRecipeSelectionExternalEvents)
             );
 
             descriptor.AddTransient(typeof(CookingRecepiesFacade), typeof(BaseCookingRecepiesFacade));

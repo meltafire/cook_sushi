@@ -1,5 +1,4 @@
-﻿using Assets.Features.Level.Conveyor.Scripts.Providers;
-using Cysharp.Threading.Tasks;
+﻿using Cysharp.Threading.Tasks;
 using Sushi.Level.Conveyor.Data;
 using Sushi.Level.Conveyor.Views;
 using Utils.AddressablesLoader;

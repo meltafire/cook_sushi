@@ -28,7 +28,6 @@ namespace Sushi.Level.Cooking
     public class CookingController : BaseCookingController,
         IRecepieParentTransformProvider,
         IIngridientsParentTransformProvider,
-        IIngridientsDispalyParentTransformProvider,
         ICookingControllerGeneralButtonsProvider,
         ICookingControllerRecepieToggleProvider,
         ICookingControllerIngridentsToggleProvider

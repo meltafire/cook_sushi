@@ -3,6 +3,7 @@ using Assets.Features.Level.Cooking.Scripts.Providers.Display;
 using Cysharp.Threading.Tasks;
 using Reflex.Core;
 using System.Threading;
+using Utils.AddressablesLoader;
 
 namespace Assets.Features.Level.Cooking.Scripts.Controllers.Display
 {
@@ -20,13 +21,17 @@ namespace Assets.Features.Level.Cooking.Scripts.Controllers.Display
     {
         private static readonly string ContainerName = "CookingDisplayIngridientFacade";
 
-        private readonly CookingDisplayIngridientInstantiator _displayIngridientInstantiator;
+        private readonly AssetInstantiator<CookingDisplayIngridientView> _displayIngridientInstantiator;
 
         private BaseCookingDisplayIngridientController _controller;
 
+        public CookingDisplayIngridientFacade(Container container) : base(container)
+        {
+        }
+
         public CookingDisplayIngridientFacade(
             Container container,
-            CookingDisplayIngridientInstantiator displayIngridientInstantiator)
+            AssetInstantiator<CookingDisplayIngridientView> displayIngridientInstantiator)
             : base(container)
         {
             _displayIngridientInstantiator = displayIngridientInstantiator;
@@ -65,7 +70,7 @@ namespace Assets.Features.Level.Cooking.Scripts.Controllers.Display
 
             return Container.Scope(ContainerName, descriptor =>
             {
-                descriptor.AddInstance(typeof(CookingDisplayIngridientView), typeof(CookingDisplayIngridientView));
+                descriptor.AddInstance(view, typeof(CookingDisplayIngridientView));
                 descriptor.AddSingleton(typeof(CookingDisplayIngridientController), typeof(BaseCookingDisplayIngridientController));
             }
             );

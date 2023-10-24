@@ -12,7 +12,7 @@ public abstract class BaseCookingDisplayIngridientController : IController
 }
 
 
-public class CookingDisplayIngridientController : IController
+public class CookingDisplayIngridientController : BaseCookingDisplayIngridientController
 {
     private readonly CookingDisplayIngridientView _view;
 
@@ -22,22 +22,22 @@ public class CookingDisplayIngridientController : IController
         _view = view;
     }
 
-    public UniTask Initialize(CancellationToken token)
+    public override UniTask Initialize(CancellationToken token)
     {
         return UniTask.CompletedTask;
     }
 
-    public void Dispose()
+    public override void Dispose()
     {
 
     }
 
-    public void Hide()
+    public override void Hide()
     {
         _view.Toggle(false);
     }
 
-    public void Show(CookingIngridientType step, int count)
+    public override void Show(CookingIngridientType step, int count)
     {
         _view.SetData(GetTextForStep(step), count);
 

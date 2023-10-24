@@ -1,5 +1,4 @@
-﻿using Assets.Features.Level.Conveyor.Scripts.Providers;
-using Assets.Features.Level.Conveyor.Scripts.Views;
+﻿using Assets.Features.Level.Conveyor.Scripts.Views;
 using Assets.Utils.ReflexIntegration;
 using Cysharp.Threading.Tasks;
 using Reflex.Core;
@@ -9,7 +8,6 @@ using Sushi.Level.Conveyor.Services;
 using Sushi.Level.Conveyor.Views;
 using System.Threading;
 using Utils.AddressablesLoader;
-using Utils.Controllers;
 
 namespace Assets.Features.Level.Conveyor.Scripts.Controllers
 {
@@ -20,12 +18,13 @@ namespace Assets.Features.Level.Conveyor.Scripts.Controllers
         private readonly ConveyorTilePositionService _positionService;
         private readonly AssetInstantiator<ConveyorTileView> _viewInstantiator;
 
-        private IController _controller;
+        private BaseConveyorTileController _controller;
 
         public ConveyorTileHolder(
             Container container,
             ConveyorTilePositionService positionService,
-            AssetInstantiator<ConveyorTileView> viewInstantiator) : base(container)
+            AssetInstantiator<ConveyorTileView> viewInstantiator)
+            : base(container)
         {
             _positionService = positionService;
             _viewInstantiator = viewInstantiator;
@@ -36,9 +35,11 @@ namespace Assets.Features.Level.Conveyor.Scripts.Controllers
             _viewInstantiator.Unload();
         }
 
-        protected override UniTask ActAfterContainerInitialized(int data, CancellationToken token)
+        protected override UniTask ActAfterContainerInitialized(int index, CancellationToken token)
         {
             _controller = ResolveFromChildContainer<BaseConveyorTileController>();
+
+            _controller.SetPosition(_positionService.GetPosition(index));
 
             return _controller.Initialize(token);
         }
@@ -48,12 +49,14 @@ namespace Assets.Features.Level.Conveyor.Scripts.Controllers
             _controller.Dispose();
         }
 
-        protected async override UniTask<Container> GenerateContainer(int data, CancellationToken token)
+        protected async override UniTask<Container> GenerateContainer(int index, CancellationToken token)
         {
             var view = await _viewInstantiator.Load();
+            var artLength = view.SpriteLength;
+            _tileGameObjectData.SetIileGameObject(artLength);
 
-            var isOnTop = _positionService.IsTileOnTopRow(data);
-            var mvcData = new ConveyorTileData(isOnTop);
+            var isOnTop = _positionService.IsTileOnTopRow(index);
+            var mvcData = new ConveyorTileData(isOnTop, index);
 
             return Container.Scope(ContainerName, descriptor =>
                 {

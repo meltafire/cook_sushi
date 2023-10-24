@@ -5,12 +5,10 @@ namespace Sushi.Level.Conveyor.Services
 {
     public class ConveyorTilePositionService
     {
-        private readonly ITileGameObjectDimensionProvider _dimensionProvider;
         private readonly IConveyorPointsProvider _pointProvider;
 
-        public ConveyorTilePositionService(ITileGameObjectDimensionProvider dimensionProvider, IConveyorPointsProvider pointProvider)
+        public ConveyorTilePositionService(IConveyorPointsProvider pointProvider)
         {
-            _dimensionProvider = dimensionProvider;
             _pointProvider = pointProvider;
         }
 

@@ -1,6 +1,5 @@
 ﻿using Assets.Features.GameData.Scripts.Data;
 using Assets.Features.GameData.Scripts.Providers;
-using Assets.Features.Level.Cooking.Scripts.Controllers.Ingridients;
 using Cysharp.Threading.Tasks;
 using Reflex.Core;
 using System.Collections.Generic;
@@ -23,8 +22,8 @@ namespace Assets.Features.Level.Cooking.Scripts.Controllers.Recepies
         private readonly ILevelDishesTypeProvider _levelDishesTypeProvider;
         private readonly List<IController> _dynamicControllers = new List<IController>();
 
-        private UniqueVcFacade<CookingMakiRecepieController, IngridientButtonView> _makiRecepieFacade;
-        private UniqueVcFacade<CookingNigiriRecepieController, IngridientButtonView> _nigiriRecepieFacade;
+        private IController _makiRecepieFacade;
+        private IController _nigiriRecepieFacade;
 
         public CookingRecepiesFacade(
             ILevelDishesTypeProvider levelDishesTypeProvider,
@@ -40,8 +39,8 @@ namespace Assets.Features.Level.Cooking.Scripts.Controllers.Recepies
 
         protected override UniTask ActAfterContainerInitialized(CancellationToken token)
         {
-            _makiRecepieFacade = ResolveFromChildContainer<UniqueVcFacade<CookingMakiRecepieController, IngridientButtonView>>();
-            _nigiriRecepieFacade = ResolveFromChildContainer<UniqueVcFacade<CookingNigiriRecepieController, IngridientButtonView>>();
+            _makiRecepieFacade = ResolveFromChildContainer<CookingMakiRecepieInstatiatorFacade>();
+            _nigiriRecepieFacade = ResolveFromChildContainer<CookingNigiriRecepieInstatiatorFacade>();
 
             return InitializeInternal(token);
         }
@@ -59,8 +58,8 @@ namespace Assets.Features.Level.Cooking.Scripts.Controllers.Recepies
             return UniTask.FromResult(
                 Container.Scope(ContainerName, descriptor =>
             {
-                descriptor.AddTransient(typeof(CookingMakiRecepieFacade), typeof(UniqueVcFacade<CookingMakiRecepieController, IngridientButtonView>));
-                descriptor.AddTransient(typeof(CookingNigiriRecepieFacade), typeof(UniqueVcFacade<CookingNigiriRecepieController, IngridientButtonView>));
+                descriptor.AddTransient(typeof(CookingNigiriRecepieInstatiatorFacade));
+                descriptor.AddTransient(typeof(CookingMakiRecepieInstatiatorFacade));
             })
                 );
         }

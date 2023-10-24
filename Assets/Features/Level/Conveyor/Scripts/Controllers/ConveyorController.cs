@@ -3,6 +3,7 @@ using Assets.Features.Level.Conveyor.Scripts.Views;
 using Assets.Utils.Controllers;
 using Cysharp.Threading.Tasks;
 using Reflex.Core;
+using Sushi.Level.Conveyor.Services;
 using System.Threading;
 
 namespace Sushi.Level.Conveyor.Controllers
@@ -19,16 +20,23 @@ namespace Sushi.Level.Conveyor.Controllers
         private static readonly string ContainerName = "ConveyorController";
 
         private readonly IConveyorView _view;
+        private readonly ConveyorPositionService _conveyorPositionService;
 
         private IControllerWithData<int> _controller;
 
-        public ConveyorController(IConveyorView view, Container container) : base(container)
+        public ConveyorController(
+            ConveyorPositionService conveyorPositionService,
+            IConveyorView view,
+            Container container) : base(container)
         {
+            _conveyorPositionService = conveyorPositionService;
             _view = view;
         }
 
         protected override UniTask ActAfterContainerInitialized(CancellationToken token)
         {
+            _conveyorPositionService.SetupConveyorData(_view.TopStart.position, _view.BottomStart.position, _view.TileCountTotal, _view.TopTileSize);
+
             _controller = ResolveFromChildContainer<BaseConveyorsTileHolder>();
 
             return _controller.Initialize(_view.TileCountTotal, token);

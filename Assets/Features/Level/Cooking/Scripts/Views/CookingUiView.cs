@@ -1,8 +1,9 @@
+using Assets.Features.Level.Cooking.Scripts.Views.Display.Infrastructure;
 using UnityEngine;
 
 namespace Sushi.Level.Cooking
 {
-    public class CookingUiView : MonoBehaviour
+    public class CookingUiView : MonoBehaviour, IIngridientsDispalyParentTransformProvider
     {
         [SerializeField]
         private ButtonView _backButton;
