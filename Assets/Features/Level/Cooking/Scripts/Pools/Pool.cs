@@ -40,13 +40,8 @@ namespace Sushi.Level.Cooking
             }
         }
 
-        public async UniTask<T> Get(CancellationToken token)
+        public T Get()
         {
-            if (_stack.Count == 0)
-            {
-                await GenerateItem(token);
-            }
-
             var controller = _stack.Pop();
 
             return controller;

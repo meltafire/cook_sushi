@@ -41,7 +41,7 @@ namespace Assets.Features.Level.Cooking.Scripts.Controllers.Display
             _ingridientSelectionExternalEvent.DisplayIngridient += OnIngridientSelected;
             _ingridientSelectionExternalEvent.HideIngridient += OnHideIngridient;
 
-            return UniTask.CompletedTask;
+            return _pool.Initialize(token);;
         }
 
         protected override void ActBeforeContainerDisposed()
@@ -72,9 +72,9 @@ namespace Assets.Features.Level.Cooking.Scripts.Controllers.Display
             ));
         }
 
-        private async void OnIngridientSelected(CookingIngridientType type, int count)
+        private void OnIngridientSelected(CookingIngridientType type, int count)
         {
-            var facade = await _pool.Get(_token);
+            var facade = _pool.Get();
 
             facade.Show(type, count);
 
